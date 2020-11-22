@@ -5,7 +5,7 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     [SerializeField]
-    private float _speed = 10.0f;
+    private float _speed = 10f;
     private CharacterController _charController;
 
     // Start is called before the first frame update
@@ -14,8 +14,7 @@ public class Movement : MonoBehaviour
         _charController = GetComponent<CharacterController>();
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (Input.GetKey(KeyCode.W))
         {
