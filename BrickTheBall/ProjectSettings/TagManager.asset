@@ -38,6 +38,18 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 2699990375
+    locked: 0
+  - name: FieldBackground
+    uniqueID: 3932723087
+    locked: 0
+  - name: Borders
+    uniqueID: 1528519587
+    locked: 0
+  - name: Ball
+    uniqueID: 209932995
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
