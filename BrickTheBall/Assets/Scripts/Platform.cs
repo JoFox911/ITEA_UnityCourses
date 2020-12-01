@@ -12,14 +12,12 @@ public class Platform : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private Collider2D _collider;
 
-    // Start is called before the first frame update
     void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _collider = GetComponent<Collider2D>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         // delta time not used there
@@ -28,7 +26,7 @@ public class Platform : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        Debug.Log("collision platform and " + col.gameObject.name);
+        Debug.Log("collision platform and " + col.gameObject.tag);
         // Hit the platform?
         if (col.gameObject.tag == "Ball")
         {

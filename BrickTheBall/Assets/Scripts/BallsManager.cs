@@ -44,14 +44,14 @@ public class BallsManager : MonoBehaviour
 
     void Update()
     {
-        if (!GamManager.Instance.isGameStarted) 
+        if (!GameManager.Instance.isGameStarted) 
         {
             _initialBall.transform.SetPostionXY(_platformObject.transform.position.x, 
                                                 _platformObject.transform.position.y + 0.50f);
 
             if (Input.GetKeyDown(KeyCode.Space)) 
             {
-                GamManager.Instance.isGameStarted = true;
+                GameManager.Instance.isGameStarted = true;
                 _initialBall.StartMoving(_initialBallSpeed);
             }
         }

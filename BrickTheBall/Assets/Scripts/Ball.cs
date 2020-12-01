@@ -3,14 +3,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
 public class Ball : MonoBehaviour
 {
-    // todo сделать ту штуку, чтоб перемещать в 2д просто через х и у
-    [SerializeField]
-    //todo required?
-    private GameObject _platformObject = null;
-
     private float _speed = 10.0f;
 
     private Rigidbody2D _rigidbody;
@@ -34,17 +28,6 @@ public class Ball : MonoBehaviour
 
     void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //{
-        //    Debug.Log("Space");
-        //    if (!_isActive)
-        //    {
-        //        //_rigidbody.isKinematic = false;
-        //        _isActive = true;
-
-        //        _rigidbody.velocity = Vector2.up * _speed;
-        //    }
-        //}
 
 
         //// todo bottom!
