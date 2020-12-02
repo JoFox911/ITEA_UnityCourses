@@ -31,11 +31,10 @@ public class Brick : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        Debug.Log("collision brick and " + col.gameObject.tag);
+        //Debug.Log("collision brick and " + col.gameObject.tag);
         if (_type != BrickType.Immortal && col.gameObject.tag == "Ball")
         {
             Ball ball = col.gameObject.GetComponent<Ball>();
-            Debug.Log("ball " + ball);
             ApplyCollisionLogic(ball);
         }
     }
@@ -45,7 +44,6 @@ public class Brick : MonoBehaviour
         _hitponts--;
         if (_hitponts <= 0)
         {
-            Debug.Log("this " + this);
             OnBrickDestruction?.Invoke(this);
             Destroy(gameObject);
         }

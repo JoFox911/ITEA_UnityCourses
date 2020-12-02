@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BallsManager : MonoBehaviour
@@ -13,13 +15,15 @@ public class BallsManager : MonoBehaviour
     [SerializeField]
     private Ball _ballPrefab = null;
 
+    public static event Action<BallsManager> OnAllBallsWasted;
     public List<Ball> Balls { get; set; }
 
     private Ball _initialBall = null;
 
+
     #region Singleton
     private static BallsManager _instanceInner;
-    private static BallsManager _instance
+    private static BallsManager Instance
     {
         get
         {
@@ -39,22 +43,45 @@ public class BallsManager : MonoBehaviour
 
     void Start()
     {
-        InitBall();
+        Ball.OnBallDestroy += OnBallDestroy;
     }
 
     void Update()
     {
-        if (!GameManager.Instance.isGameStarted) 
+        if ( !GameManager.Instance.IsGameStarted && _initialBall != null) 
         {
             _initialBall.transform.SetPostionXY(_platformObject.transform.position.x, 
                                                 _platformObject.transform.position.y + 0.50f);
 
-            if (Input.GetKeyDown(KeyCode.Space)) 
+            if (!GameManager.Instance.IsGameDisabled && Input.GetKeyDown(KeyCode.Space)) 
             {
-                GameManager.Instance.isGameStarted = true;
+                GameManager.Instance.IsGameStarted = true;
                 _initialBall.StartMoving(_initialBallSpeed);
             }
         }
+    }
+
+    private void OnBallDestroy(Ball ball) {
+        Balls.Remove(ball);
+        // todo надо ли как-то реагировать на то что єто был главный мячик или нет? скорее всего надо, 
+        // если будет рассстроение мяча, то будет троиться главный!
+        if (Balls.Count <= 0)
+        {
+            OnAllBallsWasted?.Invoke(this);
+        }
+    }
+
+    public void ResetState()
+    {
+        if (Balls != null)
+        {
+            foreach (var Ball in Balls.ToList())
+            {
+                Destroy(Ball.gameObject);
+            }
+        }
+
+        InitBall();
     }
 
     private void InitBall()
@@ -64,7 +91,6 @@ public class BallsManager : MonoBehaviour
             Vector3 startingPos = new Vector3(_platformObject.transform.position.x, 
                                               _platformObject.transform.position.y + 0.50f, 
                                               0);
-            Debug.Log("BALLS MANAGER InitBall" + _ballPrefab + startingPos);
             _initialBall = Instantiate(_ballPrefab, startingPos, Quaternion.identity);
 
             Balls = new List<Ball>

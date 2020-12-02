@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using UnityEngine;
@@ -8,6 +9,8 @@ public class Ball : MonoBehaviour
     private float _speed = 10.0f;
 
     private Rigidbody2D _rigidbody;
+
+    public static event Action<Ball> OnBallDestroy;
 
     void Awake()
     {
@@ -26,19 +29,9 @@ public class Ball : MonoBehaviour
         _rigidbody.velocity = direction * _speed;
     }
 
-    void Update()
+    public void Die()
     {
-
-
-        //// todo bottom!
-        //if (_isActive && _platformObject != null && transform.position.y < -5)
-        //{
-        //    Debug.Log("Case1" + transform.rotation.x + transform.rotation.y + transform.localRotation.x + transform.localRotation.y);
-        //    _isActive = false;
-        //    //_rigidbody.isKinematic = true;
-
-        //    transform.SetPostionXY(_platformObject.transform.position.x, _initialPosY);
-        //}
-        
+        OnBallDestroy?.Invoke(this);
+        Destroy(gameObject);
     }
 }

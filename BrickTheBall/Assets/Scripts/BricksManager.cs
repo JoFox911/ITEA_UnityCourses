@@ -39,7 +39,7 @@ public class BricksManager : MonoBehaviour
 
     private List<Brick> _remainingBricks;
 
-    //Dictionary<int, BrickType> badguys = new Dictionary<string, BadGuy>();
+    public static event Action<BricksManager> OnAllBricksDestroyed;
 
     private  
 
@@ -47,11 +47,33 @@ public class BricksManager : MonoBehaviour
     void Awake()
     {
         _bricksContainer = new GameObject("BricksContainer");
-        _remainingBricks = new List<Brick>();
+        Brick.OnBrickDestruction += OnBrickDestruction;
     }
 
-    public void GenerateBricks(int[,] levelMap, int maxRows, int maxCols)
+    public void ResetState(int[,] levelMap, int maxRows, int maxCols)
     {
+        if (_remainingBricks != null) 
+        {
+            foreach (var brick in _remainingBricks.ToList())
+            {
+                Destroy(brick.gameObject);
+            }
+        }
+        GenerateLevelBricks(levelMap, maxRows, maxCols);
+    }
+
+    private void OnBrickDestruction(Brick brick)
+    {
+        _remainingBricks.Remove(brick);
+        if (_remainingBricks.Count <= 0)
+        {
+            OnAllBricksDestroyed?.Invoke(this);
+        }
+    }
+
+    private void GenerateLevelBricks(int[,] levelMap, int maxRows, int maxCols)
+    {
+        _remainingBricks = new List<Brick>();
         float brickSpawnPositionX = _initialBricksSpawnPossition.x;
         float brickSpawnPositionY = _initialBricksSpawnPossition.y;
         float brickSpawnPositionZ = _initialBricksSpawnPossition.z;

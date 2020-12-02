@@ -11,9 +11,11 @@ public class Platform : MonoBehaviour
     
     private Rigidbody2D _rigidbody;
     private Collider2D _collider;
+    private Vector3 initialPossition;
 
     void Awake()
     {
+        initialPossition = transform.position;
         _rigidbody = GetComponent<Rigidbody2D>();
         _collider = GetComponent<Collider2D>();
     }
@@ -28,28 +30,54 @@ public class Platform : MonoBehaviour
     {
         Debug.Log("collision platform and " + col.gameObject.tag);
         // Hit the platform?
-        if (col.gameObject.tag == "Ball")
+        if (GameManager.Instance.IsGameStarted && col.gameObject.tag == "Ball")
         {
             Ball ball = col.gameObject.GetComponent<Ball>();
 
-            float x = HitFactor(col.transform.position, 
+            float x = FactorHorizontal(col.transform.position, 
                                 transform.position,
                                 _collider.bounds.size.x);
 
+            float y = VerticalFactor(col.transform.position,
+                                transform.position,
+                                _collider.bounds.size.y);
+
+
             // Calculate direction, set length to 1
-            // The value of Y will always be 1, because we want it
-            // to fly towards the top and not towards the bottom.
-            ball.SetDirection(new Vector2(x, 1).normalized);
+            ball.SetDirection(new Vector2(x, y).normalized);
         }
     }
 
-    private float HitFactor(Vector2 ballPos, Vector2 platformPos,
+    public void ResetState()
+    {
+        transform.position = initialPossition;
+    }
+
+    private float FactorHorizontal(Vector2 ballPos, Vector2 platformPos,
                 float platformWidth)
     {
         //
-        // 1  -0.5  0  0.5   1  <- x value
+        //- 1  -0.5  0  0.5   1  <- x value
         // ===================  <- platform
         //
         return (ballPos.x - platformPos.x) / platformWidth;
+    }
+
+    // определяем в какую чать ракетки по вертикали попал мячик, 
+    // если он попал ниже серидины, то отбиваем его вниз, если выше - вверх
+    private float VerticalFactor(Vector2 ballPos, Vector2 platformPos,
+                float platformHeigth)
+    {
+        // platform
+        // | 1  
+        // | 
+        // | 0
+        // |
+        // |-1
+        var platformY = (ballPos.y - platformPos.y) / platformHeigth;
+        
+        // The value of Y will always be 1, because we want it
+        // to fly towards the top and not towards the bottom.
+        return (platformY > 0) ? 1 : -1;
     }
 }
