@@ -69,7 +69,7 @@ public class BallsManager : MonoBehaviour
         }
     }
 
-    private void ResetState()
+    public void ResetState()
     {
         if (Balls != null)
         {
