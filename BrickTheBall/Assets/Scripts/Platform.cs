@@ -16,6 +16,9 @@ public class Platform : MonoBehaviour
         initialPossition = transform.position;
         _rigidbody = GetComponent<Rigidbody2D>();
         _collider = GetComponent<Collider2D>();
+
+
+        GameEvents.OnResetGameState += ResetState;
     }
 
     void Update()

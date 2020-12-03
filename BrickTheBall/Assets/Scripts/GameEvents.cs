@@ -17,6 +17,10 @@ public static class GameEvents
 
     public static event Action<int> OnChangeLevel;
 
+    public static event Action<int> OnMultiBallСatch;
+
+    public static event Action OnResetGameState;
+
     public static void AllBricksDestroyedEvent(BricksManager bricksManager)
     {
         OnAllBricksDestroyed?.Invoke(bricksManager);
@@ -50,5 +54,15 @@ public static class GameEvents
     public static void ChangeLevelEvent(int level)
     {
         OnChangeLevel?.Invoke(level);
+    }
+
+    public static void MultiBallCatchEvent(int generatedBallsNumber)
+    {
+        OnMultiBallСatch?.Invoke(generatedBallsNumber);
+    }
+
+    public static void ResetGameStateEvent()
+    {
+        OnResetGameState?.Invoke();
     }
 }

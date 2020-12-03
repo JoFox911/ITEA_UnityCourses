@@ -17,13 +17,9 @@ public class GameManager : MonoBehaviour
 
 
     [SerializeField]
-    private Platform _platform;
-    [SerializeField]
     private BricksManager _bricksManager;
     [SerializeField]
     private BallsManager _ballsManager;
-    [SerializeField]
-    private ScoreManager _scoreManager;
     [SerializeField]
     private int _initialLives = 3;
     [SerializeField]
@@ -79,6 +75,12 @@ public class GameManager : MonoBehaviour
         _tryAgainBtn.onClick.AddListener(RestartGame);
     }
 
+    void OnDestroy()
+    {
+        GameEvents.OnAllBallsWasted -= OnAllBallsWasted;
+        GameEvents.OnAllBricksDestroyed -= OnAllBricksDestroyed;
+    }
+
     public void RestartGame()
     {
         //temp 
@@ -125,18 +127,16 @@ public class GameManager : MonoBehaviour
     
 
     private void PrepareLevel(int level) {
+        GameEvents.ResetGameStateEvent();
         SetLevel(level);
         int[,] currentLevelMap = LevelsData[CurrentLevel];
-        if (_bricksManager != null && _ballsManager != null && _platform != null)
-        {
-            _bricksManager.ResetState(currentLevelMap, maxRows, maxCols);
-            _ballsManager.ResetState();
-            _platform.ResetState();
-            _scoreManager.ResetState();
+        if (_bricksManager != null)
+        { 
+            _bricksManager.GenerateLevelBricks(currentLevelMap, maxRows, maxCols);
         }
         else 
         {
-            Debug.LogError("Brick manager/Ball manager/Platform not assigned");
+            Debug.LogError("BrickManager not assigned");
         }
         
     }

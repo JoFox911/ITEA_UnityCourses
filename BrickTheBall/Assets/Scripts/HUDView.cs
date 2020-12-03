@@ -20,6 +20,14 @@ public class HUDView : MonoBehaviour
         GameEvents.OnChangeLevel += OnLevelChangedHandler;
     }
 
+    void OnDestroy() 
+    {
+        GameEvents.OnRaiseScore -= OnScoreChangedHandler;
+        GameEvents.OnRaiseHighScore -= OnHighScoreChangedHandler;
+        GameEvents.OnChangeLives -= OnLivesChangedHandler;
+        GameEvents.OnChangeLevel -= OnLevelChangedHandler;
+    }
+
     private void OnScoreChangedHandler(int score)
     {
         _scoreText.SetText(score.ToString("D5"));

@@ -18,9 +18,11 @@ public class BallsManager : MonoBehaviour
     public List<Ball> Balls { get; set; }
     private Ball _initialBall;    
 
-    void Start()
+    void Awake()
     {
         Ball.OnBallDestroy += OnBallDestroy;
+        GameEvents.OnMultiBallСatch += OnMultiBallСatch;
+        GameEvents.OnResetGameState += ResetState;
     }
 
     void Update()
@@ -33,15 +35,36 @@ public class BallsManager : MonoBehaviour
             if (!GameManager.Instance.IsGameDisabled && Input.GetKeyDown(KeyCode.Space)) 
             {
                 GameManager.Instance.IsGameStarted = true;
-                _initialBall.StartMoving(_initialBallSpeed);
+                _initialBall.StartMoving(_initialBallSpeed, Vector2.up);
             }
         }
     }
 
+    void OnDestroy()
+    {
+        Ball.OnBallDestroy -= OnBallDestroy;
+        GameEvents.OnMultiBallСatch -= OnMultiBallСatch;
+        GameEvents.OnResetGameState -= ResetState;
+    }
+
+    private void OnMultiBallСatch(int generatedBallsNumber)
+    {
+        var newBalls = new List<Ball>();
+        foreach (var ball in Balls)
+        {
+            for (var i = 0; i < generatedBallsNumber; i++)
+            {
+                var newBall = Instantiate(_ballPrefab, ball.transform.position, Quaternion.identity);
+                var direction = new Vector2(UnityEngine.Random.Range(-0.5f, 0.5f), ball.GetVelocity().y);
+                newBall.StartMoving(_initialBallSpeed, direction);
+                newBalls.Add(newBall);
+            }
+        }
+        Balls = Balls.Concat(newBalls).ToList();
+    }
+
     private void OnBallDestroy(Ball ball) {
         Balls.Remove(ball);
-        // todo надо ли как-то реагировать на то что єто был главный мячик или нет? скорее всего надо, 
-        // если будет рассстроение мяча, то будет троиться главный!
         if (Balls.Count <= 0)
         {
             GameEvents.AllBallsWastedEvent(this);
@@ -50,8 +73,10 @@ public class BallsManager : MonoBehaviour
 
     public void ResetState()
     {
+        Debug.Log("ResetState for ball manager");
         if (Balls != null)
         {
+            Debug.Log("Balls" + Balls.Count);
             foreach (var Ball in Balls.ToList())
             {
                 Destroy(Ball.gameObject);

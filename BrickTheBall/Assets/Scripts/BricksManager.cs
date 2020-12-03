@@ -46,9 +46,16 @@ public class BricksManager : MonoBehaviour
     {
         _bricksContainer = new GameObject("BricksContainer");
         GameEvents.OnBrickDestructed += OnBrickDestruction;
+        GameEvents.OnResetGameState += ResetState;
     }
 
-    public void ResetState(int[,] levelMap, int maxRows, int maxCols)
+    void OnDestroy()
+    {
+        GameEvents.OnBrickDestructed -= OnBrickDestruction;
+        GameEvents.OnResetGameState -= ResetState;
+    }
+
+    public void ResetState()
     {
         if (_remainingBricks != null) 
         {
@@ -57,7 +64,6 @@ public class BricksManager : MonoBehaviour
                 Destroy(brick.gameObject);
             }
         }
-        GenerateLevelBricks(levelMap, maxRows, maxCols);
     }
 
     private void OnBrickDestruction(Brick brick)
@@ -69,7 +75,7 @@ public class BricksManager : MonoBehaviour
         }
     }
 
-    private void GenerateLevelBricks(int[,] levelMap, int maxRows, int maxCols)
+    public void GenerateLevelBricks(int[,] levelMap, int maxRows, int maxCols)
     {
         _remainingBricks = new List<Brick>();
 
@@ -86,8 +92,8 @@ public class BricksManager : MonoBehaviour
                 {
                     var brickType = (BrickType)levelMap[row, col];
                     var brickTypeData = BrickDataByType(brickType);
-                    var newBrick = Instantiate<Brick>(_brickPrefab, 
-                                                        new Vector3(brickSpawnPositionX, brickSpawnPositionY, _initialBricksSpawnPossition.z), Quaternion.identity);
+                    var newBrick = Instantiate(_brickPrefab, 
+                                               new Vector3(brickSpawnPositionX, brickSpawnPositionY, _initialBricksSpawnPossition.z), Quaternion.identity);
                     newBrick.Init(_bricksContainer.transform, brickTypeData);
                     _remainingBricks.Add(newBrick);
                 }

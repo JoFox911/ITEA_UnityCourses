@@ -7,6 +7,13 @@ public class ScoreManager : MonoBehaviour
     {
         _scoreController = new ScoreController();
         GameEvents.OnBrickDestructed += AddScoreOnBrickDestructed;
+        GameEvents.OnResetGameState += ResetState;
+    }
+
+    void OnDestroy()
+    {
+        GameEvents.OnBrickDestructed -= AddScoreOnBrickDestructed;
+        GameEvents.OnResetGameState -= ResetState;
     }
 
     private void AddScoreOnBrickDestructed(Brick brick)
@@ -27,7 +34,8 @@ public class ScoreController
 
     public ScoreController()
     {
-        //Load();
+        Score = PlayerPrefs.GetInt("CurrentScore", 0);
+        HighScore = PlayerPrefs.GetInt("HighScore", 0);
         GameEvents.RaiseScoreEvent(Score);
         GameEvents.RaiseHighScoreEvent(HighScore);
     }
@@ -44,11 +52,12 @@ public class ScoreController
     private void SetScore(int score)
     {
         Score = score;
+        PlayerPrefs.SetInt("CurrentScore", Score);
         if (Score >= HighScore)
         {
             HighScore = Score;
+            PlayerPrefs.SetInt("HighScore", HighScore);
             GameEvents.RaiseHighScoreEvent(HighScore);
-            //Save();
         }
         GameEvents.RaiseScoreEvent(Score);
     }

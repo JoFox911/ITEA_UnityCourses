@@ -14,10 +14,11 @@ public class Ball : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody2D>();
     }
 
-    public void StartMoving(float initialSpeed)
+    public void StartMoving(float initialSpeed, Vector2 direction)
     {
+        Debug.Log("StartMoving dir " + direction.x + " " + direction.y);
         _speed = initialSpeed;
-        _rigidbody.velocity = Vector2.up * _speed;
+        _rigidbody.velocity = direction * _speed;
     }
 
     
@@ -30,5 +31,10 @@ public class Ball : MonoBehaviour
     {
         OnBallDestroy?.Invoke(this);
         Destroy(gameObject);
+    }
+
+    public Vector2 GetVelocity()
+    {
+        return _rigidbody.velocity.normalized;
     }
 }
