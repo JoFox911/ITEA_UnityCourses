@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -67,16 +65,14 @@ public class BallsManager : MonoBehaviour
         Balls.Remove(ball);
         if (Balls.Count <= 0)
         {
-            GameEvents.AllBallsWastedEvent(this);
+            GameEvents.AllBallsWastedEvent();
         }
     }
 
-    public void ResetState()
+    private void ResetState()
     {
-        Debug.Log("ResetState for ball manager");
         if (Balls != null)
         {
-            Debug.Log("Balls" + Balls.Count);
             foreach (var Ball in Balls.ToList())
             {
                 Destroy(Ball.gameObject);

@@ -18,7 +18,7 @@ public class ScoreManager : MonoBehaviour
 
     private void AddScoreOnBrickDestructed(Brick brick)
     {
-        _scoreController.AddScore(brick.Points);
+        _scoreController.AddScore(brick.GetPoints());
     }
 
     public void ResetState()

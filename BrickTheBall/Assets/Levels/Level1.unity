@@ -641,11 +641,8 @@ MonoBehaviour:
   _tryAgainBtn: {fileID: 699164100}
   _gameOverScreen: {fileID: 597823151}
   _victoryScreen: {fileID: 350083288}
-  _platform: {fileID: 688036664}
   _bricksManager: {fileID: 705424810}
   _ballsManager: {fileID: 922008638}
-  _scoreManager: {fileID: 1706430204}
-  _bonusManager: {fileID: 642416647}
   _initialLives: 3
   _initialLevel: 0
 --- !u!1 &269608309
@@ -1891,32 +1888,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d3381dd4934efb45bd9adec37b18485, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _brickTypesData:
-  - Type: 1
-    Hitpoints: 1
-    Sprites:
-    - {fileID: -57110965404973480, guid: 7f90e914d52eb0246b1c9080fb69ac2c, type: 3}
-    Points: 10
-  - Type: 2
-    Hitpoints: 2
-    Sprites:
-    - {fileID: 446392251170874411, guid: 7f90e914d52eb0246b1c9080fb69ac2c, type: 3}
-    - {fileID: 6554549308691787351, guid: 7f90e914d52eb0246b1c9080fb69ac2c, type: 3}
-    Points: 25
-  - Type: 3
-    Hitpoints: 3
-    Sprites:
-    - {fileID: -6542258964230631408, guid: 7f90e914d52eb0246b1c9080fb69ac2c, type: 3}
-    - {fileID: 4170084735909681763, guid: 7f90e914d52eb0246b1c9080fb69ac2c, type: 3}
-    - {fileID: 2707577370330349663, guid: 7f90e914d52eb0246b1c9080fb69ac2c, type: 3}
-    Points: 50
-  - Type: 4
-    Hitpoints: 1
-    Sprites:
-    - {fileID: -9036120728189194214, guid: 7f90e914d52eb0246b1c9080fb69ac2c, type: 3}
-    Points: 0
-  _brickPrefab: {fileID: 3310698076860361958, guid: e42bfacf7e37d4e489ce02252b377409,
-    type: 3}
+  _availableBricks:
+  - {fileID: 3664104825895563337, guid: 11107be9a3ebf204a8d0f1dc35ffc12d, type: 3}
+  - {fileID: 7046506324319917345, guid: 9d890d770ee715b4cb9aca299b8dcb43, type: 3}
+  - {fileID: 1605601485222677714, guid: 23504fc40fd5d644ca4a7df2c24eb52f, type: 3}
+  - {fileID: 3664104825895563337, guid: 30abe2d930b984a4da7b484bc72fe28d, type: 3}
+  - {fileID: 7046506324319917345, guid: 0b23bbd32f47c9d41a5b9f7597a5ee9b, type: 3}
   _initialBricksSpawnPossition: {x: -6.6, y: 3.6, z: 0}
 --- !u!1 &806843938
 GameObject:

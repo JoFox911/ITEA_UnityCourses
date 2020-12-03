@@ -90,7 +90,7 @@ public class GameManager : MonoBehaviour
         PrepareLevel(0);
     }
 
-    private void OnAllBallsWasted(BallsManager ballsManager)
+    private void OnAllBallsWasted()
     {
         SetLives(Lives - 1);
         if (Lives < 1)
@@ -102,11 +102,11 @@ public class GameManager : MonoBehaviour
         else
         {
             IsGameStarted = false;
-            ballsManager.ResetState();
+            _ballsManager.ResetState();
         }
     }
 
-    private void OnAllBricksDestroyed(BricksManager bricksManager)
+    private void OnAllBricksDestroyed()
     {
        
         if (CurrentLevel + 1 < LevelsData.Count)

@@ -1,46 +1,16 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class BricksManager : MonoBehaviour
 {
-    #region Singleton
-    private static BricksManager _instanceInner;
-
-    public static BricksManager Instance
-    {
-        get
-        {
-            if (_instanceInner == null)
-            {
-                var go = new GameObject("BricksManager");
-                _instanceInner = go.AddComponent<BricksManager>();
-                DontDestroyOnLoad(_instanceInner.gameObject);
-            }
-            return _instanceInner;
-        }
-    }
-    #endregion
-
     [SerializeField]
-    private List<BrickTypeData> _brickTypesData;
-
-    [SerializeField]
-    private Brick _brickPrefab;
-
+    private List<Brick> _availableBricks;
     [SerializeField]
     private Vector3 _initialBricksSpawnPossition;
 
-
-
     private GameObject _bricksContainer;
-
     private List<Brick> _remainingBricks;
-
-    private  
-
 
     void Awake()
     {
@@ -55,32 +25,12 @@ public class BricksManager : MonoBehaviour
         GameEvents.OnResetGameState -= ResetState;
     }
 
-    public void ResetState()
-    {
-        if (_remainingBricks != null) 
-        {
-            foreach (var brick in _remainingBricks.ToList())
-            {
-                Destroy(brick.gameObject);
-            }
-        }
-    }
-
-    private void OnBrickDestruction(Brick brick)
-    {
-        _remainingBricks.Remove(brick);
-        if (_remainingBricks.Count <= 0)
-        {
-            GameEvents.AllBricksDestroyedEvent(this);
-        }
-    }
-
     public void GenerateLevelBricks(int[,] levelMap, int maxRows, int maxCols)
     {
         _remainingBricks = new List<Brick>();
 
         float brickSpawnPositionX, brickSpawnPositionY;
-        brickSpawnPositionY  = _initialBricksSpawnPossition.y;
+        brickSpawnPositionY = _initialBricksSpawnPossition.y;
 
         for (var row = 0; row < maxRows; row++)
         {
@@ -91,10 +41,9 @@ public class BricksManager : MonoBehaviour
                 if (levelMap[row, col] != 0)
                 {
                     var brickType = (BrickType)levelMap[row, col];
-                    var brickTypeData = BrickDataByType(brickType);
-                    var newBrick = Instantiate(_brickPrefab, 
-                                               new Vector3(brickSpawnPositionX, brickSpawnPositionY, _initialBricksSpawnPossition.z), Quaternion.identity);
-                    newBrick.Init(_bricksContainer.transform, brickTypeData);
+                    var brickPrefab = BrickPrefabByType(brickType);
+                    var newBrick = Instantiate(brickPrefab, new Vector3(brickSpawnPositionX, brickSpawnPositionY, _initialBricksSpawnPossition.z), Quaternion.identity);
+                    newBrick.Init(_bricksContainer.transform);
                     _remainingBricks.Add(newBrick);
                 }
                 // todo надо добавлять ширину блока. могу попробовать через спрайт?
@@ -104,33 +53,42 @@ public class BricksManager : MonoBehaviour
         }
     }
 
-    private BrickTypeData BrickDataByType(BrickType brickType)
+    private void OnBrickDestruction(Brick brick)
     {
-        BrickTypeData brickTypeData = null;
-        if (_brickTypesData != null)
+        _remainingBricks.Remove(brick);
+        if (_remainingBricks.Count <= 0)
         {
-            brickTypeData = _brickTypesData.FirstOrDefault(data => data.Type == brickType);
-            if (brickTypeData == null)
+            GameEvents.AllBricksDestroyedEvent();
+        }
+    }
+
+    private void ResetState()
+    {
+        if (_remainingBricks != null)
+        {
+            foreach (var brick in _remainingBricks.ToList())
             {
-                Debug.LogError("THERE IS NO BRICK TYPE DATA FOR BRICK TYPE: " + brickType);
+                Destroy(brick.gameObject);
+            }
+        }
+    }
+
+    private Brick BrickPrefabByType(BrickType brickType)
+    {
+        Brick brickPrefab = null;
+        if (_availableBricks != null)
+        {
+            brickPrefab = _availableBricks.FirstOrDefault(brick => brick.GetBrickType() == brickType);
+            if (brickPrefab == null)
+            {
+                Debug.LogError("THERE IS NO BRICK PREFAB FOR BRICK TYPE: " + brickType);
             }
         }
         
-        return brickTypeData;
-    }
-
-    
+        return brickPrefab;
+    }    
 }
 
-
-[Serializable]
-public class BrickTypeData
-{
-    public BrickType Type;
-    public int Hitpoints;
-    public List<Sprite> Sprites;
-    public int Points;
-}
 
 // каждому типу блока соответствует значение (1, 2, 3..) 
 // которое указазывается на матрице уровня какой блок отрисовывать

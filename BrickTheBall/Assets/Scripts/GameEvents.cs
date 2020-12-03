@@ -3,9 +3,9 @@ using UnityEngine;
 
 public static class GameEvents
 {
-    public static event Action<BricksManager> OnAllBricksDestroyed;
+    public static event Action OnAllBricksDestroyed;
 
-    public static event Action<BallsManager> OnAllBallsWasted;
+    public static event Action OnAllBallsWasted;
 
     public static event Action<Brick> OnBrickDestructed;
 
@@ -21,14 +21,14 @@ public static class GameEvents
 
     public static event Action OnResetGameState;
 
-    public static void AllBricksDestroyedEvent(BricksManager bricksManager)
+    public static void AllBricksDestroyedEvent()
     {
-        OnAllBricksDestroyed?.Invoke(bricksManager);
+        OnAllBricksDestroyed?.Invoke();
     }
 
-    public static void AllBallsWastedEvent(BallsManager ballsManager)
+    public static void AllBallsWastedEvent()
     {
-        OnAllBallsWasted?.Invoke(ballsManager);
+        OnAllBallsWasted?.Invoke();
     }
 
     public static void BrickDestructedEvent(Brick brick)
