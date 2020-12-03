@@ -1,23 +1,39 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer))]
 public class Brick : MonoBehaviour
 {
+    public int Points { get; set; }
+
+    private SpriteRenderer _spriteRenderer;    
     private BrickType _type;
-
-    private int _hitponts;
-
     private List<Sprite> _sprites;
-
-    public static event Action<Brick> OnBrickDestruction;
-
-    private SpriteRenderer _spriteRenderer;
-
+    private int _hitponts;
+   
     void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        //Debug.Log("collision brick and " + col.gameObject.tag);
+        if (_type != BrickType.Immortal && col.gameObject.tag == "Ball")
+        {
+            ApplyCollisionLogic();
+        }
+    }
+
+    public void Init(Transform containerTransform, BrickTypeData brickTypeData)
+    {
+        transform.SetParent(containerTransform);
+        _sprites = brickTypeData.Sprites;
+        _hitponts = brickTypeData.Hitpoints;
+        _type = brickTypeData.Type;
+        Points = brickTypeData.Points;
+        SetActualSprite();
     }
 
     private void SetActualSprite()
@@ -29,22 +45,12 @@ public class Brick : MonoBehaviour
         _spriteRenderer.sprite = _sprites[index - 1];
     }
 
-    void OnCollisionEnter2D(Collision2D col)
-    {
-        //Debug.Log("collision brick and " + col.gameObject.tag);
-        if (_type != BrickType.Immortal && col.gameObject.tag == "Ball")
-        {
-            Ball ball = col.gameObject.GetComponent<Ball>();
-            ApplyCollisionLogic(ball);
-        }
-    }
-
-    private void ApplyCollisionLogic(Ball ball)
+    private void ApplyCollisionLogic()
     {
         _hitponts--;
         if (_hitponts <= 0)
         {
-            OnBrickDestruction?.Invoke(this);
+            GameEvents.BrickDestructedEvent(this);
             Destroy(gameObject);
         }
         else 
@@ -52,13 +58,5 @@ public class Brick : MonoBehaviour
             SetActualSprite();
         }
     }
-
-    internal void Init(Transform containerTransform, BrickTypeData brickTypeData)
-    {
-        transform.SetParent(containerTransform);
-        _sprites = brickTypeData.Sprites;
-        _hitponts = brickTypeData.Hitpoints;
-        _type = brickTypeData.Type;
-        SetActualSprite();
-    }
+    
 }

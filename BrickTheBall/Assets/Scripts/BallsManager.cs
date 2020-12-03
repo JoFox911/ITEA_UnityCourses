@@ -10,36 +10,13 @@ public class BallsManager : MonoBehaviour
     private GameObject _platformObject = null;
 
     [SerializeField]
-    private float _initialBallSpeed = 10.0f;
+    private float _initialBallSpeed = 7.0f;
 
     [SerializeField]
     private Ball _ballPrefab = null;
 
-    public static event Action<BallsManager> OnAllBallsWasted;
     public List<Ball> Balls { get; set; }
-
-    private Ball _initialBall = null;
-
-
-    #region Singleton
-    private static BallsManager _instanceInner;
-    private static BallsManager Instance
-    {
-        get
-        {
-            if (_instanceInner == null)
-            {
-                var go = new GameObject("BallsManager");
-                _instanceInner = go.AddComponent<BallsManager>();
-                DontDestroyOnLoad(_instanceInner.gameObject);
-            }
-            return _instanceInner;
-        }
-    }
-    #endregion
-
-
-    
+    private Ball _initialBall;    
 
     void Start()
     {
@@ -67,7 +44,7 @@ public class BallsManager : MonoBehaviour
         // если будет рассстроение мяча, то будет троиться главный!
         if (Balls.Count <= 0)
         {
-            OnAllBallsWasted?.Invoke(this);
+            GameEvents.AllBallsWastedEvent(this);
         }
     }
 

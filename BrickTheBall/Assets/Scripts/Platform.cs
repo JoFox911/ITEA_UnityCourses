@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
@@ -22,14 +20,13 @@ public class Platform : MonoBehaviour
 
     void Update()
     {
-        // delta time not used there
         _rigidbody.velocity = new Vector2(Input.GetAxis("Horizontal") * _speed, 0.0f);
     }
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        Debug.Log("collision platform and " + col.gameObject.tag);
-        // Hit the platform?
+        //Debug.Log("collision platform and " + col.gameObject.tag);
+
         if (GameManager.Instance.IsGameStarted && col.gameObject.tag == "Ball")
         {
             Ball ball = col.gameObject.GetComponent<Ball>();
@@ -53,8 +50,10 @@ public class Platform : MonoBehaviour
         transform.position = initialPossition;
     }
 
-    private float FactorHorizontal(Vector2 ballPos, Vector2 platformPos,
-                float platformWidth)
+    // Определяем на какой угол от платформы отбить мячик.
+    // Чем левее от середины, тем на больший угол влево отклонится мячик
+    // Чем правее от середины, тем на больший угол впрево отклоится мячик
+    private float FactorHorizontal(Vector2 ballPos, Vector2 platformPos, float platformWidth)
     {
         //
         //- 1  -0.5  0  0.5   1  <- x value
@@ -65,8 +64,9 @@ public class Platform : MonoBehaviour
 
     // определяем в какую чать ракетки по вертикали попал мячик, 
     // если он попал ниже серидины, то отбиваем его вниз, если выше - вверх
-    private float VerticalFactor(Vector2 ballPos, Vector2 platformPos,
-                float platformHeigth)
+    // если всегда отбивать его вверх, то если вдруг успеем наехать 
+    // низом платформы на мячик, он снова полетит вверх 
+    private float VerticalFactor(Vector2 ballPos, Vector2 platformPos, float platformHeigth)
     {
         // platform
         // | 1  
@@ -75,9 +75,6 @@ public class Platform : MonoBehaviour
         // |
         // |-1
         var platformY = (ballPos.y - platformPos.y) / platformHeigth;
-        
-        // The value of Y will always be 1, because we want it
-        // to fly towards the top and not towards the bottom.
         return (platformY > 0) ? 1 : -1;
     }
 }

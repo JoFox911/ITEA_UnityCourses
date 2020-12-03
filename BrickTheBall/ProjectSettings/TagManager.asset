@@ -55,6 +55,9 @@ TagManager:
   - name: Brick
     uniqueID: 178875551
     locked: 0
+  - name: HUD
+    uniqueID: 482661195
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

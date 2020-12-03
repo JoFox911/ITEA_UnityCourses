@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class Ball : MonoBehaviour
 {
-    private float _speed = 10.0f;
-
-    private Rigidbody2D _rigidbody;
-
     public static event Action<Ball> OnBallDestroy;
+
+    private float _speed = 7.0f;
+    private Rigidbody2D _rigidbody;
 
     void Awake()
     {

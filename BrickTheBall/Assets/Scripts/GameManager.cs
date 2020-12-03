@@ -9,14 +9,11 @@ public class GameManager : MonoBehaviour
     //todo temp 
     [SerializeField]
     private Button _tryAgainBtn;
-
-
     [SerializeField]
     private GameObject _gameOverScreen;
-
     [SerializeField]
     private GameObject _victoryScreen;
-
+    //----------------------------------
 
 
     [SerializeField]
@@ -26,18 +23,23 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private BallsManager _ballsManager;
     [SerializeField]
+    private ScoreManager _scoreManager;
+    [SerializeField]
     private int _initialLives = 3;
     [SerializeField]
     private int _initialLevel = 0;
 
-    private List<int[,]> LevelsData { get; set; } 
+    
     public int Lives { get; set; }
     public bool IsGameStarted { get; set; }
     public bool IsGameDisabled { get; set; }
     public int CurrentLevel { get; set; }
+    public int CurrentScore { get; set; }
 
-    public int maxRows = 20;
-    public int maxCols = 12;
+    private int maxRows = 20;
+    private int maxCols = 12;
+
+    private List<int[,]> LevelsData { get; set; }
 
     #region Singleton
     private static GameManager _instanceInner;
@@ -55,7 +57,8 @@ public class GameManager : MonoBehaviour
             return _instanceInner;
         }
     }
- 
+    #endregion
+
     void Awake()
     {
         if (_instanceInner == null)
@@ -63,23 +66,31 @@ public class GameManager : MonoBehaviour
             _instanceInner = this;
         }
     }
-    #endregion
 
     void Start()
     {
-        Lives = _initialLives; 
+        SetLives(_initialLives);
         LevelsData = LoadLevelsData();
         //todo в дфльнейшем сюда можно будет подгружать из сохраненки?
         PrepareLevel(_initialLevel);
-        BallsManager.OnAllBallsWasted += OnAllBallsWasted;
-        BricksManager.OnAllBricksDestroyed += OnAllBricksDestroyed;
+        GameEvents.OnAllBallsWasted += OnAllBallsWasted;
+        GameEvents.OnAllBricksDestroyed += OnAllBricksDestroyed;
 
         _tryAgainBtn.onClick.AddListener(RestartGame);
     }
 
+    public void RestartGame()
+    {
+        //temp 
+        _gameOverScreen.SetActive(false);
+        IsGameStarted = false;
+        SetLives(_initialLives);
+        PrepareLevel(0);
+    }
+
     private void OnAllBallsWasted(BallsManager ballsManager)
     {
-        Lives--;
+        SetLives(Lives - 1);
         if (Lives < 1)
         {
             // game over
@@ -111,29 +122,35 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void RestartGame()
-    {
-        //temp 
-        _gameOverScreen.SetActive(false);
-        IsGameStarted = false;
-        Lives = _initialLives;
-        PrepareLevel(0);
-    }
+    
 
     private void PrepareLevel(int level) {
-        CurrentLevel = level;
+        SetLevel(level);
         int[,] currentLevelMap = LevelsData[CurrentLevel];
         if (_bricksManager != null && _ballsManager != null && _platform != null)
         {
             _bricksManager.ResetState(currentLevelMap, maxRows, maxCols);
             _ballsManager.ResetState();
             _platform.ResetState();
+            _scoreManager.ResetState();
         }
         else 
         {
             Debug.LogError("Brick manager/Ball manager/Platform not assigned");
         }
         
+    }
+
+    private void SetLives(int lives)
+    {
+        Lives = lives;
+        GameEvents.ChangeLivesEvent(Lives);
+    }
+
+    private void SetLevel(int level)
+    {
+        CurrentLevel = level;
+        GameEvents.ChangeLevelEvent(CurrentLevel + 1);
     }
 
     private List<int[,]> LoadLevelsData()

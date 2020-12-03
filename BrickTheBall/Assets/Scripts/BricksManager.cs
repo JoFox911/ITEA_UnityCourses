@@ -39,15 +39,13 @@ public class BricksManager : MonoBehaviour
 
     private List<Brick> _remainingBricks;
 
-    public static event Action<BricksManager> OnAllBricksDestroyed;
-
     private  
 
 
     void Awake()
     {
         _bricksContainer = new GameObject("BricksContainer");
-        Brick.OnBrickDestruction += OnBrickDestruction;
+        GameEvents.OnBrickDestructed += OnBrickDestruction;
     }
 
     public void ResetState(int[,] levelMap, int maxRows, int maxCols)
@@ -67,16 +65,16 @@ public class BricksManager : MonoBehaviour
         _remainingBricks.Remove(brick);
         if (_remainingBricks.Count <= 0)
         {
-            OnAllBricksDestroyed?.Invoke(this);
+            GameEvents.AllBricksDestroyedEvent(this);
         }
     }
 
     private void GenerateLevelBricks(int[,] levelMap, int maxRows, int maxCols)
     {
         _remainingBricks = new List<Brick>();
-        float brickSpawnPositionX = _initialBricksSpawnPossition.x;
-        float brickSpawnPositionY = _initialBricksSpawnPossition.y;
-        float brickSpawnPositionZ = _initialBricksSpawnPossition.z;
+
+        float brickSpawnPositionX, brickSpawnPositionY;
+        brickSpawnPositionY  = _initialBricksSpawnPossition.y;
 
         for (var row = 0; row < maxRows; row++)
         {
@@ -89,10 +87,9 @@ public class BricksManager : MonoBehaviour
                     var brickType = (BrickType)levelMap[row, col];
                     var brickTypeData = BrickDataByType(brickType);
                     var newBrick = Instantiate<Brick>(_brickPrefab, 
-                                                        new Vector3(brickSpawnPositionX, brickSpawnPositionY, brickSpawnPositionZ), Quaternion.identity);
+                                                        new Vector3(brickSpawnPositionX, brickSpawnPositionY, _initialBricksSpawnPossition.z), Quaternion.identity);
                     newBrick.Init(_bricksContainer.transform, brickTypeData);
                     _remainingBricks.Add(newBrick);
-
                 }
                 // todo надо добавлять ширину блока. могу попробовать через спрайт?
                 brickSpawnPositionX += 0.8f;
@@ -126,6 +123,7 @@ public class BrickTypeData
     public BrickType Type;
     public int Hitpoints;
     public List<Sprite> Sprites;
+    public int Points;
 }
 
 // каждому типу блока соответствует значение (1, 2, 3..) 
