@@ -25,14 +25,14 @@ public class BallsManager : MonoBehaviour
 
     void Update()
     {
-        if ( !GameManager.Instance.IsGameStarted && _initialBall != null) 
+        if (!GameManager.IsGameStarted() && _initialBall != null) 
         {
             _initialBall.transform.SetPostionXY(_platformObject.transform.position.x, 
                                                 _platformObject.transform.position.y + 0.50f);
 
-            if (!GameManager.Instance.IsGameDisabled && Input.GetKeyDown(KeyCode.Space)) 
+            if (!GameManager.IsGameDisabled() && Input.GetKeyDown(KeyCode.Space)) 
             {
-                GameManager.Instance.IsGameStarted = true;
+                GameManager.StartPlaying();
                 _initialBall.StartMoving(_initialBallSpeed, Vector2.up);
             }
         }
@@ -66,6 +66,7 @@ public class BallsManager : MonoBehaviour
         if (Balls.Count <= 0)
         {
             GameEvents.AllBallsWastedEvent();
+            ResetState();
         }
     }
 

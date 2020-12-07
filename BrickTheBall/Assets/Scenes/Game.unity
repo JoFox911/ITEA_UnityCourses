@@ -641,8 +641,10 @@ MonoBehaviour:
   _tryAgainBtn: {fileID: 699164100}
   _gameOverScreen: {fileID: 597823151}
   _victoryScreen: {fileID: 350083288}
+  _platform: {fileID: 688036661}
   _bricksManager: {fileID: 705424810}
   _ballsManager: {fileID: 922008638}
+  _initialPlatformPosition: {fileID: 688036663}
   _initialLives: 3
   _initialLevel: 0
 --- !u!1 &269608309
@@ -1594,6 +1596,8 @@ GameObject:
   - component: {fileID: 688036664}
   - component: {fileID: 688036665}
   - component: {fileID: 688036666}
+  - component: {fileID: 688036668}
+  - component: {fileID: 688036667}
   m_Layer: 0
   m_Name: Platform
   m_TagString: Platform
@@ -1678,7 +1682,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a81b241fa794260439b2625679714b73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 5
 --- !u!50 &688036665
 Rigidbody2D:
   serializedVersion: 4
@@ -1726,6 +1729,32 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.67, y: 0.2}
   m_EdgeRadius: 0
+--- !u!114 &688036667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 688036661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c34d79d225e9eae4881cbcb374530d11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _BounceObjectTag: Ball
+--- !u!114 &688036668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 688036661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0aec74d668d06ac4999d503f37c3cf94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _speed: 5
 --- !u!1 &699164098
 GameObject:
   m_ObjectHideFlags: 0

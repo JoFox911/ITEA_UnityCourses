@@ -1,156 +1,164 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    //todo temp 
-    [SerializeField]
-    private Button _tryAgainBtn;
-    [SerializeField]
-    private GameObject _gameOverScreen;
-    [SerializeField]
-    private GameObject _victoryScreen;
-    //----------------------------------
-
-
-    [SerializeField]
-    private BricksManager _bricksManager;
-    [SerializeField]
-    private BallsManager _ballsManager;
     [SerializeField]
     private int _initialLives = 3;
     [SerializeField]
     private int _initialLevel = 0;
 
-    
-    public int Lives { get; set; }
-    public bool IsGameStarted { get; set; }
-    public bool IsGameDisabled { get; set; }
-    public int CurrentLevel { get; set; }
-    public int CurrentScore { get; set; }
+    private GameController _gameController;
 
-    private int maxRows = 20;
-    private int maxCols = 12;
-
-    private List<int[,]> LevelsData { get; set; }
-
-    #region Singleton
-    private static GameManager _instanceInner;
-
-    public static GameManager Instance
-    {
-        get
-        {
-            if (_instanceInner == null)
-            {
-                var go = new GameObject("GameManager");
-                _instanceInner = go.AddComponent<GameManager>();
-                DontDestroyOnLoad(_instanceInner.gameObject);
-            }
-            return _instanceInner;
-        }
-    }
-    #endregion
+    private static GameManager _instance;
 
     void Awake()
     {
-        if (_instanceInner == null)
-        {
-            _instanceInner = this;
-        }
+        _instance = this;
+
+        _gameController = new GameController();
+
+        GameEvents.OnAllBallsWasted += OnAllBallsWasted;
+        GameEvents.OnGameRestart += RestartGame;
+        GameEvents.OnAllBricksDestroyed += OnAllBricksDestroyed;
     }
 
     void Start()
     {
-        SetLives(_initialLives);
-        LevelsData = LoadLevelsData();
-        //todo в дфльнейшем сюда можно будет подгружать из сохраненки?
-        PrepareLevel(_initialLevel);
-        GameEvents.OnAllBallsWasted += OnAllBallsWasted;
-        GameEvents.OnAllBricksDestroyed += OnAllBricksDestroyed;
+        GameEvents.ResetGameStateEvent();
+        _gameController.SetLives(_initialLives);
 
-        _tryAgainBtn.onClick.AddListener(RestartGame);
+        // todo в дфльнейшем сюда можно будет подгружать из сохраненки?
+        _gameController.SetLevel(_initialLevel);
     }
 
     void OnDestroy()
     {
         GameEvents.OnAllBallsWasted -= OnAllBallsWasted;
         GameEvents.OnAllBricksDestroyed -= OnAllBricksDestroyed;
+        GameEvents.OnAllBricksDestroyed -= OnAllBricksDestroyed;
     }
 
     public void RestartGame()
     {
-        //temp 
-        _gameOverScreen.SetActive(false);
-        IsGameStarted = false;
-        SetLives(_initialLives);
-        PrepareLevel(0);
+        GameEvents.ResetGameStateEvent();
+        _gameController.SetIsGameStarted(false);
+        _gameController.SetLives(_initialLives);
+        _gameController.SetLevel(0);
     }
 
     private void OnAllBallsWasted()
     {
-        SetLives(Lives - 1);
-        if (Lives < 1)
-        {
-            // game over
-            //temp
-            _gameOverScreen.SetActive(true);
-        }
-        else
-        {
-            IsGameStarted = false;
-            _ballsManager.ResetState();
-        }
+        _gameController.SetIsGameStarted(false);
+        _gameController.ReduceLive();
     }
 
     private void OnAllBricksDestroyed()
     {
-       
-        if (CurrentLevel + 1 < LevelsData.Count)
+        _gameController.SetIsGameStarted(false);
+
+        if (_gameController.IsCurrentLevelTheLast())
         {
-            IsGameStarted = false;
-            PrepareLevel(CurrentLevel + 1);
+            _gameController.SetIsGameDisabled(true);
+            GameEvents.GameFinishedEvent();
         }
         else
         {
-            // temp
-            IsGameStarted = false;
-            IsGameDisabled = true;
-            _victoryScreen.SetActive(true);
-            _ballsManager.ResetState();
+            GameEvents.ResetGameStateEvent();
+            _gameController.IncreaseLevel();
         }
     }
 
-    
-
-    private void PrepareLevel(int level) {
-        GameEvents.ResetGameStateEvent();
-        SetLevel(level);
-        int[,] currentLevelMap = LevelsData[CurrentLevel];
-        if (_bricksManager != null)
-        { 
-            _bricksManager.GenerateLevelBricks(currentLevelMap, maxRows, maxCols);
-        }
-        else 
-        {
-            Debug.LogError("BrickManager not assigned");
-        }
-        
-    }
-
-    private void SetLives(int lives)
+    public static (int[,] map, int rowsNumber, int colsNumber) GetLevelMap(int level)
     {
-        Lives = lives;
-        GameEvents.ChangeLivesEvent(Lives);
+        return _instance._gameController.GetLevelMap(level);
     }
 
-    private void SetLevel(int level)
+    public static void StartPlaying()
+    {
+        _instance._gameController.SetIsGameStarted(true);
+    }
+
+    public static bool IsGameStarted()
+    {
+        return _instance._gameController.IsGameStarted;
+    }
+
+    public static bool IsGameDisabled()
+    {
+        return _instance._gameController.IsGameDisabled;
+    }
+
+}
+
+public class GameController
+{
+    public bool IsGameStarted = false;
+    public bool IsGameDisabled = false;
+
+    public int CurrentLevel = 0;
+    public int CurrentLives = 3;
+
+    public List<int[,]> LevelsData;
+    public int maxRows = 20;
+    public int maxCols = 12;
+
+    public GameController()
+    {
+        LevelsData = LoadLevelsData();
+    }
+
+    public void SetIsGameStarted(bool isStarted)
+    {
+        IsGameStarted = isStarted;
+    }
+
+    public void SetIsGameDisabled(bool isDisabled)
+    {
+        IsGameDisabled = isDisabled;
+    }
+
+    public void SetLives(int lives)
+    {
+        CurrentLives = lives;
+        GameEvents.ChangeLivesEvent(CurrentLives);
+
+        if (CurrentLives <= 0)
+        {
+            GameEvents.GameOverEvent();
+        }
+    }
+
+    public void SetLevel(int level)
     {
         CurrentLevel = level;
-        GameEvents.ChangeLevelEvent(CurrentLevel + 1);
+        GameEvents.ChangeLevelEvent(CurrentLevel);  
+    }
+
+    public void IncreaseLevel()
+    {
+        SetLevel(CurrentLevel + 1);
+    }
+
+    public void ReduceLive()
+    {
+        SetLevel(CurrentLives - 1);
+    }
+
+    public bool IsCurrentLevelTheLast()
+    {
+        return CurrentLevel + 1 == LevelsData.Count;
+    }
+
+    public bool IsAllLivesWasted()
+    {
+        return CurrentLives <= 0;
+    }
+
+    public (int[,] map, int rowsNumber, int colsNumber) GetLevelMap(int level)
+    {
+        return (map: LevelsData[level], rowsNumber: maxRows, colsNumber: maxCols);
     }
 
     private List<int[,]> LoadLevelsData()

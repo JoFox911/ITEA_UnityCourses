@@ -1,40 +1,28 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
+
 [RequireComponent(typeof(Collider2D))]
-public class Platform : MonoBehaviour
+public class BounceWithIncreasingAngleFromCenter : MonoBehaviour
 {
     [SerializeField]
-    private float _speed = 12.0f;
-    
-    private Rigidbody2D _rigidbody;
+    private string _BounceObjectTag;
+
     private Collider2D _collider;
-    private Vector3 initialPossition;
 
     void Awake()
     {
-        initialPossition = transform.position;
-        _rigidbody = GetComponent<Rigidbody2D>();
         _collider = GetComponent<Collider2D>();
-
-
-        GameEvents.OnResetGameState += ResetState;
-    }
-
-    void Update()
-    {
-        _rigidbody.velocity = new Vector2(Input.GetAxis("Horizontal") * _speed, 0.0f);
     }
 
     void OnCollisionEnter2D(Collision2D col)
     {
         //Debug.Log("collision platform and " + col.gameObject.tag);
 
-        if (GameManager.Instance.IsGameStarted && col.gameObject.tag == "Ball")
+        if (GameManager.IsGameStarted() && col.gameObject.tag == _BounceObjectTag)
         {
             Ball ball = col.gameObject.GetComponent<Ball>();
 
-            float x = FactorHorizontal(col.transform.position, 
+            float x = FactorHorizontal(col.transform.position,
                                 transform.position,
                                 _collider.bounds.size.x);
 
@@ -46,11 +34,6 @@ public class Platform : MonoBehaviour
             // Calculate direction, set length to 1
             ball.SetDirection(new Vector2(x, y).normalized);
         }
-    }
-
-    public void ResetState()
-    {
-        transform.position = initialPossition;
     }
 
     // Определяем на какой угол от платформы отбить мячик.

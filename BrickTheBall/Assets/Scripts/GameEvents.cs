@@ -21,6 +21,14 @@ public static class GameEvents
 
     public static event Action OnResetGameState;
 
+    public static event Action OnGameOver;
+
+    public static event Action OnGameRestart;
+
+    public static event Action OnGameFinished;
+
+    
+
     public static void AllBricksDestroyedEvent()
     {
         OnAllBricksDestroyed?.Invoke();
@@ -65,4 +73,21 @@ public static class GameEvents
     {
         OnResetGameState?.Invoke();
     }
+
+    public static void GameOverEvent()
+    {
+        OnGameOver?.Invoke();
+    }
+
+    public static void GameRestartEvent()
+    {
+        OnGameRestart?.Invoke();
+    }
+
+    public static void GameFinishedEvent()
+    {
+        OnGameFinished?.Invoke();
+    }
+
+    
 }

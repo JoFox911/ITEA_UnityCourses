@@ -45,6 +45,8 @@ public class HUDView : MonoBehaviour
 
     private void OnLevelChangedHandler(int level)
     {
-        _levelsText.SetText(level.ToString());
+        // +1 потому что level - индекс, который начинается с 0. 
+        // Для отображения не подходит
+        _levelsText.SetText((level + 1).ToString());
     }
 }

@@ -17,15 +17,23 @@ public class BricksManager : MonoBehaviour
         _bricksContainer = new GameObject("BricksContainer");
         GameEvents.OnBrickDestructed += OnBrickDestruction;
         GameEvents.OnResetGameState += ResetState;
+        GameEvents.OnChangeLevel += OnChangeLevel;
     }
 
     void OnDestroy()
     {
         GameEvents.OnBrickDestructed -= OnBrickDestruction;
         GameEvents.OnResetGameState -= ResetState;
+        GameEvents.OnChangeLevel -= OnChangeLevel;
     }
 
-    public void GenerateLevelBricks(int[,] levelMap, int maxRows, int maxCols)
+    private void OnChangeLevel(int level)
+    {
+        (int[,] map, int rowsNumber, int colsNumber) = GameManager.GetLevelMap(level);
+        GenerateLevelBricks(map, rowsNumber, colsNumber);
+    }
+
+    private void GenerateLevelBricks(int[,] levelMap, int maxRows, int maxCols)
     {
         _remainingBricks = new List<Brick>();
 
