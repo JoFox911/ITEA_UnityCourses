@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
 
-public class DeadZone : MonoBehaviour
+public class DestroingBallOnCollision : MonoBehaviour
 {
     void OnCollisionEnter2D(Collision2D col)
     {
-        Debug.Log("collision deadZone and " + col.gameObject.tag);
         if (col.gameObject.tag == "Ball")
         {
             Ball ball = col.gameObject.GetComponent<Ball>();

@@ -4,9 +4,6 @@
 [RequireComponent(typeof(Collider2D))]
 public class BounceWithIncreasingAngleFromCenter : MonoBehaviour
 {
-    [SerializeField]
-    private string _BounceObjectTag;
-
     private Collider2D _collider;
 
     void Awake()
@@ -18,7 +15,7 @@ public class BounceWithIncreasingAngleFromCenter : MonoBehaviour
     {
         //Debug.Log("collision platform and " + col.gameObject.tag);
 
-        if (GameManager.IsGameStarted() && col.gameObject.tag == _BounceObjectTag)
+        if (GameManager.IsGameStarted() && col.gameObject.tag == "Ball")
         {
             Ball ball = col.gameObject.GetComponent<Ball>();
 
