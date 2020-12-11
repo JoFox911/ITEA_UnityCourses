@@ -31,6 +31,12 @@ public static class GameEvents
 
     public static event Action OnNewGameClickedEvent;
 
+    public static event Action<float> OnChangePlatformWithCatchEvent;
+
+    public static event Action<float, float> OnShootingPlatformСatch;
+
+    public static event Action OnExtraLiveСatch;
+
 
     public static void AllBricksDestroyedEvent()
     {
@@ -67,11 +73,6 @@ public static class GameEvents
         OnChangeLevel?.Invoke(level);
     }
 
-    public static void MultiBallCatchEvent(int generatedBallsNumber)
-    {
-        OnMultiBallСatch?.Invoke(generatedBallsNumber);
-    }
-
     public static void ResetGameStateEvent()
     {
         OnResetGameState?.Invoke();
@@ -101,5 +102,26 @@ public static class GameEvents
     {
         Debug.Log("NewGameClickedEvent");
         OnNewGameClickedEvent?.Invoke();
+    }
+
+    // bonuses
+    public static void ChangePlatformWithCatchEvent(float coef)
+    {
+        OnChangePlatformWithCatchEvent?.Invoke(coef);
+    }
+
+    public static void MultiBallCatchEvent(int generatedBallsNumber)
+    {
+        OnMultiBallСatch?.Invoke(generatedBallsNumber);
+    }
+
+    public static void ShootingPlatformCatchEvent(float duration, float fireCooldown)
+    {
+        OnShootingPlatformСatch?.Invoke(duration, fireCooldown);
+    }
+
+    public static void ExtraLiveCatchEvent()
+    {
+        OnExtraLiveСatch?.Invoke();
     }
 }

@@ -7,6 +7,7 @@ TagManager:
   - Ball
   - DeadZone
   - Platform
+  - Bullet
   layers:
   - Default
   - TransparentFX
@@ -55,6 +56,9 @@ TagManager:
     locked: 0
   - name: Brick
     uniqueID: 178875551
+    locked: 0
+  - name: Bonus
+    uniqueID: 3080784113
     locked: 0
   - name: HUD
     uniqueID: 482661195

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class BonusManager : MonoBehaviour
@@ -12,12 +10,21 @@ public class BonusManager : MonoBehaviour
     private List<Bonus> _availableDebuffs;
 
     [SerializeField]
-    [Range(0, 100)]
-    private float _buffChance;
+    // минимальная пауза между двумя бонусами
+    private float _minBonusPause = 3f;
 
     [SerializeField]
     [Range(0, 100)]
-    private float _debuffChance;
+    // отдельно регулируем частоту выпадения каких-либо бонусов
+    private float _bonusChance;
+
+    [SerializeField]
+    [Range(0, 100)]
+    // регулируем отношение положительных и негативных бонусов
+    // чем больше число тем больше будет бафов относительно дебафов
+    private float _buffsToDebuffsRatio;
+
+    private float _lastBonusSpawnTime= 0;
 
     private List<Bonus> _displayingBonuses;
 
@@ -35,30 +42,49 @@ public class BonusManager : MonoBehaviour
     {
         GameEvents.OnBrickDestructed -= OnBrickDistructed;
         GameEvents.OnResetGameState -= ResetState;
+        GameEvents.OnAllBallsWasted -= ResetState;
         Bonus.OnBonusDestroy -= OnBonusDestroy;
     }
 
     private void OnBrickDistructed(Brick brick)
     {
-        float buffSpawnChance = UnityEngine.Random.Range(0, 100f);
-        float debuffSpawnChance = UnityEngine.Random.Range(0, 100f);
-        Bonus bonusPrefab = null;
-
-        if (buffSpawnChance <= _buffChance && _availableBuffs != null)
+        if (Time.time - _lastBonusSpawnTime < _minBonusPause)
         {
-            bonusPrefab = SelectBuffPrefab();
+            return;
         }
-        else if (debuffSpawnChance <= _debuffChance && _availableDebuffs != null)
+
+        float bonusSpawnChance = UnityEngine.Random.Range(0, 100f);
+        if (bonusSpawnChance <= _bonusChance)
         {
-            bonusPrefab = SelectDebuffPrefab();
-        }
+            float bonusTypeValue = UnityEngine.Random.Range(0, 100f);
+            Bonus bonusPrefab = null;
 
-        if (bonusPrefab != null)
-        { 
-            var newBonus = Instantiate(bonusPrefab, brick.transform.position, Quaternion.identity);
-            _displayingBonuses.Add(newBonus);
-        }
+            // _buffsToDebuffsRatio - если рандомное меньше чем єто значение, то будет баф, если больше - дебаф
+            // так, зная что сейчас будет сгенерирован бонус, мы можем регулировать тип бонуса с вероятностью выставленной параметром 
 
+            if (bonusTypeValue < _buffsToDebuffsRatio)
+            {
+                if (_availableBuffs != null)
+                { 
+                    bonusPrefab = SelectBuffPrefab();
+                }
+            }
+            else
+            {
+                if (_availableDebuffs != null)
+                {
+                    bonusPrefab = SelectDebuffPrefab();
+                }
+            }
+
+            if (bonusPrefab != null)
+            {
+                _lastBonusSpawnTime = Time.time;
+                var newBonus = Instantiate(bonusPrefab, brick.transform.position, Quaternion.identity);
+                _displayingBonuses.Add(newBonus);
+            }
+
+        }
     }
 
     public void ResetState()

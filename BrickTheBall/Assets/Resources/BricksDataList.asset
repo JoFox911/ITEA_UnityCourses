@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c46f5468d7f086741b59955f8a4c4431, type: 3}
+  m_Name: BricksDataList
+  m_EditorClassIdentifier: 
+  _bricksDataList:
+  - Type: 1
+    Hitponts: 1
+    Sprites:
+    - {fileID: -57110965404973480, guid: 7f90e914d52eb0246b1c9080fb69ac2c, type: 3}
+    Points: 10
+    SizeX: 0.8
+    SizeY: 0.4
+  - Type: 2
+    Hitponts: 2
+    Sprites:
+    - {fileID: 446392251170874411, guid: 7f90e914d52eb0246b1c9080fb69ac2c, type: 3}
+    - {fileID: 6554549308691787351, guid: 7f90e914d52eb0246b1c9080fb69ac2c, type: 3}
+    Points: 25
+    SizeX: 0.8
+    SizeY: 0.4
+  - Type: 3
+    Hitponts: 3
+    Sprites:
+    - {fileID: -6542258964230631408, guid: 7f90e914d52eb0246b1c9080fb69ac2c, type: 3}
+    - {fileID: 4170084735909681763, guid: 7f90e914d52eb0246b1c9080fb69ac2c, type: 3}
+    - {fileID: 2707577370330349663, guid: 7f90e914d52eb0246b1c9080fb69ac2c, type: 3}
+    Points: 50
+    SizeX: 0.8
+    SizeY: 0.4
+  - Type: 4
+    Hitponts: 1
+    Sprites:
+    - {fileID: -9036120728189194214, guid: 7f90e914d52eb0246b1c9080fb69ac2c, type: 3}
+    Points: 0
+    SizeX: 0.8
+    SizeY: 0.4
+  - Type: 5
+    Hitponts: 10
+    Sprites:
+    - {fileID: 21300000, guid: 87c480ca7889b3045a2e23907c3456c8, type: 3}
+    Points: 0
+    SizeX: 5
+    SizeY: 3

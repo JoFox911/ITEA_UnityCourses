@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1449604206300326417}
   - component: {fileID: 1449604206300326419}
   m_Layer: 0
-  m_Name: MultiBall
+  m_Name: BonusMultiBall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -70,8 +70,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 209932995
-  m_SortingLayer: -3
+  m_SortingLayerID: -1214183183
+  m_SortingLayer: -2
   m_SortingOrder: 0
   m_Sprite: {fileID: -4232634231569271572, guid: 40149c89373e6c543a6ca9a2662b738b,
     type: 3}
@@ -134,5 +134,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 415607e25265a254abddb923f68c8ef6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fallSpeed: 2
+  _fallSpeed: 2.5
   _generatedBallsNumber: 2

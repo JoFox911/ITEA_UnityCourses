@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class Brick : MonoBehaviour
 {
-    
-    [SerializeField]
     private List<Sprite> _sprites;
-    [SerializeField]
     private int _hitponts;
-    [SerializeField]
-    public BrickType _type;
-    [SerializeField]
-    public int _points;
+    private BrickType _type;
+    private int _points;
 
     private SpriteRenderer _spriteRenderer;
 
@@ -24,9 +18,22 @@ public class Brick : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        if (_type != BrickType.Immortal && col.gameObject.tag == "Ball")
+        if (col.gameObject.CompareTag("Ball"))
         {
-            AudioManager.PlaySFX(SFXType.BallAndBrickCollision);
+            if (_type == BrickType.Immortal)
+            {
+                AudioManager.PlaySFX(SFXType.BallAnImmortaldBrickCollision);
+            }
+            else
+            {
+                AudioManager.PlaySFX(SFXType.BallAndBrickCollision);
+                ApplyCollisionLogic();
+            }
+        }
+
+
+        if (_type != BrickType.Immortal && (col.gameObject.CompareTag("Bullet")))
+        {
             ApplyCollisionLogic();
         }
     }
@@ -41,10 +48,16 @@ public class Brick : MonoBehaviour
         return _type;
     }
 
-    public void Init(Transform containerTransform)
+    public void Init(Transform containerTransform, BrickData brickData)
     {
+        _sprites = brickData.Sprites;
+        _hitponts = brickData.Hitponts;
+        _type = brickData.Type;
+        _points = brickData.Points;
+
         transform.SetParent(containerTransform);
         SetActualSprite();
+        SetSize(brickData.SizeX, brickData.SizeY);
     }
 
     private void SetActualSprite()
@@ -54,6 +67,11 @@ public class Brick : MonoBehaviour
         // а берем 2й и когда будет 2 жизни будет использоваться тот же 2й спрайт
         var index = Mathf.Clamp(_hitponts, 1, _sprites.Count);
         _spriteRenderer.sprite = _sprites[index - 1];
+    }
+
+    private void SetSize(float sizeX, float sizeY)
+    {
+        _spriteRenderer.size = new Vector2(sizeX, sizeY);
     }
 
     private void ApplyCollisionLogic()
@@ -71,10 +89,4 @@ public class Brick : MonoBehaviour
     }
 }
 
-public class BrickData
-{
-    public List<Sprite> Sprites;
-    public int Hitponts;
-    public BrickType Type;
-    public int Points;
-}
+

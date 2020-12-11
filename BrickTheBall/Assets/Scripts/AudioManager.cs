@@ -51,7 +51,8 @@ public enum SFXType
 {
     BallAndPlatformCollision,
     BallAndBrickCollision,
-    LevelStart
+    LevelStart,
+    BallAnImmortaldBrickCollision
 }
 
 [Serializable]

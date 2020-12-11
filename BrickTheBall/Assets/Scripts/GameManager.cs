@@ -5,6 +5,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     [SerializeField]
+    private int _maxLives = 5;
+    [SerializeField]
     private int _initialLives = 3;
     [SerializeField]
     private int _initialLevel = 0;
@@ -17,13 +19,14 @@ public class GameManager : MonoBehaviour
     {
         _instance = this;
 
-        _gameController = new GameController(_initialLives, _initialLevel);
+        _gameController = new GameController(_initialLives, _initialLevel, _maxLives);
 
         GameEvents.OnNewGameClickedEvent += StartNewGame;
         GameEvents.OnGamePaused += PauseGame;
         GameEvents.OnGameUnpaused += UnpauseGame;
         GameEvents.OnAllBallsWasted += OnAllBallsWasted;
         GameEvents.OnAllBricksDestroyed += OnAllBricksDestroyed;
+        GameEvents.OnExtraLiveСatch += OnExtraLiveСatch;
     }
 
     void Start()
@@ -85,6 +88,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void OnExtraLiveСatch()
+    {
+        _instance._gameController.IncreaseLive();
+    }
+
     public static (int[,] map, int rowsNumber, int colsNumber) GetLevelMap(int level)
     {
         return _instance._gameController.GetLevelMap(level);
@@ -120,12 +128,14 @@ public class GameController
     public List<int[,]> LevelsData;
     public int maxRows = 20;
     public int maxCols = 10;
+    public int MaxLives = 5;
 
-    public GameController(int initialLives, int initialLevel)
+    public GameController(int initialLives, int initialLevel, int maxLives)
     {
         LevelsData = LoadLevelsData();
         InitialLives = initialLives;
         InitialLevel = initialLevel;
+        MaxLives = maxLives;
 
         CurrentLevel = PlayerPrefs.GetInt("CurrentLevel", InitialLevel);
         CurrentLives = PlayerPrefs.GetInt("CurrentLives", InitialLives);
@@ -169,6 +179,14 @@ public class GameController
     public void ReduceLive()
     {
         SetLives(CurrentLives - 1);
+    }
+
+    public void IncreaseLive()
+    {
+        if (CurrentLives + 1 <= MaxLives)
+        { 
+            SetLives(CurrentLives + 1);
+        }
     }
 
     public bool IsCurrentLevelTheLast()

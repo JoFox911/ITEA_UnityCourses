@@ -5,16 +5,16 @@ using UnityEngine;
 public class BricksManager : MonoBehaviour
 {
     [SerializeField]
-    private List<Brick> _availableBricks;
-    [SerializeField]
     private Vector3 _initialBricksSpawnPossition;
-
+    [SerializeField]
+    private Brick _brickPrefab;
+    [SerializeField]
     private GameObject _bricksContainer;
+
     private List<Brick> _remainingBricks;
 
     void Awake()
     {
-        _bricksContainer = new GameObject("BricksContainer");
         GameEvents.OnBrickDestructed += OnBrickDestruction;
         GameEvents.OnResetGameState += ResetState;
         GameEvents.OnChangeLevel += OnChangeLevel;
@@ -36,38 +36,53 @@ public class BricksManager : MonoBehaviour
     private void GenerateLevelBricks(int[,] levelMap, int maxRows, int maxCols)
     {
         _remainingBricks = new List<Brick>();
+        var bricksOffset = 0.01f;
 
         float brickSpawnPositionX, brickSpawnPositionY;
         brickSpawnPositionY = _initialBricksSpawnPossition.y;
 
         for (var row = 0; row < maxRows; row++)
         {
+            float rowWidth = 0.4f;
             brickSpawnPositionX = _initialBricksSpawnPossition.x;
 
             for (var col = 0; col < maxCols; col++)
             {
+                float columnWidth = 0.8f;
                 if (levelMap[row, col] != 0)
                 {
                     var brickType = (BrickType)levelMap[row, col];
-                    var brickPrefab = BrickPrefabByType(brickType);
-                    var newBrick = Instantiate(brickPrefab, new Vector3(brickSpawnPositionX, brickSpawnPositionY, _initialBricksSpawnPossition.z), Quaternion.identity);
-                    newBrick.Init(_bricksContainer.transform);
+                    var brickData = BricksConfiguration.BrickDataByType(brickType);
+                    columnWidth = columnWidth < brickData.SizeX ? brickData.SizeX : columnWidth;
+                    rowWidth = rowWidth < brickData.SizeY ? brickData.SizeY : rowWidth;
+
+                    var newBrick = Instantiate(_brickPrefab, new Vector3(brickSpawnPositionX, brickSpawnPositionY, _initialBricksSpawnPossition.z), Quaternion.identity);
+                    newBrick.Init(_bricksContainer.transform, brickData);
                     _remainingBricks.Add(newBrick);
                 }
-                // todo надо добавлять ширину блока. могу попробовать через спрайт?
-                brickSpawnPositionX += 0.8f;
+                brickSpawnPositionX += columnWidth + bricksOffset;
             }
-            brickSpawnPositionY -= 0.4f;
+            brickSpawnPositionY -= rowWidth + bricksOffset;
         }
     }
 
     private void OnBrickDestruction(Brick brick)
     {
         _remainingBricks.Remove(brick);
-        if (_remainingBricks.Count <= 0)
+        if (IsAllPossibleBricksDestroyed())
         {
             GameEvents.AllBricksDestroyedEvent();
         }
+    }
+
+    private bool IsAllPossibleBricksDestroyed()
+    {
+        if (_remainingBricks.Count <= 0) 
+        {
+            return true;
+        }
+        var numberOfUnImmortalBricks = _remainingBricks.Count(brick => brick.GetBrickType() != BrickType.Immortal);
+        return numberOfUnImmortalBricks <= 0;
     }
 
     private void ResetState()
@@ -80,21 +95,6 @@ public class BricksManager : MonoBehaviour
             }
         }
     }
-
-    private Brick BrickPrefabByType(BrickType brickType)
-    {
-        Brick brickPrefab = null;
-        if (_availableBricks != null)
-        {
-            brickPrefab = _availableBricks.FirstOrDefault(brick => brick.GetBrickType() == brickType);
-            if (brickPrefab == null)
-            {
-                Debug.LogError("THERE IS NO BRICK PREFAB FOR BRICK TYPE: " + brickType);
-            }
-        }
-        
-        return brickPrefab;
-    }    
 }
 
 
