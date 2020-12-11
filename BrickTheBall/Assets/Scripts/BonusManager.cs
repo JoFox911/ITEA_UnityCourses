@@ -23,9 +23,11 @@ public class BonusManager : MonoBehaviour
 
     void Awake()
     {
+        _displayingBonuses = new List<Bonus>();
+
         GameEvents.OnBrickDestructed += OnBrickDistructed;
         GameEvents.OnResetGameState += ResetState;
-        _displayingBonuses = new List<Bonus>();
+        GameEvents.OnAllBallsWasted += ResetState;
         Bonus.OnBonusDestroy += OnBonusDestroy;
     }
 

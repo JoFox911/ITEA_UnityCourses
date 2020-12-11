@@ -30,7 +30,7 @@ public class BallsManager : MonoBehaviour
             _initialBall.transform.SetPostionXY(_platformObject.transform.position.x, 
                                                 _platformObject.transform.position.y + 0.50f);
 
-            if (!GameManager.IsGameDisabled() && Input.GetKeyDown(KeyCode.Space)) 
+            if (Input.GetKeyDown(KeyCode.Space)) 
             {
                 GameManager.StartPlaying();
                 _initialBall.StartMoving(_initialBallSpeed, Vector2.up);

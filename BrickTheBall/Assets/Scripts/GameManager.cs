@@ -17,35 +17,51 @@ public class GameManager : MonoBehaviour
     {
         _instance = this;
 
-        _gameController = new GameController();
+        _gameController = new GameController(_initialLives, _initialLevel);
 
+        GameEvents.OnNewGameClickedEvent += StartNewGame;
+        GameEvents.OnGamePaused += PauseGame;
+        GameEvents.OnGameUnpaused += UnpauseGame;
         GameEvents.OnAllBallsWasted += OnAllBallsWasted;
-        GameEvents.OnGameRestart += RestartGame;
         GameEvents.OnAllBricksDestroyed += OnAllBricksDestroyed;
     }
 
     void Start()
     {
+        UnpauseGame();
         GameEvents.ResetGameStateEvent();
+        _gameController.SetIsGameStarted(false);
         _gameController.SetLives(_initialLives);
-
-        // todo в дфльнейшем сюда можно будет подгружать из сохраненки?
-        _gameController.SetLevel(_initialLevel);
+        _gameController.SetLevel(_gameController.CurrentLevel);
     }
 
     void OnDestroy()
     {
-        GameEvents.OnAllBallsWasted -= OnAllBallsWasted;
-        GameEvents.OnAllBricksDestroyed -= OnAllBricksDestroyed;
-        GameEvents.OnAllBricksDestroyed -= OnAllBricksDestroyed;
+        //GameEvents.OnAllBallsWasted -= OnAllBallsWasted;
+        //GameEvents.OnAllBricksDestroyed -= OnAllBricksDestroyed;
+        //GameEvents.OnAllBricksDestroyed -= OnAllBricksDestroyed;
     }
 
-    public void RestartGame()
+
+    public void StartNewGame()
     {
+        UnpauseGame();
         GameEvents.ResetGameStateEvent();
         _gameController.SetIsGameStarted(false);
         _gameController.SetLives(_initialLives);
-        _gameController.SetLevel(0);
+        _gameController.SetLevel(_initialLevel);
+    }
+
+    private void PauseGame()
+    {
+        _gameController.SetIsGamePaused(true);
+        Time.timeScale = 0;
+    }
+
+    private void UnpauseGame()
+    {
+        _gameController.SetIsGamePaused(false);
+        Time.timeScale = 1;
     }
 
     private void OnAllBallsWasted()
@@ -60,7 +76,6 @@ public class GameManager : MonoBehaviour
 
         if (_gameController.IsCurrentLevelTheLast())
         {
-            _gameController.SetIsGameDisabled(true);
             GameEvents.GameFinishedEvent();
         }
         else
@@ -85,28 +100,35 @@ public class GameManager : MonoBehaviour
         return _instance._gameController.IsGameStarted;
     }
 
-    public static bool IsGameDisabled()
+    public static bool IsGamePaused()
     {
-        return _instance._gameController.IsGameDisabled;
+        return _instance._gameController.IsGamePaused;
     }
-
 }
 
 public class GameController
 {
     public bool IsGameStarted = false;
-    public bool IsGameDisabled = false;
+    public bool IsGamePaused = false;
 
     public int CurrentLevel = 0;
     public int CurrentLives = 3;
 
+    public int InitialLevel = 0;
+    public int InitialLives = 3;
+
     public List<int[,]> LevelsData;
     public int maxRows = 20;
-    public int maxCols = 12;
+    public int maxCols = 10;
 
-    public GameController()
+    public GameController(int initialLives, int initialLevel)
     {
         LevelsData = LoadLevelsData();
+        InitialLives = initialLives;
+        InitialLevel = initialLevel;
+
+        CurrentLevel = PlayerPrefs.GetInt("CurrentLevel", InitialLevel);
+        CurrentLives = PlayerPrefs.GetInt("CurrentLives", InitialLives);
     }
 
     public void SetIsGameStarted(bool isStarted)
@@ -114,9 +136,9 @@ public class GameController
         IsGameStarted = isStarted;
     }
 
-    public void SetIsGameDisabled(bool isDisabled)
+    public void SetIsGamePaused(bool isPaused)
     {
-        IsGameDisabled = isDisabled;
+        IsGamePaused = isPaused;
     }
 
     public void SetLives(int lives)
@@ -128,12 +150,15 @@ public class GameController
         {
             GameEvents.GameOverEvent();
         }
+        PlayerPrefs.SetInt("CurrentLives", CurrentLives);
     }
 
     public void SetLevel(int level)
     {
         CurrentLevel = level;
-        GameEvents.ChangeLevelEvent(CurrentLevel);  
+        AudioManager.PlaySFX(SFXType.LevelStart);
+        GameEvents.ChangeLevelEvent(CurrentLevel);
+        PlayerPrefs.SetInt("CurrentLevel", CurrentLevel);
     }
 
     public void IncreaseLevel()
@@ -143,7 +168,7 @@ public class GameController
 
     public void ReduceLive()
     {
-        SetLevel(CurrentLives - 1);
+        SetLives(CurrentLives - 1);
     }
 
     public bool IsCurrentLevelTheLast()

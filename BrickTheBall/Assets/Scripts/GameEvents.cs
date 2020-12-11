@@ -23,11 +23,14 @@ public static class GameEvents
 
     public static event Action OnGameOver;
 
-    public static event Action OnGameRestart;
-
     public static event Action OnGameFinished;
 
-    
+    public static event Action OnGameUnpaused;
+
+    public static event Action OnGamePaused;
+
+    public static event Action OnNewGameClickedEvent;
+
 
     public static void AllBricksDestroyedEvent()
     {
@@ -79,15 +82,24 @@ public static class GameEvents
         OnGameOver?.Invoke();
     }
 
-    public static void GameRestartEvent()
-    {
-        OnGameRestart?.Invoke();
-    }
-
     public static void GameFinishedEvent()
     {
         OnGameFinished?.Invoke();
     }
 
-    
+    public static void GameContinueClickedEvent()
+    {
+        OnGameUnpaused?.Invoke();
+    }
+
+    public static void GamePauseClickedEvent()
+    {
+        OnGamePaused?.Invoke();
+    }
+
+    public static void NewGameClickedEvent()
+    {
+        Debug.Log("NewGameClickedEvent");
+        OnNewGameClickedEvent?.Invoke();
+    }
 }

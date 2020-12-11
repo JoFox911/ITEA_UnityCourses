@@ -17,6 +17,8 @@ public class BounceWithIncreasingAngleFromCenter : MonoBehaviour
 
         if (GameManager.IsGameStarted() && col.gameObject.tag == "Ball")
         {
+            AudioManager.PlaySFX(SFXType.BallAndPlatformCollision);
+
             Ball ball = col.gameObject.GetComponent<Ball>();
 
             float x = FactorHorizontal(col.transform.position,

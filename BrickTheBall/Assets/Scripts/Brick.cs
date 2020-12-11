@@ -26,6 +26,7 @@ public class Brick : MonoBehaviour
     {
         if (_type != BrickType.Immortal && col.gameObject.tag == "Ball")
         {
+            AudioManager.PlaySFX(SFXType.BallAndBrickCollision);
             ApplyCollisionLogic();
         }
     }
@@ -68,4 +69,12 @@ public class Brick : MonoBehaviour
             SetActualSprite();
         }
     }
+}
+
+public class BrickData
+{
+    public List<Sprite> Sprites;
+    public int Hitponts;
+    public BrickType Type;
+    public int Points;
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class Bonus : MonoBehaviour
 {
     [SerializeField]
-    private float  _fallSpeed = 5;
+    private float  _fallSpeed = 7;
 
     public static event Action<Bonus> OnBonusDestroy;
 

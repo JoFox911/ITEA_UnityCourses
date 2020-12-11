@@ -14,13 +14,13 @@ public class HUDView : MonoBehaviour
 
     void Awake()
     {
-        GameEvents.OnRaiseScore += OnScoreChangedHandler;
+		GameEvents.OnRaiseScore += OnScoreChangedHandler;
         GameEvents.OnRaiseHighScore += OnHighScoreChangedHandler;
         GameEvents.OnChangeLives += OnLivesChangedHandler;
         GameEvents.OnChangeLevel += OnLevelChangedHandler;
-    }
+	}
 
-    void OnDestroy() 
+	void OnDestroy() 
     {
         GameEvents.OnRaiseScore -= OnScoreChangedHandler;
         GameEvents.OnRaiseHighScore -= OnHighScoreChangedHandler;

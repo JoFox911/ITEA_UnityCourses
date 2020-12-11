@@ -11,6 +11,11 @@ public class PlatformManager : MonoBehaviour
         GameEvents.OnResetGameState += ResetState;
     }
 
+    void OnDestroy()
+    {
+        GameEvents.OnResetGameState -= ResetState;
+    }
+
     public void ResetState()
     {
         transform.position = initialPossition;
