@@ -37,6 +37,16 @@ public static class GameEvents
 
     public static event Action OnExtraLiveСatch;
 
+    public static event Action OnRestartGameClicked;
+
+    // Audio
+    public static event Action OnMasterVolumeChanged;
+
+    public static event Action OnMusicVolumeChanged;
+
+    public static event Action OnSFXVolumeChanged;
+
+    
 
     public static void AllBricksDestroyedEvent()
     {
@@ -104,6 +114,12 @@ public static class GameEvents
         OnNewGameClickedEvent?.Invoke();
     }
 
+    public static void RestartGameClickedEvent()
+    {
+        OnRestartGameClicked?.Invoke();
+    }
+
+
     // bonuses
     public static void ChangePlatformWithCatchEvent(float coef)
     {
@@ -123,5 +139,22 @@ public static class GameEvents
     public static void ExtraLiveCatchEvent()
     {
         OnExtraLiveСatch?.Invoke();
+    }
+
+    // Audio
+
+    public static void MasterVolumeChangedEvent()
+    {
+        OnMasterVolumeChanged?.Invoke();
+    }
+
+    public static void MusicVolumeChangedEvent()
+    {
+        OnMusicVolumeChanged?.Invoke();
+    }
+
+    public static void SFXVolumeChangedEvent()
+    {
+        OnSFXVolumeChanged?.Invoke();
     }
 }

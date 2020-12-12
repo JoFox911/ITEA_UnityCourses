@@ -30,23 +30,51 @@ public class HUDView : MonoBehaviour
 
     private void OnScoreChangedHandler(int score)
     {
-        _scoreText.SetText(score.ToString("D5"));
+        if (_scoreText != null)
+        {
+            _scoreText.SetText(score.ToString("D5"));
+        }
+        else
+        {
+            CommonWarnings.ObjectNotAssignedWarning("ScoreText");
+        }
     }
 
     private void OnHighScoreChangedHandler(int score)
     {
-        _highScoreText.SetText(score.ToString("D5"));
+        if (_highScoreText != null)
+        {
+            _highScoreText.SetText(score.ToString("D5"));
+        }
+        else
+        {
+            CommonWarnings.ObjectNotAssignedWarning("HighScoreText");
+        }
     }
 
     private void OnLivesChangedHandler(int lives)
     {
-        _livesText.SetText(lives.ToString("D2"));
+        if (_livesText != null)
+        {
+            _livesText.SetText(lives.ToString("D2"));
+        }
+        else
+        {
+            CommonWarnings.ObjectNotAssignedWarning("LivesText");
+        }
     }
 
     private void OnLevelChangedHandler(int level)
     {
-        // +1 потому что level - индекс, который начинается с 0. 
-        // Для отображения не подходит
-        _levelsText.SetText((level + 1).ToString());
+        if (_levelsText != null)
+        {
+            // +1 потому что level - индекс, который начинается с 0. 
+            // Для отображения не подходит
+            _levelsText.SetText((level + 1).ToString());
+        }
+        else
+        {
+            CommonWarnings.ObjectNotAssignedWarning("LevelsText");
+        }
     }
 }

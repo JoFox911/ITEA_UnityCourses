@@ -14,13 +14,46 @@ public class PauseView : MonoBehaviour
     private Button _settingsBtn;
 
     [SerializeField]
-    private GameObject _settinsMenu;
+    private GameObject _settingsScreen;
 
     void Awake()
     {
-        _continueBtn.onClick.AddListener(ContinueGame);
-        _exitBtn.onClick.AddListener(ExitGame);
-        _settingsBtn.onClick.AddListener(OpenSettings);
+        if (_continueBtn != null)
+        {
+            _continueBtn.onClick.AddListener(ContinueGame);
+        }
+        else
+        {
+            CommonWarnings.ObjectNotAssignedWarning("ContinueButton");
+        }
+
+        if (_exitBtn != null)
+        {
+            _exitBtn.onClick.AddListener(ExitGame);
+        }
+        else
+        {
+            CommonWarnings.ObjectNotAssignedWarning("ExitButton");
+        }
+
+        if (_settingsBtn != null)
+        {
+            _settingsBtn.onClick.AddListener(OpenSettings);
+        }
+        else
+        {
+            CommonWarnings.ObjectNotAssignedWarning("SettingsButton");
+        }
+    }
+
+    void OnEnable()
+    {
+        AudioManager.PlayMusic(MusicType.Pause);
+    }
+
+    private void OnDisable()
+    {
+        AudioManager.StopMusic();
     }
 
     private void ContinueGame()
@@ -36,7 +69,14 @@ public class PauseView : MonoBehaviour
    
     private void OpenSettings()
     {
-        _settinsMenu.SetActive(true);
+        if (_settingsScreen != null)
+        {
+            _settingsScreen.SetActive(true);
+        }
+        else
+        {
+            CommonWarnings.ObjectNotAssignedWarning("SettingsScreen");
+        }
     }
 
 }

@@ -2,10 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
     private static AudioManager _instance;
+
+    [SerializeField] 
+    private AudioMixer _mixer;
 
     [SerializeField] private 
     List<SfxData> _sfxDataList = new List<SfxData>();
@@ -17,9 +21,53 @@ public class AudioManager : MonoBehaviour
     [SerializeField] 
     private AudioSource _sfxSource;
 
-    private void Awake()
+    private const string MasterVolumeParameter = "MasterVolume";
+    private const string MusicVolumeParameter = "MusicVolume";
+    private const string SFXVolumeParameter = "SFXVolume";
+
+    void Awake()
     {
         _instance = this;
+        GameEvents.OnMasterVolumeChanged += ApplyMasterVolume;
+        GameEvents.OnMusicVolumeChanged += ApplyMusicVolume;
+        GameEvents.OnSFXVolumeChanged += ApplySFXVolume;
+    }
+
+    void OnDestroy()
+    {
+        GameEvents.OnMasterVolumeChanged -= ApplyMasterVolume;
+        GameEvents.OnMusicVolumeChanged -= ApplyMusicVolume;
+        GameEvents.OnSFXVolumeChanged -= ApplySFXVolume;
+    }
+
+    void Start()
+    {
+        ApplyMasterVolume();
+        ApplyMusicVolume();
+        ApplySFXVolume();
+    }
+
+    private void ApplyMasterVolume()
+    {
+        var savedMasterVolume = PlayerPrefs.GetFloat(MasterVolumeParameter, 0f);
+        _mixer.SetFloat(MasterVolumeParameter, savedMasterVolume);
+    }
+
+    private void ApplyMusicVolume()
+    {
+        var savedMusicVolume = PlayerPrefs.GetFloat(MusicVolumeParameter, 0f);
+        _mixer.SetFloat(MusicVolumeParameter, savedMusicVolume);
+    }
+
+    private void ApplySFXVolume()
+    {
+        var savedSFXVolume = PlayerPrefs.GetFloat(SFXVolumeParameter, 0f);
+        _mixer.SetFloat(SFXVolumeParameter, savedSFXVolume);
+    }
+
+    private void StopMusicInner()
+    {
+        _musicSource.Stop();
     }
 
     private void PlayMusicInner(MusicType type)
@@ -44,6 +92,11 @@ public class AudioManager : MonoBehaviour
     {
         _instance.PlaySFXInner(type);
     }
+
+    public static void StopMusic()
+    {
+        _instance.StopMusicInner();
+    }
 }
 
 
@@ -51,8 +104,9 @@ public enum SFXType
 {
     BallAndPlatformCollision,
     BallAndBrickCollision,
+    BallAnImmortaldBrickCollision,
     LevelStart,
-    BallAnImmortaldBrickCollision
+    GameOver
 }
 
 [Serializable]
@@ -64,8 +118,9 @@ public class SfxData
 
 public enum MusicType
 {
-    Background,
-    InMainMenu
+    InMenu,
+    Pause,
+    Victory
 }
 
 [Serializable]

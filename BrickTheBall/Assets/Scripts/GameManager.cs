@@ -22,8 +22,13 @@ public class GameManager : MonoBehaviour
         _gameController = new GameController(_initialLives, _initialLevel, _maxLives);
 
         GameEvents.OnNewGameClickedEvent += StartNewGame;
+        GameEvents.OnRestartGameClicked += StartNewGame;
+        
         GameEvents.OnGamePaused += PauseGame;
         GameEvents.OnGameUnpaused += UnpauseGame;
+        GameEvents.OnGameOver += PauseGame;
+        GameEvents.OnGameFinished += PauseGame;
+
         GameEvents.OnAllBallsWasted += OnAllBallsWasted;
         GameEvents.OnAllBricksDestroyed += OnAllBricksDestroyed;
         GameEvents.OnExtraLiveСatch += OnExtraLiveСatch;
@@ -40,9 +45,17 @@ public class GameManager : MonoBehaviour
 
     void OnDestroy()
     {
-        //GameEvents.OnAllBallsWasted -= OnAllBallsWasted;
-        //GameEvents.OnAllBricksDestroyed -= OnAllBricksDestroyed;
-        //GameEvents.OnAllBricksDestroyed -= OnAllBricksDestroyed;
+        GameEvents.OnNewGameClickedEvent -= StartNewGame;
+        GameEvents.OnRestartGameClicked -= StartNewGame;
+
+        GameEvents.OnGamePaused -= PauseGame;
+        GameEvents.OnGameUnpaused -= UnpauseGame;
+        GameEvents.OnGameOver -= PauseGame;
+        GameEvents.OnGameFinished -= PauseGame;
+
+        GameEvents.OnAllBallsWasted -= OnAllBallsWasted;
+        GameEvents.OnAllBricksDestroyed -= OnAllBricksDestroyed;
+        GameEvents.OnExtraLiveСatch -= OnExtraLiveСatch;
     }
 
 
@@ -70,27 +83,19 @@ public class GameManager : MonoBehaviour
     private void OnAllBallsWasted()
     {
         _gameController.SetIsGameStarted(false);
-        _gameController.ReduceLive();
+        _gameController.DecreaseLives();
     }
 
     private void OnAllBricksDestroyed()
     {
         _gameController.SetIsGameStarted(false);
-
-        if (_gameController.IsCurrentLevelTheLast())
-        {
-            GameEvents.GameFinishedEvent();
-        }
-        else
-        {
-            GameEvents.ResetGameStateEvent();
-            _gameController.IncreaseLevel();
-        }
+        GameEvents.ResetGameStateEvent();
+        _gameController.IncreaseLevel();
     }
 
     private void OnExtraLiveСatch()
     {
-        _instance._gameController.IncreaseLive();
+        _instance._gameController.IncreaseLives();
     }
 
     public static (int[,] map, int rowsNumber, int colsNumber) GetLevelMap(int level)
@@ -126,8 +131,8 @@ public class GameController
     public int InitialLives = 3;
 
     public List<int[,]> LevelsData;
-    public int maxRows = 20;
-    public int maxCols = 10;
+    public const int maxRows = 20;
+    public const int maxCols = 10;
     public int MaxLives = 5;
 
     public GameController(int initialLives, int initialLevel, int maxLives)
@@ -155,11 +160,6 @@ public class GameController
     {
         CurrentLives = lives;
         GameEvents.ChangeLivesEvent(CurrentLives);
-
-        if (CurrentLives <= 0)
-        {
-            GameEvents.GameOverEvent();
-        }
         PlayerPrefs.SetInt("CurrentLives", CurrentLives);
     }
 
@@ -173,15 +173,31 @@ public class GameController
 
     public void IncreaseLevel()
     {
-        SetLevel(CurrentLevel + 1);
+        if (IsCurrentLevelTheLast())
+        {
+            GameEvents.GameFinishedEvent();
+            RemoveSavedGameProgress();
+        }
+        else
+        {
+            SetLevel(CurrentLevel + 1);
+        }
     }
 
-    public void ReduceLive()
+    public void DecreaseLives()
     {
-        SetLives(CurrentLives - 1);
+        if (IsCurrentLiveTheLast())
+        {
+            GameEvents.GameOverEvent();
+            RemoveSavedGameProgress();
+        }
+        else
+        {
+            SetLives(CurrentLives - 1);
+        }
     }
 
-    public void IncreaseLive()
+    public void IncreaseLives()
     {
         if (CurrentLives + 1 <= MaxLives)
         { 
@@ -194,9 +210,15 @@ public class GameController
         return CurrentLevel + 1 == LevelsData.Count;
     }
 
-    public bool IsAllLivesWasted()
+    public bool IsCurrentLiveTheLast()
     {
-        return CurrentLives <= 0;
+        return CurrentLives <= 1;
+    }
+
+    public void RemoveSavedGameProgress()
+    {
+        PlayerPrefs.DeleteKey("CurrentLevel");
+        PlayerPrefs.DeleteKey("CurrentLives");
     }
 
     public (int[,] map, int rowsNumber, int colsNumber) GetLevelMap(int level)

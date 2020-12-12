@@ -2,6 +2,7 @@
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+//todo refactoring
 public class MainMenuView : MonoBehaviour
 {
     [SerializeField]

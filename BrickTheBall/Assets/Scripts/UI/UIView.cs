@@ -1,18 +1,24 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class UIView : MonoBehaviour
 {
     [SerializeField]
-    private GameObject _pauseMenu;
+    private GameObject _pauseScreen;
 
 	[SerializeField]
-	private GameObject _settinsMenu;
+	private GameObject _settinsScreen;
 
 	[SerializeField]
-	private GameObject _HUD;
+	private GameObject _victoryScreen;
+
+	[SerializeField]
+	private GameObject _gameOverScreen;
+
+	void Awake()
+	{
+		GameEvents.OnGameFinished += OnGameFinished;
+		GameEvents.OnGameOver += OnGameOver;
+	}
 
 	void Update()
 	{
@@ -23,36 +29,110 @@ public class UIView : MonoBehaviour
 		}
 	}
 
+	void OnDestroy()
+	{
+		GameEvents.OnGameFinished -= OnGameFinished;
+		GameEvents.OnGameOver -= OnGameOver;
+	}
+
+
+
+	private void OnGameFinished()
+	{
+		if (_victoryScreen != null)
+		{ 
+			_victoryScreen.SetActive(true);
+		}
+		else
+		{
+			CommonWarnings.ObjectNotAssignedWarning("VictoryScreen");
+		}
+	}
+
+	private void OnGameOver()
+	{
+		if (_victoryScreen != null)
+		{
+			_gameOverScreen.SetActive(true);
+		}
+		else
+		{
+			CommonWarnings.ObjectNotAssignedWarning("GameOverScreen");
+		}
+	}
+
 	private void PauseControl()
 	{
-		Debug.Log("PauseControl " + GameManager.IsGamePaused());
-		// останавливаем время в игре
+		if (_victoryScreen == null || _gameOverScreen == null || _settinsScreen == null)
+		{
+			CommonWarnings.ObjectNotAssignedWarning("GameOverScreen/GameOverScreen/SettinsScreen");
+			return;
+		}
+
+		// ignore esc on victory and game over screens
+		if (_victoryScreen.activeInHierarchy || _gameOverScreen.activeInHierarchy)
+		{
+			return;
+		}
+		
 		if (GameManager.IsGamePaused())
 		{
-			GameEvents.GameContinueClickedEvent();
-			HidePaused();
+			// если открт скрин настроек поверх скрина паузы,
+			// то первым нажатием на esc закроем настройки
+			if (_settinsScreen.activeInHierarchy)
+			{
+				HideSettingsScreen();
+			}
+			else
+			{
+				GameEvents.GameContinueClickedEvent();
+				HidePauseScreen();
+			}
+			
 		}
-		//  запускаем его снова
 		else
 		{
 			GameEvents.GamePauseClickedEvent();
-			ShowPaused();
+			ShowPauseScreen();
 		}
 	}
 
 
 
-	public void ShowPaused()
+	private void ShowPauseScreen()
 	{
-		_HUD.SetActive(false);
-		_pauseMenu.SetActive(true);
+		if (_pauseScreen != null)
+		{
+			_pauseScreen.SetActive(true);
+		}
+		else
+		{
+			CommonWarnings.ObjectNotAssignedWarning("PauseScreen");
+		}	
 	}
 
-	//hides objects with ShowOnPause tag
-	public void HidePaused()
+	private void HidePauseScreen()
 	{
-		_pauseMenu.SetActive(false);
-		_settinsMenu.SetActive(false);
-		_HUD.SetActive(true);
+		if (_pauseScreen != null)
+		{
+			_pauseScreen.SetActive(false);
+		}
+		else
+		{
+			CommonWarnings.ObjectNotAssignedWarning("PauseScreen");
+		}
+	}
+
+	private void HideSettingsScreen()
+	{
+		if (_settinsScreen != null)
+		{
+			_settinsScreen.SetActive(false);
+		}
+		else
+		{
+			CommonWarnings.ObjectNotAssignedWarning("SettinsScreen");
+		}
+		
 	}
 }
