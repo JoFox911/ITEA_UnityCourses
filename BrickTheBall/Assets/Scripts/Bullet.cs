@@ -32,7 +32,7 @@ public class Bullet : MonoBehaviour
         _destroyBulletCallBack = destroyBulletCallBack;
     }
 
-    public void DestroyCallback()
+    private void DestroyCallback()
     {
         _destroyBulletCallBack?.Invoke(this);
     }

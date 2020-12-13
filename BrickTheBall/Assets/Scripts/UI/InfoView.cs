@@ -19,16 +19,6 @@ public class InfoView : MonoBehaviour
 
     }
 
-    void OnEnable()
-    {
-        AudioManager.PlayMusic(MusicType.Victory);
-    }
-
-    private void OnDisable()
-    {
-        AudioManager.StopMusic();
-    }
-
     private void CloseInfo()
     {
         GameEvents.GameContinueClickedEvent();

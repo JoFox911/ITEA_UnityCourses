@@ -5,7 +5,7 @@
 public class HorizontalMovement : MonoBehaviour
 {
     [SerializeField]
-    private float _speed = 5.0f;
+    private float _speed = 5f;
 
     private Rigidbody2D _rigidbody;
 
@@ -16,6 +16,6 @@ public class HorizontalMovement : MonoBehaviour
 
     void Update()
     {
-        _rigidbody.velocity = new Vector2(Input.GetAxis("Horizontal") * _speed, 0.0f);
+        _rigidbody.velocity = new Vector2(Input.GetAxis("Horizontal") * _speed, .0f);
     }
 }

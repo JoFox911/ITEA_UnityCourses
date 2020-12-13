@@ -6,6 +6,7 @@ public class ScoreManager : MonoBehaviour
     void Awake()
     {
         _scoreController = new ScoreController();
+
         GameEvents.OnBrickDestructed += AddScoreOnBrickDestructed;
         GameEvents.OnEnemyDestroyed += AddScoreOnEnemyDestroyed;
         GameEvents.OnResetGameState += ResetState;
@@ -27,10 +28,7 @@ public class ScoreManager : MonoBehaviour
     {
         _scoreController.AddScore(points);
     }
-
-    
-
-    public void ResetState()
+    private void ResetState()
     {
         _scoreController.ResetScore();
     }

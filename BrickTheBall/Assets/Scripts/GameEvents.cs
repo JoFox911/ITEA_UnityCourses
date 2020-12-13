@@ -3,11 +3,7 @@ using UnityEngine;
 
 public static class GameEvents
 {
-    public static event Action OnAllBricksDestroyed;
-
-    public static event Action OnAllBallsWasted;
-
-    public static event Action<Brick> OnBrickDestructed;
+    // HUD
 
     public static event Action<int> OnRaiseScore;
 
@@ -17,7 +13,7 @@ public static class GameEvents
 
     public static event Action<int> OnChangeLevel;
 
-    public static event Action<int> OnMultiBallСatch;
+    // game state
 
     public static event Action OnResetGameState;
 
@@ -29,21 +25,34 @@ public static class GameEvents
 
     public static event Action OnGamePaused;
 
-    public static event Action OnNewGameClickedEvent;
+    public static event Action OnNewGame;
 
-    public static event Action<float> OnChangePlatformWithCatchEvent;
+    public static event Action OnRestartGame;
 
-    public static event Action<float, float> OnShootingPlatformСatch;
+    public static event Action OnShowInfoScreen;
 
-    public static event Action OnExtraLiveСatch;
+    // level events
 
-    public static event Action OnRestartGameClicked;
+    public static event Action OnAllBricksDestroyed;
+
+    public static event Action OnAllBallsWasted;
+
+    public static event Action<Brick> OnBrickDestructed;
 
     public static event Action<int> OnEnemyDestroyed;
 
-    public static event Action OnShowInfoScreen;    
+    // Bonuses
+
+    public static event Action<float> OnChangePlatformWidthCatched;
+
+    public static event Action<float, float> OnShootingPlatformСatched;
+
+    public static event Action OnExtraLiveСatched;
+
+    public static event Action<int> OnMultiBallСatched;
 
     // Audio
+
     public static event Action OnMasterVolumeChanged;
 
     public static event Action OnMusicVolumeChanged;
@@ -114,37 +123,13 @@ public static class GameEvents
 
     public static void NewGameClickedEvent()
     {
-        Debug.Log("NewGameClickedEvent");
-        OnNewGameClickedEvent?.Invoke();
+        OnNewGame?.Invoke();
     }
 
     public static void RestartGameClickedEvent()
     {
-        OnRestartGameClicked?.Invoke();
+        OnRestartGame?.Invoke();
     }
-
-
-    // bonuses
-    public static void ChangePlatformWithCatchEvent(float coef)
-    {
-        OnChangePlatformWithCatchEvent?.Invoke(coef);
-    }
-
-    public static void MultiBallCatchEvent(int generatedBallsNumber)
-    {
-        OnMultiBallСatch?.Invoke(generatedBallsNumber);
-    }
-
-    public static void ShootingPlatformCatchEvent(float duration, float fireCooldown)
-    {
-        OnShootingPlatformСatch?.Invoke(duration, fireCooldown);
-    }
-
-    public static void ExtraLiveCatchEvent()
-    {
-        OnExtraLiveСatch?.Invoke();
-    }
-
     public static void EnemyDestroyedEvent(int points)
     {
         OnEnemyDestroyed?.Invoke(points);
@@ -153,6 +138,29 @@ public static class GameEvents
     {
         OnShowInfoScreen?.Invoke();
     }
+
+
+    // bonuses
+    public static void ChangePlatformWithCatchEvent(float coef)
+    {
+        OnChangePlatformWidthCatched?.Invoke(coef);
+    }
+
+    public static void MultiBallCatchEvent(int generatedBallsNumber)
+    {
+        OnMultiBallСatched?.Invoke(generatedBallsNumber);
+    }
+
+    public static void ShootingPlatformCatchEvent(float duration, float fireCooldown)
+    {
+        OnShootingPlatformСatched?.Invoke(duration, fireCooldown);
+    }
+
+    public static void ExtraLiveCatchEvent()
+    {
+        OnExtraLiveСatched?.Invoke();
+    }
+
 
     // Audio
 

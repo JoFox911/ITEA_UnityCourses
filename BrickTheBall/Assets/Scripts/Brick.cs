@@ -15,8 +15,6 @@ public class Brick : MonoBehaviour
     private SpriteRenderer _spriteRenderer;
     private BoxCollider2D _boxCollider;
 
-    private IEnumerator _generateEnemyCoroutine;
-
     void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();

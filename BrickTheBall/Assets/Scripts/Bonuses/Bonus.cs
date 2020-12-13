@@ -5,19 +5,15 @@ using UnityEngine;
 public abstract class Bonus : MonoBehaviour
 {
     [SerializeField]
-    private float  _fallSpeed = 2.5f;
+    private float  _fallSpeed = 1.5f;
 
-    public static event Action<Bonus> OnBonusDestroy;
+    private Action<Bonus> _destroyBonusCallback;
 
     private Rigidbody2D _rigidbody;
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
-    }
-
-    void Update()
-    {
         _rigidbody.velocity = Vector2.down * _fallSpeed;
     }
 
@@ -25,17 +21,26 @@ public abstract class Bonus : MonoBehaviour
     {
         if (col.gameObject.CompareTag("Platform"))
         {
+            AudioManager.PlaySFX(SFXType.BonusCatched);
             ApplyEffect();
         }
 
         if (col.gameObject.CompareTag("Platform") || col.gameObject.CompareTag("DeadZone"))
         {
+            DestroyCallback();
             Destroy(gameObject);
-            OnBonusDestroy?.Invoke(this);
         }
     }
 
-    
+    public void SetDestroyCallback(Action<Bonus> destroyBonusCallBack)
+    {
+        _destroyBonusCallback = destroyBonusCallBack;
+    }
+
+    private void DestroyCallback()
+    {
+        _destroyBonusCallback?.Invoke(this);
+    }
 
     protected abstract void ApplyEffect();
 }

@@ -35,8 +35,6 @@ public class BonusManager : MonoBehaviour
         GameEvents.OnBrickDestructed += OnBrickDistructed;
         GameEvents.OnResetGameState += ResetState;
         GameEvents.OnAllBallsWasted += ResetState;
-        // todo change
-        Bonus.OnBonusDestroy += OnBonusDestroy;
     }
 
     void OnDestroy()
@@ -44,11 +42,11 @@ public class BonusManager : MonoBehaviour
         GameEvents.OnBrickDestructed -= OnBrickDistructed;
         GameEvents.OnResetGameState -= ResetState;
         GameEvents.OnAllBallsWasted -= ResetState;
-        Bonus.OnBonusDestroy -= OnBonusDestroy;
     }
 
     private void OnBrickDistructed(Brick brick)
     {
+        // если не прошло время кулдауна с последнего появления бонуса - игнорируем
         if (Time.time - _lastBonusSpawnTime < _minBonusPause)
         {
             return;
@@ -83,12 +81,13 @@ public class BonusManager : MonoBehaviour
                 _lastBonusSpawnTime = Time.time;
                 var newBonus = Instantiate(bonusPrefab, brick.transform.position, Quaternion.identity);
                 _displayingBonuses.Add(newBonus);
+                newBonus.SetDestroyCallback(OnBonusDestroy);
             }
 
         }
     }
 
-    public void ResetState()
+    private void ResetState()
     {
         if (_displayingBonuses != null)
         {
@@ -110,19 +109,18 @@ public class BonusManager : MonoBehaviour
 
     private Bonus SelectBuffPrefab()
     {
-        return selectBonusPrefab(_availableBuffs);
+        return SelectBonusPrefab(_availableBuffs);
     }
 
     private Bonus SelectDebuffPrefab()
     {
 
-        return selectBonusPrefab(_availableDebuffs);
+        return SelectBonusPrefab(_availableDebuffs);
     }
 
-    private Bonus selectBonusPrefab(List<Bonus> bonusesList)
+    private Bonus SelectBonusPrefab(List<Bonus> bonusesList)
     { 
-        int index = UnityEngine.Random.Range(0, bonusesList.Count);
-        return bonusesList[index];
+        return bonusesList[Random.Range(0, bonusesList.Count)];
     }
 }
 

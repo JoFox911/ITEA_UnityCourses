@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
-    private static AudioManager _instance;
-
     [SerializeField] 
     private AudioMixer _mixer;
 
@@ -25,12 +22,22 @@ public class AudioManager : MonoBehaviour
     private const string MusicVolumeParameter = "MusicVolume";
     private const string SFXVolumeParameter = "SFXVolume";
 
+
+    private static AudioManager _instance;
+
     void Awake()
     {
         _instance = this;
         GameEvents.OnMasterVolumeChanged += ApplyMasterVolume;
         GameEvents.OnMusicVolumeChanged += ApplyMusicVolume;
         GameEvents.OnSFXVolumeChanged += ApplySFXVolume;
+    }
+    void Start()
+    {
+        // в Awake не работает
+        ApplyMasterVolume();
+        ApplyMusicVolume();
+        ApplySFXVolume();
     }
 
     void OnDestroy()
@@ -40,11 +47,19 @@ public class AudioManager : MonoBehaviour
         GameEvents.OnSFXVolumeChanged -= ApplySFXVolume;
     }
 
-    void Start()
+    public static void PlayMusic(MusicType type)
     {
-        ApplyMasterVolume();
-        ApplyMusicVolume();
-        ApplySFXVolume();
+        _instance.PlayMusicInner(type);
+    }
+
+    public static void PlaySFX(SFXType type)
+    {
+        _instance.PlaySFXInner(type);
+    }
+
+    public static void StopMusic()
+    {
+        _instance.StopMusicInner();
     }
 
     private void ApplyMasterVolume()
@@ -85,21 +100,6 @@ public class AudioManager : MonoBehaviour
         var sfxData = _sfxDataList.Find(sound => sound.Type == type);
         _sfxSource.PlayOneShot(sfxData.Clip);
     }
-
-    public static void PlayMusic(MusicType type)
-    {
-        _instance.PlayMusicInner(type);
-    }
-
-    public static void PlaySFX(SFXType type)
-    {
-        _instance.PlaySFXInner(type);
-    }
-
-    public static void StopMusic()
-    {
-        _instance.StopMusicInner();
-    }
 }
 
 
@@ -112,7 +112,8 @@ public enum SFXType
     GameOver,
     Bullet,
     BallWasted,
-    EnemyKilled
+    EnemyKilled,
+    BonusCatched
 }
 
 [Serializable]

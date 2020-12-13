@@ -36,7 +36,7 @@ public class BricksManager : MonoBehaviour
     private void GenerateLevelBricks(int[,] levelMap, int maxRows, int maxCols)
     {
         _remainingBricks = new List<Brick>();
-        var bricksOffset = 0.01f;
+        var bricksOffset = .01f;
 
         float brickSpawnPositionX, brickSpawnPositionY;
         brickSpawnPositionY = _initialBricksSpawnPossition.y;

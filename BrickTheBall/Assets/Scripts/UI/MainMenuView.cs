@@ -2,7 +2,6 @@
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-//todo refactoring
 public class MainMenuView : MonoBehaviour
 {
     [SerializeField]
@@ -22,10 +21,41 @@ public class MainMenuView : MonoBehaviour
 
     void Awake()
     {
-        _newGameBtn.onClick.AddListener(NewGameClicked);
-        _continueGameBtn.onClick.AddListener(ContinueGameClicked);
-        _exitGameBtn.onClick.AddListener(ExitGameClicked);
-        _settingsBtn.onClick.AddListener(OpenSettings);
+        if (_newGameBtn != null)
+        {
+            _newGameBtn.onClick.AddListener(NewGameClicked);
+        }
+        else
+        {
+            CommonWarnings.ObjectNotAssignedWarning("ТewGameBtn");
+        }
+
+        if (_continueGameBtn != null)
+        {
+            _continueGameBtn.onClick.AddListener(ContinueGameClicked);
+        }
+        else
+        {
+            CommonWarnings.ObjectNotAssignedWarning("СontinueGameBtn");
+        }
+
+        if (_exitGameBtn != null)
+        {
+            _exitGameBtn.onClick.AddListener(ExitGameClicked);
+        }
+        else
+        {
+            CommonWarnings.ObjectNotAssignedWarning("ExitGameBtn");
+        }
+
+        if (_settingsBtn != null)
+        {
+            _settingsBtn.onClick.AddListener(OpenSettings);
+        }
+        else
+        {
+            CommonWarnings.ObjectNotAssignedWarning("SettingsBtn");
+        }
 
         var isContinuePossible = PlayerPrefs.HasKey("CurrentLevel") &&
                                 PlayerPrefs.HasKey("CurrentLives") &&
@@ -41,6 +71,11 @@ public class MainMenuView : MonoBehaviour
 
     }
 
+    void Start()
+    {
+        AudioManager.PlayMusic(MusicType.InMenu);
+    }
+
     private void NewGameClicked()
     {
         RemoveSavedGameProgress();
@@ -49,6 +84,7 @@ public class MainMenuView : MonoBehaviour
 
     private void ContinueGameClicked()
     {
+        // менеджер игры увидит что есть сохранение и запустит игру с теми данными
         SceneManager.LoadScene("Game");
     }
 
@@ -59,11 +95,20 @@ public class MainMenuView : MonoBehaviour
 
     private void OpenSettings()
     {
-        _settingsScreen.SetActive(true);
+        if (_settingsScreen != null)
+        {
+            _settingsScreen.SetActive(true);
+        }
+        else
+        {
+            CommonWarnings.ObjectNotAssignedWarning("SettingsScreen");
+        }
     }
 
     private void RemoveSavedGameProgress()
     {
+        // удаляем весь сохраненный прогресс уровня, 
+        // количества жизней и текущего результата
         PlayerPrefs.DeleteKey("CurrentLevel");
         PlayerPrefs.DeleteKey("CurrentLives");
         PlayerPrefs.DeleteKey("CurrentScore");

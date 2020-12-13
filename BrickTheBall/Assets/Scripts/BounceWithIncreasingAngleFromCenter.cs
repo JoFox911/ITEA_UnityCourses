@@ -6,6 +6,9 @@ public class BounceWithIncreasingAngleFromCenter : MonoBehaviour
 {
     private Collider2D _collider;
 
+    private float _newDirX;
+    private float _newDirY;
+
     void Awake()
     {
         _collider = GetComponent<Collider2D>();
@@ -13,25 +16,23 @@ public class BounceWithIncreasingAngleFromCenter : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        //Debug.Log("collision platform and " + col.gameObject.tag);
-
-        if (GameManager.IsGameStarted() && col.gameObject.tag == "Ball")
+        if (GameManager.IsGameStarted() && col.gameObject.CompareTag("Ball"))
         {
             AudioManager.PlaySFX(SFXType.BallAndPlatformCollision);
 
             Ball ball = col.gameObject.GetComponent<Ball>();
 
-            float x = FactorHorizontal(col.transform.position,
+            _newDirX = FactorHorizontal(col.transform.position,
                                 transform.position,
                                 _collider.bounds.size.x);
 
-            float y = VerticalFactor(col.transform.position,
+            _newDirY = VerticalFactor(col.transform.position,
                                 transform.position,
                                 _collider.bounds.size.y);
 
 
             // Calculate direction, set length to 1
-            ball.SetDirection(new Vector2(x, y).normalized);
+            ball.SetDirection(new Vector2(_newDirX, _newDirY).normalized);
         }
     }
 

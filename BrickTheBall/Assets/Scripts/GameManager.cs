@@ -21,8 +21,8 @@ public class GameManager : MonoBehaviour
 
         _gameController = new GameController(_initialLives, _initialLevel, _maxLives);
 
-        GameEvents.OnNewGameClickedEvent += StartNewGame;
-        GameEvents.OnRestartGameClicked += StartNewGame;
+        GameEvents.OnNewGame += StartNewGame;
+        GameEvents.OnRestartGame += StartNewGame;
         
         GameEvents.OnGamePaused += PauseGame;
         GameEvents.OnGameUnpaused += UnpauseGame;
@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
 
         GameEvents.OnAllBallsWasted += OnAllBallsWasted;
         GameEvents.OnAllBricksDestroyed += OnAllBricksDestroyed;
-        GameEvents.OnExtraLiveСatch += OnExtraLiveСatch;
+        GameEvents.OnExtraLiveСatched += OnExtraLiveСatch;
     }
 
     void Start()
@@ -55,8 +55,8 @@ public class GameManager : MonoBehaviour
 
     void OnDestroy()
     {
-        GameEvents.OnNewGameClickedEvent -= StartNewGame;
-        GameEvents.OnRestartGameClicked -= StartNewGame;
+        GameEvents.OnNewGame -= StartNewGame;
+        GameEvents.OnRestartGame -= StartNewGame;
 
         GameEvents.OnGamePaused -= PauseGame;
         GameEvents.OnGameUnpaused -= UnpauseGame;
@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
 
         GameEvents.OnAllBallsWasted -= OnAllBallsWasted;
         GameEvents.OnAllBricksDestroyed -= OnAllBricksDestroyed;
-        GameEvents.OnExtraLiveСatch -= OnExtraLiveСatch;
+        GameEvents.OnExtraLiveСatched -= OnExtraLiveСatch;
     }
 
 

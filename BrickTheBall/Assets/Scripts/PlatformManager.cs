@@ -32,21 +32,21 @@ public class PlatformManager : MonoBehaviour
 
         GameEvents.OnResetGameState += ResetState;
         GameEvents.OnAllBallsWasted += ResetState;
-        GameEvents.OnChangePlatformWithCatchEvent += OnChangePlatformWithCatch;
-        GameEvents.OnShootingPlatformСatch += OnShootingPlatformСatch;
-        GameEvents.OnMultiBallСatch -= OnMultiBallСatch;
+        GameEvents.OnChangePlatformWidthCatched += OnChangePlatformWithCatch;
+        GameEvents.OnShootingPlatformСatched += OnShootingPlatformСatch;
+        GameEvents.OnMultiBallСatched -= OnMultiBallСatch;
     }
 
     void OnDestroy()
     {
         GameEvents.OnResetGameState -= ResetState;
         GameEvents.OnAllBallsWasted -= ResetState;
-        GameEvents.OnChangePlatformWithCatchEvent -= OnChangePlatformWithCatch;
-        GameEvents.OnShootingPlatformСatch -= OnShootingPlatformСatch;
-        GameEvents.OnMultiBallСatch -= OnMultiBallСatch;
+        GameEvents.OnChangePlatformWidthCatched -= OnChangePlatformWithCatch;
+        GameEvents.OnShootingPlatformСatched -= OnShootingPlatformСatch;
+        GameEvents.OnMultiBallСatched -= OnMultiBallСatch;
     }
 
-    public void ResetState()
+    private void ResetState()
     {
         StopPlatformCoroutines();
 
@@ -64,6 +64,51 @@ public class PlatformManager : MonoBehaviour
 
         SetDefaultPlatformView();
         transform.position = _initialPossition;
+    }
+
+    
+
+    private IEnumerator ChangeWidth(float newWidth)
+    {
+        if (newWidth > _spriteRenderer.size.x)
+        {
+            var currentWidth = _spriteRenderer.size.x;
+            while (currentWidth < newWidth)
+            {
+                currentWidth += Time.deltaTime * 2;
+                _spriteRenderer.size = new Vector2(currentWidth, _initialHeigth);
+                yield return null;
+            }
+        }
+        else
+        {
+            var currentWidth = _spriteRenderer.size.x;
+            while (currentWidth > newWidth)
+            {
+                currentWidth -= Time.deltaTime * 2;
+                _spriteRenderer.size = new Vector2(currentWidth, _initialHeigth);
+                yield return null;
+            }
+        }
+    }
+
+    public IEnumerator StartShooting(float duration, float fireCooldown)
+    {
+        float shootingDurationLeft = duration;
+        float fireCooldownLeft = 0;
+        while (shootingDurationLeft >= 0)
+        {
+            fireCooldownLeft -= Time.deltaTime;
+            shootingDurationLeft -= Time.deltaTime;
+
+            if (fireCooldownLeft <= 0)
+            {
+                Shoot();
+                fireCooldownLeft = fireCooldown;
+            }
+
+            yield return null;
+        }
     }
 
     private void OnMultiBallСatch(int ballsNum)
@@ -113,49 +158,6 @@ public class PlatformManager : MonoBehaviour
         if (_changeSizeCoroutine != null)
         {
             StopCoroutine(_changeSizeCoroutine);
-        }
-    }
-
-    public IEnumerator ChangeWidth(float newWidth)
-    {
-        if (newWidth > _spriteRenderer.size.x)
-        {
-            var currentWidth = _spriteRenderer.size.x;
-            while (currentWidth < newWidth)
-            {
-                currentWidth += Time.deltaTime * 2;
-                _spriteRenderer.size = new Vector2(currentWidth, _initialHeigth);
-                yield return null;
-            }
-        }
-        else
-        {
-            var currentWidth = _spriteRenderer.size.x;
-            while (currentWidth > newWidth)
-            {
-                currentWidth -= Time.deltaTime * 2;
-                _spriteRenderer.size = new Vector2(currentWidth, _initialHeigth);
-                yield return null;
-            }
-        }
-    }
-
-    public IEnumerator StartShooting(float duration, float fireCooldown)
-    {
-        float shootingDurationLeft = duration;
-        float fireCooldownLeft = 0;
-        while (shootingDurationLeft >= 0)
-        {
-            fireCooldownLeft -= Time.deltaTime;
-            shootingDurationLeft -= Time.deltaTime;
-
-            if (fireCooldownLeft <= 0)
-            {
-                Shoot();
-                fireCooldownLeft = fireCooldown;
-            }
-
-            yield return null;
         }
     }
 

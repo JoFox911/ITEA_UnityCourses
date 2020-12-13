@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Ball : MonoBehaviour, IDestroyableOnCollisionWithDeadZone
 {
-    public static event Action<Ball> OnBallDestroy;
+    private Action<Ball> _destroyBallCallback;
 
     private float _speed = 7.0f;
     private Rigidbody2D _rigidbody;
@@ -17,7 +17,7 @@ public class Ball : MonoBehaviour, IDestroyableOnCollisionWithDeadZone
     public void StartMoving(float initialSpeed, Vector2 direction)
     {
         _speed = initialSpeed;
-        _rigidbody.velocity = direction * _speed;
+        _rigidbody.velocity = direction.normalized * _speed;
     }
 
 
@@ -28,7 +28,7 @@ public class Ball : MonoBehaviour, IDestroyableOnCollisionWithDeadZone
 
     public void DestroyBall()
     {
-        OnBallDestroy?.Invoke(this);
+        DestroyCallback();
         Destroy(gameObject);
     }
 
@@ -40,5 +40,15 @@ public class Ball : MonoBehaviour, IDestroyableOnCollisionWithDeadZone
     public void DestroyOnCollisionWithDeadZone()
     {
         DestroyBall();
+    }
+
+    public void SetDestroyCallback(Action<Ball> destroyBallCallback)
+    {
+        _destroyBallCallback = destroyBallCallback;
+    }
+
+    private void DestroyCallback()
+    {
+        _destroyBallCallback?.Invoke(this);
     }
 }

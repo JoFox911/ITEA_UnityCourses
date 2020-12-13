@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class ExtraLive: Bonus
+﻿public class ExtraLive: Bonus
 {
     protected override void ApplyEffect()
     {

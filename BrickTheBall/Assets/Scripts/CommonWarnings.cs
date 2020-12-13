@@ -4,6 +4,6 @@ public static class CommonWarnings
 {
     public static void ObjectNotAssignedWarning(string objName)
     {
-        Debug.Log($"{objName} not assigned");
+        Debug.LogWarning($"{objName} not assigned");
     }
 }

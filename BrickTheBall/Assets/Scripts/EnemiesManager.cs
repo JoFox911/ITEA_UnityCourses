@@ -13,11 +13,11 @@ public class EnemiesManager : MonoBehaviour
     [SerializeField]
     private Vector3 _rightPossition;
 
+    public static bool _autoSpawnEnemies;
+
     private List<Enemy> _displayingEnemies;
 
-    private IEnumerator _generateEnemiesCoroutine;
-
-    public static bool _autoSpawnEnemies;
+    private IEnumerator _generateEnemiesCoroutine;    
 
     private static EnemiesManager _instance;
 

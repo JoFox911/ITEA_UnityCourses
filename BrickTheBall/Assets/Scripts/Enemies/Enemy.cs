@@ -11,7 +11,7 @@ public abstract class Enemy : MonoBehaviour, IDestroyableOnCollisionWithDeadZone
     [SerializeField]
     private float _speed = 2.0f;
 
-    private static event Action<Enemy> _destroyEnemyCallBack;
+    private Action<Enemy> _destroyEnemyCallBack;
 
     private Rigidbody2D _rigidbody;
 
@@ -26,18 +26,14 @@ public abstract class Enemy : MonoBehaviour, IDestroyableOnCollisionWithDeadZone
         ChangeDirectionWithTimeout();
     }
 
-
     void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.CompareTag("Ball"))
+        if (col.gameObject.CompareTag("Ball") || col.gameObject.CompareTag("Bullet") || col.gameObject.CompareTag("Platform"))
         {
-            GameEvents.EnemyDestroyedEvent(_points);
-            ApplyEnemyEffect(col);
-            AudioManager.PlaySFX(SFXType.EnemyKilled);
-            DestroyEnemy();
-        }
-        if (col.gameObject.CompareTag("Bullet") || col.gameObject.CompareTag("Platform"))
-        {
+            if (col.gameObject.CompareTag("Ball"))
+            {
+                ApplyEnemyEffect(col);
+            }
             GameEvents.EnemyDestroyedEvent(_points);
             AudioManager.PlaySFX(SFXType.EnemyKilled);
             DestroyEnemy();
@@ -47,11 +43,6 @@ public abstract class Enemy : MonoBehaviour, IDestroyableOnCollisionWithDeadZone
             // отбиваемся от объекта
             _rigidbody.velocity = (col.contacts[0].normal).normalized * _speed;
         }
-    }
-
-    private Vector2 GenerateRandomDirication()
-    {
-        return new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)).normalized;
     }
 
     public void DestroyOnCollisionWithDeadZone()
@@ -74,6 +65,12 @@ public abstract class Enemy : MonoBehaviour, IDestroyableOnCollisionWithDeadZone
     {
         _destroyEnemyCallBack?.Invoke(this);
     }
+
+    private Vector2 GenerateRandomDirication()
+    {
+        return new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
+    }
+
     private void ChangeDirectionWithTimeout()
     {
         StartCoroutine(ChangeDirectionWithDelay(2f));
@@ -83,12 +80,12 @@ public abstract class Enemy : MonoBehaviour, IDestroyableOnCollisionWithDeadZone
     {
         yield return new WaitForSeconds(delay);
         SetRandomDirection();
-        StartCoroutine(ChangeDirectionWithDelay(UnityEngine.Random.Range(0.2f, 3f)));
+        StartCoroutine(ChangeDirectionWithDelay(UnityEngine.Random.Range(.2f, 3f)));
     }
 
     private void SetRandomDirection()
     {
-        _rigidbody.velocity = GenerateRandomDirication() * _speed;
+        _rigidbody.velocity = GenerateRandomDirication().normalized * _speed;
     }
 
     protected abstract void ApplyEnemyEffect(Collision2D col);
