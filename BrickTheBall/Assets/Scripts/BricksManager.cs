@@ -37,6 +37,7 @@ public class BricksManager : MonoBehaviour
     {
         _remainingBricks = new List<Brick>();
         var bricksOffset = .01f;
+        var isEnemiesGeneratorExists = false;
 
         float brickSpawnPositionX, brickSpawnPositionY;
         brickSpawnPositionY = _initialBricksSpawnPossition.y;
@@ -53,6 +54,7 @@ public class BricksManager : MonoBehaviour
                 {
                     var brickType = (BrickType)levelMap[row, col];
                     var brickData = BricksConfiguration.BrickDataByType(brickType);
+                    isEnemiesGeneratorExists = isEnemiesGeneratorExists || brickData.IsEnemyGenerator;
                     columnWidth = columnWidth < brickData.SizeX ? brickData.SizeX : columnWidth;
                     rowWidth = rowWidth < brickData.SizeY ? brickData.SizeY : rowWidth;
 
@@ -64,6 +66,10 @@ public class BricksManager : MonoBehaviour
             }
             brickSpawnPositionY -= rowWidth + bricksOffset;
         }
+
+        // если на уровне нет блоков которые генерируют врагов,
+        // то менеджер врагов будет генерировать их сам 
+        EnemiesManager.SetIsAutoSpawnEnemies(!isEnemiesGeneratorExists);
     }
 
     private void OnBrickDestruction(Brick brick)

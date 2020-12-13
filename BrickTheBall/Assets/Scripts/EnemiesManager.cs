@@ -25,7 +25,7 @@ public class EnemiesManager : MonoBehaviour
     {
         _instance = this;
 
-        _autoSpawnEnemies = true;
+        SetIsAutoSpawnEnemies(false);
         _displayingEnemies = new List<Enemy>();
 
         GameEvents.OnChangeLevel += OnChangeLevel;

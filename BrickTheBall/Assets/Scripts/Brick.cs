@@ -69,7 +69,6 @@ public class Brick : MonoBehaviour
         // то мы выключаем авто-генерацию врагов в менеджере врагов
         if (_isEnemyGenerator)
         {
-            EnemiesManager.SetIsAutoSpawnEnemies(false);
             GenerateEnemy();
         }
     }
