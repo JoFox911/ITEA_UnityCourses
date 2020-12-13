@@ -41,6 +41,8 @@ public static class GameEvents
 
     public static event Action<int> OnEnemyDestroyed;
 
+    public static event Action OnShowInfoScreen;    
+
     // Audio
     public static event Action OnMasterVolumeChanged;
 
@@ -146,6 +148,10 @@ public static class GameEvents
     public static void EnemyDestroyedEvent(int points)
     {
         OnEnemyDestroyed?.Invoke(points);
+    }
+    public static void ShowInfoScreenEvent()
+    {
+        OnShowInfoScreen?.Invoke();
     }
 
     // Audio

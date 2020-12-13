@@ -36,11 +36,21 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        UnpauseGame();
         GameEvents.ResetGameStateEvent();
         _gameController.SetIsGameStarted(false);
         _gameController.SetLives(_initialLives);
         _gameController.SetLevel(_gameController.CurrentLevel);
+
+        // если мы начинаем новую игру, из меню (не продолжаем и не кнопкой еще раз) то показываем инфо скрин
+        if (_gameController.CurrentLevel == 0)
+        {
+            GameEvents.ShowInfoScreenEvent();
+            PauseGame();
+        }
+        else
+        {
+            UnpauseGame();
+        }
     }
 
     void OnDestroy()

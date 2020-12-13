@@ -15,8 +15,17 @@ public class EnemiesManager : MonoBehaviour
 
     private List<Enemy> _displayingEnemies;
 
+    private IEnumerator _generateEnemiesCoroutine;
+
+    public static bool _autoSpawnEnemies;
+
+    private static EnemiesManager _instance;
+
     void Awake()
     {
+        _instance = this;
+
+        _autoSpawnEnemies = true;
         _displayingEnemies = new List<Enemy>();
 
         GameEvents.OnChangeLevel += OnChangeLevel;
@@ -30,12 +39,15 @@ public class EnemiesManager : MonoBehaviour
     public void OnChangeLevel(int level)
     {
         ResetState();
-        GenerateEnemy(_leftPossition);
-        GenerateEnemy(_rightPossition);
+        GenerateEnemies();
     }
 
     public void ResetState()
     {
+        if (_generateEnemiesCoroutine != null)
+        { 
+            StopCoroutine(_generateEnemiesCoroutine);
+        }
         if (_displayingEnemies != null)
         {
             foreach (var enemy in _displayingEnemies)
@@ -49,7 +61,17 @@ public class EnemiesManager : MonoBehaviour
         _displayingEnemies = new List<Enemy>();
     }
 
-    public void GenerateEnemy(Vector3 position)
+    public static void SetIsAutoSpawnEnemies(bool value)
+    {
+        _autoSpawnEnemies = value;
+    }
+
+    public static void GenerateEnemy(Vector3 position)
+    {
+        _instance.GenerateEnemyInner(position);
+    }
+
+    private void GenerateEnemyInner(Vector3 position)
     {
         var enemyPrefab = _availableEnemies[Random.Range(0, _availableEnemies.Count)];
 
@@ -58,20 +80,30 @@ public class EnemiesManager : MonoBehaviour
         _displayingEnemies.Add(newEnemy);
     }
 
+    private void GenerateEnemies()
+    {
+        if (_autoSpawnEnemies)
+        {
+            GenerateEnemy(new Vector2(Random.Range(_leftPossition.x, _rightPossition.x), _leftPossition.y));
+            GenerateEnemy(new Vector2(Random.Range(_leftPossition.x, _rightPossition.x), _leftPossition.y));
+        }
+    }
+
+
     private void OnEnemyDestroy(Enemy enemy)
     {
         _displayingEnemies.Remove(enemy);
 
         if (_displayingEnemies.Count <= 0)
         {
-            StartCoroutine(GenerateNewEnemies(1.5f));
+            _generateEnemiesCoroutine = GenerateNewEnemies(Random.Range(1, 3));
+            StartCoroutine(_generateEnemiesCoroutine);
         }
     }
 
     IEnumerator GenerateNewEnemies(float delay)
     {
         yield return new WaitForSeconds(delay);
-        GenerateEnemy(_leftPossition);
-        GenerateEnemy(_rightPossition);
+        GenerateEnemies();
     }
 }

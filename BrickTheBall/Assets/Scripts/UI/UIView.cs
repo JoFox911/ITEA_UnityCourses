@@ -14,10 +14,14 @@ public class UIView : MonoBehaviour
 	[SerializeField]
 	private GameObject _gameOverScreen;
 
+	[SerializeField]
+	private GameObject _infoScreen;
+
 	void Awake()
 	{
 		GameEvents.OnGameFinished += OnGameFinished;
 		GameEvents.OnGameOver += OnGameOver;
+		GameEvents.OnShowInfoScreen += ShowInfoScreen;
 	}
 
 	void Update()
@@ -33,6 +37,7 @@ public class UIView : MonoBehaviour
 	{
 		GameEvents.OnGameFinished -= OnGameFinished;
 		GameEvents.OnGameOver -= OnGameOver;
+		GameEvents.OnShowInfoScreen -= ShowInfoScreen;
 	}
 
 
@@ -132,6 +137,19 @@ public class UIView : MonoBehaviour
 		else
 		{
 			CommonWarnings.ObjectNotAssignedWarning("SettinsScreen");
+		}
+		
+	}
+
+	private void ShowInfoScreen()
+	{
+		if (_infoScreen != null)
+		{
+			_infoScreen.SetActive(true);
+		}
+		else
+		{
+			CommonWarnings.ObjectNotAssignedWarning("InfoScreen");
 		}
 		
 	}

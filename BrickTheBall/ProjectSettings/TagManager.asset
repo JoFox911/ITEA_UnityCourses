@@ -52,14 +52,14 @@ TagManager:
   - name: Borders
     uniqueID: 1528519587
     locked: 0
-  - name: Ball
-    uniqueID: 209932995
-    locked: 0
   - name: Brick
     uniqueID: 178875551
     locked: 0
   - name: Bonus
     uniqueID: 3080784113
+    locked: 0
+  - name: Ball
+    uniqueID: 209932995
     locked: 0
   - name: HUD
     uniqueID: 482661195

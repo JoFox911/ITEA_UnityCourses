@@ -23,7 +23,7 @@ public class Ball : MonoBehaviour, IDestroyableOnCollisionWithDeadZone
 
     public void SetDirection(Vector2 direction)
     {
-        _rigidbody.velocity = direction * _speed;
+        _rigidbody.velocity = direction.normalized * _speed;
     }
 
     public void DestroyBall()

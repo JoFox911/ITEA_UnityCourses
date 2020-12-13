@@ -59,4 +59,5 @@ public class BrickData
 
     public float SizeX = 0.8f;
     public float SizeY = 0.4f;
+    public bool IsEnemyGenerator = false;
 }

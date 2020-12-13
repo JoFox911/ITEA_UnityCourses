@@ -66,6 +66,8 @@ public class BallsManager : MonoBehaviour
         Balls.Remove(ball);
         if (Balls.Count <= 0)
         {
+
+            AudioManager.PlaySFX(SFXType.BallWasted);
             GameEvents.AllBallsWastedEvent();
             ResetState();
         }

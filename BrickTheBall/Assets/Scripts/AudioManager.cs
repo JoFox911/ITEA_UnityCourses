@@ -110,7 +110,9 @@ public enum SFXType
     BallAnImmortaldBrickCollision,
     LevelStart,
     GameOver,
-    Bullet
+    Bullet,
+    BallWasted,
+    EnemyKilled
 }
 
 [Serializable]

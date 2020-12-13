@@ -738,6 +738,31 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1394309867}
     m_Modifications:
+    - target: {fileID: 291373574476989793, guid: 677b25bbc231b704a9868485f90018eb,
+        type: 3}
+      propertyPath: m_fontColor.r
+      value: 0.019607844
+      objectReference: {fileID: 0}
+    - target: {fileID: 291373574476989793, guid: 677b25bbc231b704a9868485f90018eb,
+        type: 3}
+      propertyPath: m_fontColor.g
+      value: 0.7607843
+      objectReference: {fileID: 0}
+    - target: {fileID: 291373574476989793, guid: 677b25bbc231b704a9868485f90018eb,
+        type: 3}
+      propertyPath: m_fontColor.b
+      value: 0.83137256
+      objectReference: {fileID: 0}
+    - target: {fileID: 291373574476989793, guid: 677b25bbc231b704a9868485f90018eb,
+        type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4292133381
+      objectReference: {fileID: 0}
+    - target: {fileID: 291373574476989793, guid: 677b25bbc231b704a9868485f90018eb,
+        type: 3}
+      propertyPath: m_text
+      value: Space  Bricks
+      objectReference: {fileID: 0}
     - target: {fileID: 1365722413912209192, guid: 677b25bbc231b704a9868485f90018eb,
         type: 3}
       propertyPath: m_IsActive
@@ -856,7 +881,7 @@ PrefabInstance:
     - target: {fileID: 7688031872599593617, guid: 677b25bbc231b704a9868485f90018eb,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 677b25bbc231b704a9868485f90018eb, type: 3}

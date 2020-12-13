@@ -32,75 +32,22 @@ public abstract class Enemy : MonoBehaviour, IDestroyableOnCollisionWithDeadZone
         if (col.gameObject.CompareTag("Ball"))
         {
             GameEvents.EnemyDestroyedEvent(_points);
-            ApplyEnemyEffect();
+            ApplyEnemyEffect(col);
+            AudioManager.PlaySFX(SFXType.EnemyKilled);
             DestroyEnemy();
         }
         if (col.gameObject.CompareTag("Bullet") || col.gameObject.CompareTag("Platform"))
         {
             GameEvents.EnemyDestroyedEvent(_points);
+            AudioManager.PlaySFX(SFXType.EnemyKilled);
             DestroyEnemy();
         }
         else
         {
             // отбиваемся от объекта
             _rigidbody.velocity = (col.contacts[0].normal).normalized * _speed;
-            
-
-            ////todo в корутину?
-            //var newDirection = (col.contacts[0].normal + new Vector2(UnityEngine.Random.Range(-2f, 2f), UnityEngine.Random.Range(-2f, 2f)));
-
-            //for (int i = 0; i < 50; i++)
-            //{
-            //    if (IsDetectedCollisionInThisDerection(newDirection))
-            //    {
-            //        newDirection += new Vector2(UnityEngine.Random.Range(-2f, 2f), UnityEngine.Random.Range(-2f, 2f));
-            //    }
-            //    else
-            //    {
-            //        break;
-            //    }
-            //}
-            //_rigidbody.velocity = newDirection.normalized * _speed;
         }
     }
-
-    //private bool IsDetectedCollisionInThisDerection(Vector2 derection)
-    //{
-    //    // Cast a ray straight to the new direction.
-    //    RaycastHit2D hit = Physics2D.Raycast(transform.position, derection);
-
-    //    // If it hits something...
-    //    if (hit.collider != null)
-    //    {
-    //        // Calculate the distance from the surface
-    //        float distance = Mathf.Abs(hit.point.y - transform.position.y);
-    //        Debug.Log("distance " + distance);
-    //        return distance < 0.5f;
-    //    }
-    //    else
-    //    {
-    //        return false;
-    //    }
-    //}
-
-    public void ChangeDirectionWithTimeout()
-    {
-        StartCoroutine(ChangeDirectionWithDelay(2f));
-    }
-
-    
-    IEnumerator ChangeDirectionWithDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        SetRandomDirection();
-        StartCoroutine(ChangeDirectionWithDelay(UnityEngine.Random.Range(0.2f, 3f)));
-    }
-
-    public void SetRandomDirection()
-    {
-        _rigidbody.velocity = GenerateRandomDirication() * _speed;
-    }
-
 
     private Vector2 GenerateRandomDirication()
     {
@@ -112,21 +59,37 @@ public abstract class Enemy : MonoBehaviour, IDestroyableOnCollisionWithDeadZone
         DestroyEnemy();
     }
 
-    public void DestroyEnemy()
-    {
-        DestroyCallback();
-        Destroy(gameObject);
-    }
-
     public void SetDestroyCallback(Action<Enemy> destroyEnemyCallBack)
     {
         _destroyEnemyCallBack = destroyEnemyCallBack;
     }
 
-    public void DestroyCallback()
+    private void DestroyEnemy()
+    {
+        DestroyCallback();
+        Destroy(gameObject);
+    }
+
+    private void DestroyCallback()
     {
         _destroyEnemyCallBack?.Invoke(this);
     }
+    private void ChangeDirectionWithTimeout()
+    {
+        StartCoroutine(ChangeDirectionWithDelay(2f));
+    }
 
-    protected abstract void ApplyEnemyEffect();
+    IEnumerator ChangeDirectionWithDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SetRandomDirection();
+        StartCoroutine(ChangeDirectionWithDelay(UnityEngine.Random.Range(0.2f, 3f)));
+    }
+
+    private void SetRandomDirection()
+    {
+        _rigidbody.velocity = GenerateRandomDirication() * _speed;
+    }
+
+    protected abstract void ApplyEnemyEffect(Collision2D col);
 }
