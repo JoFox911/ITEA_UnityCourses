@@ -9,14 +9,14 @@ public class ScoreManager : MonoBehaviour
 
         GameEvents.OnBrickDestructed += AddScoreOnBrickDestructed;
         GameEvents.OnEnemyDestroyed += AddScoreOnEnemyDestroyed;
-        GameEvents.OnResetGameState += ResetState;
+        GameEvents.OnRestartGame += ResetState;
     }
 
     void OnDestroy()
     {
         GameEvents.OnBrickDestructed -= AddScoreOnBrickDestructed;
         GameEvents.OnEnemyDestroyed -= AddScoreOnEnemyDestroyed;
-        GameEvents.OnResetGameState -= ResetState;
+        GameEvents.OnRestartGame -= ResetState;
     }
 
     private void AddScoreOnBrickDestructed(Brick brick)
