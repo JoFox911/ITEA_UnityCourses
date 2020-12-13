@@ -39,6 +39,8 @@ public static class GameEvents
 
     public static event Action OnRestartGameClicked;
 
+    public static event Action<int> OnEnemyDestroyed;
+
     // Audio
     public static event Action OnMasterVolumeChanged;
 
@@ -139,6 +141,11 @@ public static class GameEvents
     public static void ExtraLiveCatchEvent()
     {
         OnExtraLiveСatch?.Invoke();
+    }
+
+    public static void EnemyDestroyedEvent(int points)
+    {
+        OnEnemyDestroyed?.Invoke(points);
     }
 
     // Audio

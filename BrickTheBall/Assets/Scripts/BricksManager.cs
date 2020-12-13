@@ -94,6 +94,7 @@ public class BricksManager : MonoBehaviour
                 Destroy(brick.gameObject);
             }
         }
+        _remainingBricks = new List<Brick>();
     }
 }
 

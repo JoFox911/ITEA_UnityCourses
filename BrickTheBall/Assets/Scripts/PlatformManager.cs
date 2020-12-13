@@ -54,7 +54,10 @@ public class PlatformManager : MonoBehaviour
         {
             foreach (var bullet in _remainingBullets)
             {
-                Destroy(bullet.gameObject);
+                if (bullet != null)
+                {
+                    Destroy(bullet.gameObject);
+                }
             }
         }
         _remainingBullets = new List<Bullet>();
@@ -170,6 +173,7 @@ public class PlatformManager : MonoBehaviour
     private void SpawnBullet(GameObject laser)
     {
         Bullet bullet = Instantiate(_bulletPrefab, laser.transform.position, Quaternion.identity);
+        AudioManager.PlaySFX(SFXType.Bullet);
         bullet.StartMoving();
         bullet.InitCallback(OnBulletDestroyHandler);
         _remainingBullets.Add(bullet);

@@ -112,11 +112,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
-  m_Name: ARCADECLASSIC SDF
+  m_Name: ARCADECLASSIC SDF 1
   m_EditorClassIdentifier: 
-  hashCode: 1989904485
+  hashCode: -1952499212
   material: {fileID: -7718284392598448420}
-  materialHashCode: 918798757
+  materialHashCode: 835046100
   m_Version: 1.1.0
   m_SourceFontFileGUID: c949f23c4de0c8449a27be4b8bf8c8c4
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: c949f23c4de0c8449a27be4b8bf8c8c4,

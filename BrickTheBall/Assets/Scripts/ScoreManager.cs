@@ -7,12 +7,14 @@ public class ScoreManager : MonoBehaviour
     {
         _scoreController = new ScoreController();
         GameEvents.OnBrickDestructed += AddScoreOnBrickDestructed;
+        GameEvents.OnEnemyDestroyed += AddScoreOnEnemyDestroyed;
         GameEvents.OnResetGameState += ResetState;
     }
 
     void OnDestroy()
     {
         GameEvents.OnBrickDestructed -= AddScoreOnBrickDestructed;
+        GameEvents.OnEnemyDestroyed -= AddScoreOnEnemyDestroyed;
         GameEvents.OnResetGameState -= ResetState;
     }
 
@@ -20,6 +22,13 @@ public class ScoreManager : MonoBehaviour
     {
         _scoreController.AddScore(brick.GetPoints());
     }
+
+    private void AddScoreOnEnemyDestroyed(int points)
+    {
+        _scoreController.AddScore(points);
+    }
+
+    
 
     public void ResetState()
     {

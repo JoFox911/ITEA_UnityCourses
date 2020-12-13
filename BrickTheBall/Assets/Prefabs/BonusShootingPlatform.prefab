@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: -1214183183
   m_SortingLayer: -2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 6033311595038576316, guid: 40149c89373e6c543a6ca9a2662b738b,
+  m_Sprite: {fileID: -1033530890795047046, guid: 436aa5da65c62c643bf1f56f7980a120,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -135,5 +135,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _fallSpeed: 2.5
-  _shootingDuration: 10
-  _fireCooldown: 0.5
+  _shootingDuration: 20
+  _fireCooldown: 0.4

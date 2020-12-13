@@ -8,6 +8,7 @@ TagManager:
   - DeadZone
   - Platform
   - Bullet
+  - Enemy
   layers:
   - Default
   - TransparentFX

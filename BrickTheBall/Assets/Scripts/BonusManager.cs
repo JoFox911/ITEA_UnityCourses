@@ -35,6 +35,7 @@ public class BonusManager : MonoBehaviour
         GameEvents.OnBrickDestructed += OnBrickDistructed;
         GameEvents.OnResetGameState += ResetState;
         GameEvents.OnAllBallsWasted += ResetState;
+        // todo change
         Bonus.OnBonusDestroy += OnBonusDestroy;
     }
 
@@ -53,10 +54,10 @@ public class BonusManager : MonoBehaviour
             return;
         }
 
-        float bonusSpawnChance = UnityEngine.Random.Range(0, 100f);
+        float bonusSpawnChance = Random.Range(0, 100f);
         if (bonusSpawnChance <= _bonusChance)
         {
-            float bonusTypeValue = UnityEngine.Random.Range(0, 100f);
+            float bonusTypeValue = Random.Range(0, 100f);
             Bonus bonusPrefab = null;
 
             // _buffsToDebuffsRatio - если рандомное меньше чем єто значение, то будет баф, если больше - дебаф
@@ -91,14 +92,15 @@ public class BonusManager : MonoBehaviour
     {
         if (_displayingBonuses != null)
         {
-            foreach (var Bonus in _displayingBonuses)
+            foreach (var bonus in _displayingBonuses)
             {
-                if (Bonus != null)
+                if (bonus != null)
                 {
-                    Destroy(Bonus.gameObject);
+                    Destroy(bonus.gameObject);
                 }
             }
         }
+        _displayingBonuses = new List<Bonus>();
     }
 
     private void OnBonusDestroy(Bonus bonus)

@@ -33,7 +33,8 @@ public class BallsManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space)) 
             {
                 GameManager.StartPlaying();
-                _initialBall.StartMoving(_initialBallSpeed, Vector2.up);
+                var direction = new Vector2(0.33f, 1);
+                _initialBall.StartMoving(_initialBallSpeed, direction.normalized);
             }
         }
     }
@@ -72,13 +73,18 @@ public class BallsManager : MonoBehaviour
 
     public void ResetState()
     {
+        // todo rename 
         if (Balls != null)
         {
-            foreach (var Ball in Balls.ToList())
+            foreach (var ball in Balls.ToList())
             {
-                Destroy(Ball.gameObject);
+                if (ball != null)
+                { 
+                    Destroy(ball.gameObject);
+                }
             }
         }
+        Balls = new List<Ball>();
 
         InitBall();
     }

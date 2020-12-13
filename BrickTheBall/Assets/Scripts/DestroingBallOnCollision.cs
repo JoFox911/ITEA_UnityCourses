@@ -4,10 +4,11 @@ public class DestroingBallOnCollision : MonoBehaviour
 {
     void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.tag == "Ball")
+        Debug.Log("OnCollisionEnter2D" + col.gameObject.tag);
+        var obj = col.gameObject.GetComponent<IDestroyableOnCollisionWithDeadZone>();
+        if (obj != null)
         {
-            Ball ball = col.gameObject.GetComponent<Ball>();
-            ball.Die();
+            obj.DestroyOnCollisionWithDeadZone();
         }
     }
 }

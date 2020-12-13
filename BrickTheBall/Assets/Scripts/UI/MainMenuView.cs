@@ -14,11 +14,18 @@ public class MainMenuView : MonoBehaviour
     [SerializeField]
     private Button _exitGameBtn;
 
+    [SerializeField]
+    private Button _settingsBtn;
+
+    [SerializeField]
+    private GameObject _settingsScreen;
+
     void Awake()
     {
         _newGameBtn.onClick.AddListener(NewGameClicked);
         _continueGameBtn.onClick.AddListener(ContinueGameClicked);
         _exitGameBtn.onClick.AddListener(ExitGameClicked);
+        _settingsBtn.onClick.AddListener(OpenSettings);
 
         var isContinuePossible = PlayerPrefs.HasKey("CurrentLevel") &&
                                 PlayerPrefs.HasKey("CurrentLives") &&
@@ -48,6 +55,11 @@ public class MainMenuView : MonoBehaviour
     private void ExitGameClicked()
     {
         Application.Quit();
+    }
+
+    private void OpenSettings()
+    {
+        _settingsScreen.SetActive(true);
     }
 
     private void RemoveSavedGameProgress()

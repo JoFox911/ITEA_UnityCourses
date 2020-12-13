@@ -67,7 +67,10 @@ public class AudioManager : MonoBehaviour
 
     private void StopMusicInner()
     {
-        _musicSource.Stop();
+        if (_musicSource != null)
+        { 
+            _musicSource.Stop();
+        }
     }
 
     private void PlayMusicInner(MusicType type)
@@ -106,7 +109,8 @@ public enum SFXType
     BallAndBrickCollision,
     BallAnImmortaldBrickCollision,
     LevelStart,
-    GameOver
+    GameOver,
+    Bullet
 }
 
 [Serializable]
