@@ -62,15 +62,20 @@ public class BallsManager : MonoBehaviour
 
     private void OnMultiBallСatch(int generatedBallsNumber)
     {
+        // copy of balls
+        var newBalls = new List<Ball>();
         foreach (var ball in _displayedBalls)
         {
             for (var i = 0; i < generatedBallsNumber; i++)
             {
                 var newBall = Instantiate(_ballPrefab, ball.transform.position, Quaternion.identity);
                 newBall.StartMoving(_initialBallSpeed, new Vector2(Random.Range(-.5f, .5f), ball.GetVelocity().y));
-                AddBallToDisplayedList(newBall);
+                newBall.SetDestroyCallback(OnBallDestroy);
+                newBalls.Add(newBall);
             }
         }
+
+        _displayedBalls = _displayedBalls.Concat(newBalls).ToList();
     }
 
     private void AddBallToDisplayedList(Ball ball)
