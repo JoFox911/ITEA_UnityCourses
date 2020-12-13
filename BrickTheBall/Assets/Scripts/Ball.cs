@@ -14,6 +14,15 @@ public class Ball : MonoBehaviour, IDestroyableOnCollisionWithDeadZone
         _rigidbody = GetComponent<Rigidbody2D>();
     }
 
+    void FixedUpdate()
+    {
+        if (GameManager.IsGameStarted())
+        {
+            // на случай если мячик остановится, каждый кадр скорость мячику выставляем
+            _rigidbody.velocity = _rigidbody.velocity.normalized * _speed;
+        }
+    }
+
     public void StartMoving(float initialSpeed, Vector2 direction)
     {
         _speed = initialSpeed;

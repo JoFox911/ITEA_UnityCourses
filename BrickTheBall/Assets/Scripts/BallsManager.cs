@@ -62,7 +62,6 @@ public class BallsManager : MonoBehaviour
 
     private void OnMultiBallСatch(int generatedBallsNumber)
     {
-        // copy of balls
         var newBalls = new List<Ball>();
         foreach (var ball in _displayedBalls)
         {
