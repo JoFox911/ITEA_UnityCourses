@@ -1,4 +1,5 @@
-# 10 items in row.
+# max level sizee 10*10.
+# all extra blocks on the level will be ignored
 # separate levels by =====
 #
 0,2,2,0,1,1,0,2,2,0

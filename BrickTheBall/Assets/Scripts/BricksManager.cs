@@ -27,11 +27,10 @@ public class BricksManager : MonoBehaviour
 
     private void OnChangeLevel(int level)
     {
-        (int[,] map, int rowsNumber, int colsNumber) = GameManager.GetLevelMap(level);
-        GenerateLevelBricks(map, rowsNumber, colsNumber);
+        GenerateLevelBricks(GameManager.GetLevelMap(level));
     }
 
-    private void GenerateLevelBricks(int[,] levelMap, int maxRows, int maxCols)
+    private void GenerateLevelBricks(List<List<int>> levelMap)
     {
         _remainingBricks = new List<Brick>();
         var bricksOffset = .01f;
@@ -40,17 +39,16 @@ public class BricksManager : MonoBehaviour
         float brickSpawnPositionX, brickSpawnPositionY;
         brickSpawnPositionY = _initialBricksSpawnPossition.y;
 
-        for (var row = 0; row < maxRows; row++)
+        foreach (var levelRow in levelMap)
         {
             float rowWidth = 0.4f;
             brickSpawnPositionX = _initialBricksSpawnPossition.x;
-
-            for (var col = 0; col < maxCols; col++)
+            foreach (var item in levelRow)
             {
                 float columnWidth = 0.8f;
-                if (levelMap[row, col] != 0)
+                if (item != 0)
                 {
-                    var brickType = (BrickType)levelMap[row, col];
+                    var brickType = (BrickType)item;
                     var brickData = BricksConfiguration.BrickDataByType(brickType);
                     isEnemiesGeneratorExists = isEnemiesGeneratorExists || brickData.IsEnemyGenerator;
                     columnWidth = columnWidth < brickData.SizeX ? brickData.SizeX : columnWidth;
@@ -58,8 +56,8 @@ public class BricksManager : MonoBehaviour
 
                     var newBrick = Instantiate(_brickPrefab, new Vector3(brickSpawnPositionX, brickSpawnPositionY, _initialBricksSpawnPossition.z), Quaternion.identity);
                     newBrick.Init(_bricksContainer.transform, brickData);
-                    _remainingBricks.Add(newBrick);
                     newBrick.SetDestroyCallback(OnBrickDestruction);
+                    _remainingBricks.Add(newBrick);
                 }
                 brickSpawnPositionX += columnWidth + bricksOffset;
             }

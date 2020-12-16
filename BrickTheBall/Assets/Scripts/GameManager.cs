@@ -74,7 +74,7 @@ public class GameManager : MonoBehaviour
         _gameController.SetLevel(_initialLevel);
     }
 
-    public static (int[,] map, int rowsNumber, int colsNumber) GetLevelMap(int level)
+    public static List<List<int>> GetLevelMap(int level)
     {
         return _instance._gameController.GetLevelMap(level);
     }
@@ -120,7 +120,7 @@ public class GameManager : MonoBehaviour
 
     private void OnAllBallsWastedInner()
     {
-        // на SoftReset не надо чистить поле от блоков
+        // на SoftReset не надо чистить поле от блоков и врагов
         GameEvents.SoftResetGameStateEvent();
         _gameController.SetIsGameStarted(false);
         _gameController.DecreaseLives();
@@ -150,8 +150,8 @@ public class GameController
     public int InitialLevel = 0;
     public int InitialLives = 3;
 
-    public List<int[,]> LevelsData;
-    public const int maxRows = 20;
+    public List<List<List<int>>> LevelsData;
+    public const int maxRows = 10;
     public const int maxCols = 10;
     public int MaxLives = 5;
 
@@ -241,23 +241,23 @@ public class GameController
         PlayerPrefs.DeleteKey("CurrentLives");
     }
 
-    public (int[,] map, int rowsNumber, int colsNumber) GetLevelMap(int level)
+    public List<List<int>> GetLevelMap(int level)
     {
-        return (map: LevelsData[level], rowsNumber: maxRows, colsNumber: maxCols);
+        return LevelsData[level];
     }
 
-    private List<int[,]> LoadLevelsData()
+    private List<List<List<int>>> LoadLevelsData()
     {
-        List<int[,]> levelsData = new List<int[,]>();
+        List< List<List<int>>> levelsData = new List<List<List<int>>>();
         TextAsset text = Resources.Load("Levels") as TextAsset;
         if (text != null)
         {
             string[] rows = text.text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            int[,] proccedLevel = new int[maxRows, maxCols];
-            int levelRow = 0;
+            List<List<int>> proccedLevel = new List<List<int>>();            
 
             foreach (var line in rows)
             {
+                List<int> levelRow = new List<int>();
                 if (line.StartsWith("#"))
                 {
                     // this is comment line - ignore it
@@ -265,20 +265,30 @@ public class GameController
                 }
                 if (line.IndexOf("=====") == -1)
                 {
+                    // if the level has more columns in the file than can fit on the level - ignore them
+                    if (proccedLevel.Count >= maxRows)
+                    {
+                        continue;
+                    }
+
                     // this is line with level discriptions
                     string[] bricks = line.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                     for (var col = 0; col < bricks.Length; col++)
                     {
-                        proccedLevel[levelRow, col] = int.Parse(bricks[col]);
+                        // if there are more cubes in a file in a row at the level than can fit, we ignore them
+                        if (col >= maxCols)
+                        {
+                            break;
+                        }
+                        levelRow.Add(int.Parse(bricks[col]));
                     }
-                    levelRow++;
+                    proccedLevel.Add(levelRow);
                 }
                 else
                 {
                     // end of level
-                    levelRow = 0;
                     levelsData.Add(proccedLevel);
-                    proccedLevel = new int[maxRows, maxCols];
+                    proccedLevel = new List<List<int>>();
                 }
             }
         }
