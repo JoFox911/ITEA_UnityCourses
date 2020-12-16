@@ -29,8 +29,6 @@ public class GameManager : MonoBehaviour
         GameEvents.OnGameOver += PauseGame;
         GameEvents.OnGameFinished += PauseGame;
 
-        GameEvents.OnAllBallsWasted += OnAllBallsWasted;
-        GameEvents.OnAllBricksDestroyed += OnAllBricksDestroyed;
         GameEvents.OnExtraLiveСatched += OnExtraLiveСatch;
     }
 
@@ -63,8 +61,6 @@ public class GameManager : MonoBehaviour
         GameEvents.OnGameOver -= PauseGame;
         GameEvents.OnGameFinished -= PauseGame;
 
-        GameEvents.OnAllBallsWasted -= OnAllBallsWasted;
-        GameEvents.OnAllBricksDestroyed -= OnAllBricksDestroyed;
         GameEvents.OnExtraLiveСatched -= OnExtraLiveСatch;
     }
 
@@ -78,36 +74,6 @@ public class GameManager : MonoBehaviour
         _gameController.SetLevel(_initialLevel);
     }
 
-    private void PauseGame()
-    {
-        _gameController.SetIsGamePaused(true);
-        Time.timeScale = 0;
-    }
-
-    private void UnpauseGame()
-    {
-        _gameController.SetIsGamePaused(false);
-        Time.timeScale = 1;
-    }
-
-    private void OnAllBallsWasted()
-    {
-        _gameController.SetIsGameStarted(false);
-        _gameController.DecreaseLives();
-    }
-
-    private void OnAllBricksDestroyed()
-    {
-        _gameController.SetIsGameStarted(false);
-        GameEvents.ResetGameStateEvent();
-        _gameController.IncreaseLevel();
-    }
-
-    private void OnExtraLiveСatch()
-    {
-        _instance._gameController.IncreaseLives();
-    }
-
     public static (int[,] map, int rowsNumber, int colsNumber) GetLevelMap(int level)
     {
         return _instance._gameController.GetLevelMap(level);
@@ -118,6 +84,16 @@ public class GameManager : MonoBehaviour
         _instance._gameController.SetIsGameStarted(true);
     }
 
+    public static void OnAllBallsWasted()
+    {
+        _instance.OnAllBallsWastedInner();
+    }
+
+    public static void OnAllBricksDestroyed()
+    {
+        _instance.OnAllBricksDestroyedInner();
+    }
+
     public static bool IsGameStarted()
     {
         return _instance._gameController.IsGameStarted;
@@ -126,6 +102,40 @@ public class GameManager : MonoBehaviour
     public static bool IsGamePaused()
     {
         return _instance._gameController.IsGamePaused;
+    }
+
+    private void PauseGame()
+    {
+        _gameController.SetIsGamePaused(true);
+        // останавливаем время в игре
+        Time.timeScale = 0;
+    }
+
+    private void UnpauseGame()
+    {
+        _gameController.SetIsGamePaused(false);
+        // запускаем время в игре
+        Time.timeScale = 1;
+    }
+
+    private void OnAllBallsWastedInner()
+    {
+        // на SoftReset не надо чистить поле от блоков
+        GameEvents.SoftResetGameStateEvent();
+        _gameController.SetIsGameStarted(false);
+        _gameController.DecreaseLives();
+    }
+
+    private void OnAllBricksDestroyedInner()
+    {
+        _gameController.SetIsGameStarted(false);
+        GameEvents.ResetGameStateEvent();
+        _gameController.IncreaseLevel();
+    }
+
+    private void OnExtraLiveСatch()
+    {
+        _instance._gameController.IncreaseLives();
     }
 }
 

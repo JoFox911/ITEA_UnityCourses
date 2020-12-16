@@ -31,7 +31,7 @@ public class PlatformManager : MonoBehaviour
         _initialHeigth = _spriteRenderer.size.y;
 
         GameEvents.OnResetGameState += ResetState;
-        GameEvents.OnAllBallsWasted += ResetState;
+        GameEvents.OnSoftResetGameState += ResetState;
         GameEvents.OnChangePlatformWidthCatched += OnChangePlatformWithCatch;
         GameEvents.OnShootingPlatformСatched += OnShootingPlatformСatch;
         GameEvents.OnMultiBallСatched -= OnMultiBallСatch;
@@ -40,7 +40,7 @@ public class PlatformManager : MonoBehaviour
     void OnDestroy()
     {
         GameEvents.OnResetGameState -= ResetState;
-        GameEvents.OnAllBallsWasted -= ResetState;
+        GameEvents.OnSoftResetGameState -= ResetState;
         GameEvents.OnChangePlatformWidthCatched -= OnChangePlatformWithCatch;
         GameEvents.OnShootingPlatformСatched -= OnShootingPlatformСatch;
         GameEvents.OnMultiBallСatched -= OnMultiBallСatch;

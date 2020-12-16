@@ -15,14 +15,12 @@ public class BricksManager : MonoBehaviour
 
     void Awake()
     {
-        GameEvents.OnBrickDestructed += OnBrickDestruction;
         GameEvents.OnResetGameState += ResetState;
         GameEvents.OnChangeLevel += OnChangeLevel;
     }
 
     void OnDestroy()
     {
-        GameEvents.OnBrickDestructed -= OnBrickDestruction;
         GameEvents.OnResetGameState -= ResetState;
         GameEvents.OnChangeLevel -= OnChangeLevel;
     }
@@ -61,6 +59,7 @@ public class BricksManager : MonoBehaviour
                     var newBrick = Instantiate(_brickPrefab, new Vector3(brickSpawnPositionX, brickSpawnPositionY, _initialBricksSpawnPossition.z), Quaternion.identity);
                     newBrick.Init(_bricksContainer.transform, brickData);
                     _remainingBricks.Add(newBrick);
+                    newBrick.SetDestroyCallback(OnBrickDestruction);
                 }
                 brickSpawnPositionX += columnWidth + bricksOffset;
             }
@@ -77,7 +76,7 @@ public class BricksManager : MonoBehaviour
         _remainingBricks.Remove(brick);
         if (IsAllPossibleBricksDestroyed())
         {
-            GameEvents.AllBricksDestroyedEvent();
+            GameManager.OnAllBricksDestroyed();
         }
     }
 

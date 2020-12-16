@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,6 +15,8 @@ public class Brick : MonoBehaviour
 
     private SpriteRenderer _spriteRenderer;
     private BoxCollider2D _boxCollider;
+
+    private Action<Brick> _destroyBrickCallback;    
 
     void Awake()
     {
@@ -43,11 +46,6 @@ public class Brick : MonoBehaviour
         }
     }
 
-    public int GetPoints()
-    {
-        return _points;
-    }
-
     public BrickType GetBrickType()
     {
         return _type;
@@ -73,6 +71,16 @@ public class Brick : MonoBehaviour
         }
     }
 
+    public void SetDestroyCallback(Action<Brick> destroyBrickCallBack)
+    {
+        _destroyBrickCallback = destroyBrickCallBack;
+    }
+
+    private void DestroyCallback()
+    {
+        _destroyBrickCallback?.Invoke(this);
+    }
+
     private void GenerateEnemy()
     { 
         StartCoroutine(GenerateNewEnemy(2f));
@@ -83,9 +91,9 @@ public class Brick : MonoBehaviour
         yield return new WaitForSeconds(delay);
         if (GameManager.IsGameStarted())
         { 
-            EnemiesManager.GenerateEnemy(transform.position + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0));
+            EnemiesManager.GenerateEnemy(transform.position + new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), 0));
         }
-        StartCoroutine(GenerateNewEnemy(Random.Range(3f, 5f)));
+        StartCoroutine(GenerateNewEnemy(UnityEngine.Random.Range(3f, 5f)));
     }
 
     private void SetActualSprite()
@@ -108,7 +116,9 @@ public class Brick : MonoBehaviour
         _hitponts--;
         if (_hitponts <= 0)
         {
-            GameEvents.BrickDestructedEvent(this);
+            DestroyCallback();
+            BonusManager.GenerateBonus(gameObject.transform, BonusSource.Brick);
+            ScoreManager.AddScore(_points);
             Destroy(gameObject);
         }
         else 

@@ -15,8 +15,13 @@ public class BonusManager : MonoBehaviour
 
     [SerializeField]
     [Range(0, 100)]
-    // отдельно регулируем частоту выпадения каких-либо бонусов
-    private float _bonusChance;
+    // отдельно регулируем частоту выпадения каких-либо бонусов из блока
+    private float _bonusFromBrickChance;
+
+    [SerializeField]
+    [Range(0, 100)]
+    // отдельно регулируем частоту выпадения каких-либо бонусов из врага
+    private float _bonusFromEnemyChance;
 
     [SerializeField]
     [Range(0, 100)]
@@ -28,23 +33,29 @@ public class BonusManager : MonoBehaviour
 
     private List<Bonus> _displayingBonuses;
 
+    private static BonusManager _instance;
+
     void Awake()
     {
+        _instance = this;
         _displayingBonuses = new List<Bonus>();
 
-        GameEvents.OnBrickDestructed += OnBrickDistructed;
         GameEvents.OnResetGameState += ResetState;
-        GameEvents.OnAllBallsWasted += ResetState;
+        GameEvents.OnSoftResetGameState += ResetState;
     }
 
     void OnDestroy()
     {
-        GameEvents.OnBrickDestructed -= OnBrickDistructed;
         GameEvents.OnResetGameState -= ResetState;
-        GameEvents.OnAllBallsWasted -= ResetState;
+        GameEvents.OnSoftResetGameState -= ResetState;
     }
 
-    private void OnBrickDistructed(Brick brick)
+    public static void GenerateBonus(Transform transform, BonusSource source)
+    {
+        _instance.GenerateBonusInner(transform, source);
+    }
+
+    private void GenerateBonusInner(Transform transform, BonusSource source)
     {
         // если не прошло время кулдауна с последнего появления бонуса - игнорируем
         if (Time.time - _lastBonusSpawnTime < _minBonusPause)
@@ -53,7 +64,8 @@ public class BonusManager : MonoBehaviour
         }
 
         float bonusSpawnChance = Random.Range(0, 100f);
-        if (bonusSpawnChance <= _bonusChance)
+        if (((source == BonusSource.Brick) && bonusSpawnChance <= _bonusFromBrickChance) ||
+           ((source == BonusSource.Enemy) && bonusSpawnChance <= _bonusFromEnemyChance))
         {
             float bonusTypeValue = Random.Range(0, 100f);
             Bonus bonusPrefab = null;
@@ -79,7 +91,7 @@ public class BonusManager : MonoBehaviour
             if (bonusPrefab != null)
             {
                 _lastBonusSpawnTime = Time.time;
-                var newBonus = Instantiate(bonusPrefab, brick.transform.position, Quaternion.identity);
+                var newBonus = Instantiate(bonusPrefab, transform.position, Quaternion.identity);
                 _displayingBonuses.Add(newBonus);
                 newBonus.SetDestroyCallback(OnBonusDestroy);
             }
@@ -124,5 +136,10 @@ public class BonusManager : MonoBehaviour
     }
 }
 
+public enum BonusSource
+{
+    Brick,
+    Enemy
+}
 
 

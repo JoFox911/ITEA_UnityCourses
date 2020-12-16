@@ -28,13 +28,16 @@ public abstract class Enemy : MonoBehaviour, IDestroyableOnCollisionWithDeadZone
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.CompareTag("Ball") || col.gameObject.CompareTag("Bullet") || col.gameObject.CompareTag("Platform"))
+        // если мячик еще не запущен то при косании мяча или платформы фраг будет отскакивать
+        if (GameManager.IsGameStarted() && (col.gameObject.CompareTag("Ball") || col.gameObject.CompareTag("Bullet") || col.gameObject.CompareTag("Platform")))
         {
             if (col.gameObject.CompareTag("Ball"))
             {
                 ApplyEnemyEffect(col);
+                // если враг был убит мячиком - надо сгенерировать бонус
+                BonusManager.GenerateBonus(gameObject.transform, BonusSource.Enemy);
             }
-            GameEvents.EnemyDestroyedEvent(_points);
+            ScoreManager.AddScore(_points);
             AudioManager.PlaySFX(SFXType.EnemyKilled);
             DestroyEnemy();
         }

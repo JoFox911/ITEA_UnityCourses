@@ -3,31 +3,32 @@
 public class ScoreManager : MonoBehaviour
 {
     private ScoreController _scoreController;
+
+    private static ScoreManager _instance;
+
     void Awake()
     {
+        _instance = this;
         _scoreController = new ScoreController();
 
-        GameEvents.OnBrickDestructed += AddScoreOnBrickDestructed;
-        GameEvents.OnEnemyDestroyed += AddScoreOnEnemyDestroyed;
         GameEvents.OnRestartGame += ResetState;
     }
 
     void OnDestroy()
     {
-        GameEvents.OnBrickDestructed -= AddScoreOnBrickDestructed;
-        GameEvents.OnEnemyDestroyed -= AddScoreOnEnemyDestroyed;
         GameEvents.OnRestartGame -= ResetState;
     }
 
-    private void AddScoreOnBrickDestructed(Brick brick)
+    public static void AddScore(int points)
     {
-        _scoreController.AddScore(brick.GetPoints());
+        _instance.AddScoreInner(points);
     }
 
-    private void AddScoreOnEnemyDestroyed(int points)
+    public void AddScoreInner(int points)
     {
         _scoreController.AddScore(points);
     }
+
     private void ResetState()
     {
         _scoreController.ResetScore();

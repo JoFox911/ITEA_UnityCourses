@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 
 public static class GameEvents
 {
@@ -15,9 +14,13 @@ public static class GameEvents
 
     // game state
 
-    public static event Action OnResetGameState;
+    public static event Action OnNewGame;
+
+    public static event Action OnRestartGame;
 
     public static event Action OnGameOver;
+
+    public static event Action OnResetGameState;
 
     public static event Action OnGameFinished;
 
@@ -25,21 +28,10 @@ public static class GameEvents
 
     public static event Action OnGamePaused;
 
-    public static event Action OnNewGame;
-
-    public static event Action OnRestartGame;
-
     public static event Action OnShowInfoScreen;
 
-    // level events
+    public static event Action OnSoftResetGameState;
 
-    public static event Action OnAllBricksDestroyed;
-
-    public static event Action OnAllBallsWasted;
-
-    public static event Action<Brick> OnBrickDestructed;
-
-    public static event Action<int> OnEnemyDestroyed;
 
     // Bonuses
 
@@ -59,21 +51,11 @@ public static class GameEvents
 
     public static event Action OnSFXVolumeChanged;
 
-    
 
-    public static void AllBricksDestroyedEvent()
-    {
-        OnAllBricksDestroyed?.Invoke();
-    }
 
-    public static void AllBallsWastedEvent()
+    public static void SoftResetGameStateEvent()
     {
-        OnAllBallsWasted?.Invoke();
-    }
-
-    public static void BrickDestructedEvent(Brick brick)
-    {
-        OnBrickDestructed?.Invoke(brick);
+        OnSoftResetGameState?.Invoke();
     }
 
     public static void RaiseScoreEvent(int score)
@@ -130,10 +112,7 @@ public static class GameEvents
     {
         OnRestartGame?.Invoke();
     }
-    public static void EnemyDestroyedEvent(int points)
-    {
-        OnEnemyDestroyed?.Invoke(points);
-    }
+
     public static void ShowInfoScreenEvent()
     {
         OnShowInfoScreen?.Invoke();
@@ -141,6 +120,7 @@ public static class GameEvents
 
 
     // bonuses
+
     public static void ChangePlatformWithCatchEvent(float coef)
     {
         OnChangePlatformWidthCatched?.Invoke(coef);

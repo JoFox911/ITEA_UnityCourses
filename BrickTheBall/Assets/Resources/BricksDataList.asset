@@ -43,7 +43,7 @@ MonoBehaviour:
   - Type: 4
     Hitponts: 1
     Sprites:
-    - {fileID: 3447440847192360939, guid: 6fb011d7c68043f4f84a6d5990143e39, type: 3}
+    - {fileID: 5510493095158745747, guid: 6fb011d7c68043f4f84a6d5990143e39, type: 3}
     Points: 0
     SizeX: 0.8
     SizeY: 0.4
