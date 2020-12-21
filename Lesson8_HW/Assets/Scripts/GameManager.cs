@@ -18,8 +18,9 @@ public class GameManager : MonoBehaviour
     {
         //If you press R - reload scene
         if (Input.GetKeyDown(KeyCode.R))
-        { 
-            SceneManager.LoadScene(SceneManager.GetActiveScene().ToString());
+        {
+            var activeScene = SceneManager.GetActiveScene();
+            SceneManager.LoadScene(activeScene.name);
         }
     }
 
