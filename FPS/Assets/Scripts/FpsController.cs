@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent (typeof(SoldierWeaponManager))]
 [RequireComponent(typeof(PickUpHelper))]
@@ -13,123 +10,124 @@ public class FpsController : MonoBehaviour
     private SoldierWeaponManager _soldierWeaponManager;
     private PickUpHelper _pickUpHelper;
 
+    private bool _isGrabPossible;
+    private bool _isWeaponSelected;
+    private int _ammoInClip = int.MinValue;
+    private int _ammoInStock = int.MinValue;
+
     void Awake()
     {
         _soldierWeaponManager = gameObject.GetComponent<SoldierWeaponManager>();
         _pickUpHelper = gameObject.GetComponent<PickUpHelper>();
 
         _soldierWeaponManager.Initialize(_fpsCamera.gameObject);
-    }
 
+        EventAgregator.Subscribe<GrabBtnClickedEvent>(Grab);
+        EventAgregator.Subscribe<ShootBtnClickedEvent>(Shoot);
+        EventAgregator.Subscribe<ReloadBtnClickedEvent>(Reload);
+        EventAgregator.Subscribe<FirstSlotWeaponBtnClickedEvent>(SelectFirstSlotWeapon);
+        EventAgregator.Subscribe<SecondSlotWeaponBtnClickedEvent>(SelectSecondSlotWeapon);
+    }
     private void FixedUpdate()
     {
-        if (_pickUpHelper.CheckGrab())
-        {
-            var item = _pickUpHelper.PickUp();
-            var weapon = item.GetComponent<GunLikeWeapon>();
-            if (weapon)
-            {
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-                    _soldierWeaponManager.AddGunLikeWeapon(weapon, UpdateWeaponUI);
-                }
-            }
-            
+        // todo redo
+        var newValue = _pickUpHelper.CheckGrab();
+        if (newValue != _isGrabPossible) {
+            _isGrabPossible = newValue;
+            var ChangeGrabBtnVisibilityEvent = new ChangeGrabBtnVisibilityEvent();
+            ChangeGrabBtnVisibilityEvent.NewVisibilityValue = newValue;
+            EventAgregator.Post(this, ChangeGrabBtnVisibilityEvent);
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Grab(object sender, GrabBtnClickedEvent eventData)
     {
-        if (Input.GetButton("Fire1"))
+        Debug.Log("FPS GRAB");
+
+        if (_isGrabPossible)
         {
-            _soldierWeaponManager.Shoot();
-        }
+            var item = _pickUpHelper.GetPickUpObject();
+            // check is weapon
+            var weapon = item.GetComponent<Weapon>();
+            var ammo = item.GetComponent<Ammo>();
+            if (weapon != null)
+            {
+                _soldierWeaponManager.AddWeapon(weapon, UpdateWeaponUI);
+            } 
+            else if (ammo != null)
+            {
+                _soldierWeaponManager.AddAmmo(ammo, UpdateWeaponUI);
+            }
+        }            
+    }
+
+    private void Shoot(object sender, ShootBtnClickedEvent eventData)
+    {
+        Debug.Log("FPS Shoot");
+
+        _soldierWeaponManager.Shoot(UpdateWeaponUI);
+    }
+
+    private void Reload(object sender, ReloadBtnClickedEvent eventData)
+    {
+        Debug.Log("FPS Reload");
+
+        _soldierWeaponManager.Reload(UpdateWeaponUI);
+    }
+
+    private void SelectFirstSlotWeapon(object sender, FirstSlotWeaponBtnClickedEvent eventData)
+    {
+        Debug.Log("FPS SelectFirstSlotWeapon");
+
+        _soldierWeaponManager.SelectFirstSlotWeapon();
+        UpdateWeaponUI();
+    }
+
+
+    private void SelectSecondSlotWeapon(object sender, SecondSlotWeaponBtnClickedEvent eventData)
+    {
+        Debug.Log("FPS SelectSecondSlotWeapon");
+
+        _soldierWeaponManager.SelectSecondSlotWeapon();
+        UpdateWeaponUI();
     }
 
 
     private void UpdateWeaponUI()
     {
         Debug.Log("UpdateWeaponUI");
+
+
+        var newIsWeaponSelectedValue = _soldierWeaponManager.IsWeaponSelected();
+        if (_isWeaponSelected != newIsWeaponSelectedValue)
+        {
+            _isWeaponSelected = newIsWeaponSelectedValue;
+            var ChangeIsWeaponSelectedUIVisibleElementsEvent = new ChangeIsWeaponSelectedUIVisibleElementsEvent();
+            ChangeIsWeaponSelectedUIVisibleElementsEvent.NewIsWeaponSelectedValue = newIsWeaponSelectedValue;
+            EventAgregator.Post(this, ChangeIsWeaponSelectedUIVisibleElementsEvent);
+        }
+
+        var weapon = (ShootingWeapon)_soldierWeaponManager.GetCurrentWeapon();
+        var newAmmoInClipValue = weapon.GetCurrentAmmo();
+        if (_ammoInClip != newAmmoInClipValue)
+        {
+            _ammoInClip = newAmmoInClipValue;
+            var ChangeAmmoInClipVolumeEvent = new ChangeAmmoInClipVolumeEvent();
+            ChangeAmmoInClipVolumeEvent.newVolume = newAmmoInClipValue;
+            EventAgregator.Post(this, ChangeAmmoInClipVolumeEvent);
+        }
+
+
+        var newAmmoInStockValue = _soldierWeaponManager.GetCurrentWeaponAvailableAmmo();
+        if (_ammoInStock != newAmmoInStockValue)
+        {
+            _ammoInStock = newAmmoInStockValue;
+            var ChangeAmmoInStockVolumeEvent = new ChangeAmmoInStockVolumeEvent();
+            ChangeAmmoInStockVolumeEvent.newVolume = newAmmoInStockValue;
+            EventAgregator.Post(this, ChangeAmmoInStockVolumeEvent);
+        }
     }
 
-
-
-
-
-    
-
-
-
-    //[Serializable]
-    //private class FpsInput
-    //{
-
-
-
-
-
-
-    //    [Tooltip("The name of the virtual axis mapped to rotate the camera around the y axis."),
-    //     SerializeField]
-    //    private string rotateX = "Mouse X";
-
-    //    [Tooltip("The name of the virtual axis mapped to rotate the camera around the x axis."),
-    //     SerializeField]
-    //    private string rotateY = "Mouse Y";
-
-    //    [Tooltip("The name of the virtual axis mapped to move the character back and forth."),
-    //     SerializeField]
-    //    private string move = "Horizontal";
-
-    //    [Tooltip("The name of the virtual axis mapped to move the character left and right."),
-    //     SerializeField]
-    //    private string strafe = "Vertical";
-
-    //    [Tooltip("The name of the virtual button mapped to run."),
-    //     SerializeField]
-    //    private string run = "Fire3";
-
-    //    [Tooltip("The name of the virtual button mapped to jump."),
-    //     SerializeField]
-    //    private string jump = "Jump";
-
-    //    /// Returns the value of the virtual axis mapped to rotate the camera around the y axis.
-    //    public float RotateX
-    //    {
-    //        get { return Input.GetAxisRaw(rotateX); }
-    //    }
-
-    //    /// Returns the value of the virtual axis mapped to rotate the camera around the x axis.        
-    //    public float RotateY
-    //    {
-    //        get { return Input.GetAxisRaw(rotateY); }
-    //    }
-
-    //    /// Returns the value of the virtual axis mapped to move the character back and forth.        
-    //    public float Move
-    //    {
-    //        get { return Input.GetAxisRaw(move); }
-    //    }
-
-    //    /// Returns the value of the virtual axis mapped to move the character left and right.         
-    //    public float Strafe
-    //    {
-    //        get { return Input.GetAxisRaw(strafe); }
-    //    }
-
-    //    /// Returns true while the virtual button mapped to run is held down.          
-    //    public bool Run
-    //    {
-    //        get { return Input.GetButton(run); }
-    //    }
-
-    //    /// Returns true during the frame the user pressed down the virtual button mapped to jump.          
-    //    public bool Jump
-    //    {
-    //        get { return Input.GetButtonDown(jump); }
-    //    }
-    //}
 }
 
 

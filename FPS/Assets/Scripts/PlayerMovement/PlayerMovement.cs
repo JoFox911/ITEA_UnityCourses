@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerMovement: MonoBehaviour
 {
@@ -8,14 +6,12 @@ public class PlayerMovement: MonoBehaviour
     private GameObject _movementJoystick;
 
     [SerializeField]
-    private float _speed = 8f;
+    private float _speed = 4f;
     [SerializeField]
     private float _gravity = -18.62f;
     [SerializeField]
-    private float _jumpHeight = 3f;
+    private float _jumpHeight = 1f;
 
-    [SerializeField]
-    private Transform _groundCheck;
     [SerializeField]
     private float _groundDistance = 0.01f;
     [SerializeField]
@@ -23,8 +19,12 @@ public class PlayerMovement: MonoBehaviour
 
     private CharacterController _charController;
     private JoystickDetector _movementJoystickDetector;
+
     private Vector3 _move;
     private Vector3 _velocity;
+
+    private RaycastHit _hit;
+    private float _distanceToColPoint;
     private bool _isGrounded;
 
     private bool _isMovementStarted;
@@ -41,26 +41,9 @@ public class PlayerMovement: MonoBehaviour
         EventAgregator.Subscribe<JumpBtnClickedEvent>(Jump);
     }
 
-    void OnDestroy()
-    {
-        EventAgregator.Unsubscribe<JumpBtnClickedEvent>(Jump);
-    }
-
-    private void SetIsMovementStarted(bool isMovementStarted)
-    {
-        _isMovementStarted = isMovementStarted;
-    }
-
-    private void OnDirectionChange(Vector2 movementDirection)
-    {
-        _movementDirection = movementDirection;
-    }
-
     void FixedUpdate()
     {
         UpdateIsGrounded();
-
-        Debug.Log("_velocity.y " + _velocity.y);
 
         if (_isGrounded && _velocity.y < 0)
         {
@@ -74,6 +57,21 @@ public class PlayerMovement: MonoBehaviour
 
         _velocity.y += _gravity * Time.deltaTime;
         _charController.Move(_velocity * Time.deltaTime);
+    }
+
+    void OnDestroy()
+    {
+        EventAgregator.Unsubscribe<JumpBtnClickedEvent>(Jump);
+    }
+
+    private void SetIsMovementStarted(bool isMovementStarted)
+    {
+        _isMovementStarted = isMovementStarted;
+    }
+
+    private void OnDirectionChange(Vector2 movementDirection)
+    {
+        _movementDirection = movementDirection;
     }
 
     private void Move()
@@ -94,31 +92,12 @@ public class PlayerMovement: MonoBehaviour
 
     private void UpdateIsGrounded()
     {
+        _distanceToColPoint = _charController.height * 0.5f - _charController.radius;
 
-        RaycastHit hit;
-        Vector3 p1 = transform.position + _charController.center + Vector3.up * -_charController.height * 0.5F;
-        Vector3 p2 = p1 + Vector3.up * _charController.height;
-        float distanceToObstacle = 0;
+        Physics.CapsuleCast(transform.position + _charController.center + Vector3.up * _distanceToColPoint,
+                            transform.position + _charController.center - Vector3.up * _distanceToColPoint,
+                            _charController.radius, Vector3.down, out _hit, _groundDistance, _groundMask);
 
-        // Cast character controller shape 10 meters forward to see if it is about to hit anything.
-        if (Physics.CapsuleCast(p1, p2, _charController.radius, Vector3.down, out hit, _charController.bounds.extents.y + _groundDistance, _groundMask))
-            distanceToObstacle = hit.distance;
-
-
-        //RaycastHit hit;
-        //Physics.CapsuleCast(_charController.bounds.center, Vector3.down, out hit, _charController.bounds.extents.y + _groundDistance, _groundMask);
-
-        //Color rayColor;
-        //if (hit.collider != null)
-        //{
-        //    rayColor = Color.green;
-        //}
-        //else
-        //{
-        //    rayColor = Color.red;
-        //}
-        //Debug.DrawRay(_charController.bounds.center, Vector3.down * (_charController.bounds.extents.y + _groundDistance), rayColor);
-
-        _isGrounded = hit.collider != null;
+        _isGrounded = _hit.collider != null;
     }
 }

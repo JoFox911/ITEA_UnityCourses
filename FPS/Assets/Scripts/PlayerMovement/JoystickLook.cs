@@ -12,11 +12,11 @@ public class JoystickLook : MonoBehaviour
     private Transform _playerBody;
 
     [SerializeField]
-    private float _maxBottomLookAngle = 45f;
+    private float _minVerticalLookAngle = 45f;
 
     [SerializeField]
     // 360 - 75 т.к используем localEulerAngles которые измеряются в 0 - 360
-    private float _maxTopLookAngle = 285f;
+    private float _maxVerticalLookAngle = 285f;
 
 
     private float xRotation = 0f;
@@ -49,13 +49,40 @@ public class JoystickLook : MonoBehaviour
 
         if (_isRotationStarted)
         {
-            
             xRotation = transform.localEulerAngles.x - _direction.y;
-            if (xRotation <= _maxBottomLookAngle || xRotation >= _maxTopLookAngle)
+            if (xRotation <= _maxVerticalLookAngle || xRotation >= _minVerticalLookAngle)
             {
                 transform.localRotation = Quaternion.Euler(xRotation * _joystickSensitivity, 0f, 0f);
             }
+
             _playerBody.Rotate(Vector3.up * _direction.x * _joystickSensitivity);
         }
     }
+
+
+    //private float RestrictVerticalRotation(float rotationY)
+    //{
+    //    var currentAngle = NormalizeAngle(rotationY);
+    //    var minY = _minVerticalLookAngle + currentAngle;
+    //    var maxY = _maxVerticalLookAngle + currentAngle;
+    //    return Mathf.Clamp(rotationY, minY + 0.01f, maxY - 0.01f);
+    //}
+
+    ///// Normalize an angle between -180 and 180 degrees.
+    ///// <param name="angleDegrees">angle to normalize</param>
+    ///// <returns>normalized angle</returns>
+    //private float NormalizeAngle(float angleDegrees)
+    //{
+    //    while (angleDegrees > 180f)
+    //    {
+    //        angleDegrees -= 360f;
+    //    }
+
+    //    while (angleDegrees <= -180f)
+    //    {
+    //        angleDegrees += 360f;
+    //    }
+
+    //    return angleDegrees;
+    //}
 }

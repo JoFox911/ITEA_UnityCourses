@@ -1,30 +1,41 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PickUpHelper : MonoBehaviour
 {
     [SerializeField]
-    private float _castRadius = 0.5f;
+    private float _castDistance = 0.7f;
+    [SerializeField]
+    private LayerMask _canGrabMask;
 
+    private CharacterController _charController;
     private GameObject _grabableObject;
 
-    private RaycastHit hit;
+    private RaycastHit _hit;
+    private float _distanceToColPoint;
+
+    void Awake()
+    {
+        _charController = gameObject.GetComponent<CharacterController>();
+    }
 
     public bool CheckGrab()
     {
-        if (Physics.SphereCast(transform.position, _castRadius, transform.forward, out hit, _castRadius))
+        _distanceToColPoint = _charController.height * 0.5f - _charController.radius;
+
+        if (Physics.CapsuleCast(transform.position + _charController.center + Vector3.up * _distanceToColPoint,
+                                transform.position + _charController.center - Vector3.up * _distanceToColPoint,
+                                _charController.radius, transform.forward, out _hit, _castDistance, _canGrabMask))
         {
-            if (hit.transform.CompareTag("CanGrab")) 
-            {
-                _grabableObject = hit.transform.gameObject;
-                return true;
-            }
+            _grabableObject = _hit.transform.gameObject;
+            //Debug.Log("CheckGrab true");
+            return true;
         }
+
+        _grabableObject = null;
         return false;
     }
 
-    public GameObject PickUp()
+    public GameObject GetPickUpObject()
     {
         return _grabableObject;
     }
