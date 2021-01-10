@@ -52,6 +52,9 @@ public class SoldierWeaponManager : MonoBehaviour
         //Put the game object in the ignore raycast layer(2)
         weapon.gameObject.layer = 2;
 
+        weapon.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+        weapon.transform.localPosition = new Vector3(0, 0, 0);
+
         var shootingWeapon = (ShootingWeapon)weapon;
         AddAmmoByType(shootingWeapon.GetWeaponAmmoType(), shootingWeapon.GetWeaponAmmoVolume());
 
@@ -144,8 +147,12 @@ public class SoldierWeaponManager : MonoBehaviour
     {
         if (_weaponsList[slotIndex] != null)
         {
+            if (_weaponsList[slotIndex].gameObject.activeInHierarchy)
+            {
+                weapon.gameObject.SetActive(true);
+            }
             //todo может не надо уничтожеать?
-            Destroy(_weaponsList[slotIndex]);
+            Destroy(_weaponsList[slotIndex].gameObject);
         }
 
         _weaponsList[slotIndex] = weapon;

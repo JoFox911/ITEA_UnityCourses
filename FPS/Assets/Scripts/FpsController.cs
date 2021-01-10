@@ -108,14 +108,18 @@ public class FpsController : MonoBehaviour
         }
 
         var weapon = (ShootingWeapon)_soldierWeaponManager.GetCurrentWeapon();
-        var newAmmoInClipValue = weapon.GetCurrentAmmo();
-        if (_ammoInClip != newAmmoInClipValue)
+        if (weapon != null)
         {
-            _ammoInClip = newAmmoInClipValue;
-            var ChangeAmmoInClipVolumeEvent = new ChangeAmmoInClipVolumeEvent();
-            ChangeAmmoInClipVolumeEvent.newVolume = newAmmoInClipValue;
-            EventAgregator.Post(this, ChangeAmmoInClipVolumeEvent);
+            var newAmmoInClipValue = weapon.GetCurrentAmmo();
+            if (_ammoInClip != newAmmoInClipValue)
+            {
+                _ammoInClip = newAmmoInClipValue;
+                var ChangeAmmoInClipVolumeEvent = new ChangeAmmoInClipVolumeEvent();
+                ChangeAmmoInClipVolumeEvent.newVolume = newAmmoInClipValue;
+                EventAgregator.Post(this, ChangeAmmoInClipVolumeEvent);
+            }
         }
+       
 
 
         var newAmmoInStockValue = _soldierWeaponManager.GetCurrentWeaponAvailableAmmo();
