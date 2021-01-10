@@ -176,5 +176,33 @@ public class SoldierWeaponManager : MonoBehaviour
         }
         return 0;
     }
+
+    public bool IsCurrentWeaponAmmoAvailable()
+    {
+        return IsWeaponAmmoAvailable(_currentWeapon);
+    }
+
+    public bool IsWeaponAmmoAvailable(Weapon weapon)
+    {
+        if (!weapon)
+        {
+            return false;
+        }
+        return !weapon.GetIsOutOfAmmo() || (_availableAmmo.ContainsKey(weapon.GetWeaponAmmoType()) && _availableAmmo[weapon.GetWeaponAmmoType()] > 0);
+    }
+
+    public void TryToSelectWeaponWithAvailableAmmo(out bool IsNoAmmoOnAllWeapons)
+    {
+        for (var i = 0; i < _weaponsList.Count; i++)
+        {
+            if (_weaponsList[i] != null && IsWeaponAmmoAvailable(_weaponsList[i]))
+            {
+                SelectSlotWeapon(i);
+                IsNoAmmoOnAllWeapons = false;
+                return;
+            }
+        }
+        IsNoAmmoOnAllWeapons = true;
+    }
 }
 

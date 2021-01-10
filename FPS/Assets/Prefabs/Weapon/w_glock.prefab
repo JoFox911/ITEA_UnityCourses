@@ -29,7 +29,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3478790504961449316}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.918327, y: -2.525, z: -1.148995}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3478790503618845579}
@@ -137,8 +137,6 @@ MonoBehaviour:
   _muzzleFlash: {fileID: 3478790503618845577}
   _impactEffect: {fileID: 6899934165692146724, guid: effb2751fe5539549b4e4c361fc3095d,
     type: 3}
-  isReloading: 0
-  isOutOfAmmo: 0
 --- !u!1001 &9134628456544990496
 PrefabInstance:
   m_ObjectHideFlags: 0

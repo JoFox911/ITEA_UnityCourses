@@ -29,6 +29,8 @@ public abstract class Weapon : MonoBehaviour
     [SerializeField]
     protected int _ammoVolume = 10;
 
+    protected bool _isOutOfAmmo;
+
 
     public abstract void Shoot(GameObject _raycastSource);
     public abstract void Reload(int enabledAmmoNumber, out int remaining);
@@ -46,6 +48,11 @@ public abstract class Weapon : MonoBehaviour
     public int GetWeaponAmmoVolume()
     {
         return _ammoVolume;
+    }
+
+    public bool GetIsOutOfAmmo()
+    {
+        return _isOutOfAmmo;
     }
 }
 
