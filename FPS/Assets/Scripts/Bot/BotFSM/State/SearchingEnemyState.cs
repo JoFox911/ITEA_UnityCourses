@@ -13,7 +13,7 @@ namespace BotLogic
 
         public override void OnStateEnter()
         {
-            //Debug.Log($"[{GetType().Name}][{MethodBase.GetCurrentMethod().Name}] - OK");
+            Debug.Log($"[{GetType().Name}][{MethodBase.GetCurrentMethod().Name}] - OK");
             if (_sharedContext == null)
             {
                 return;
@@ -41,13 +41,15 @@ namespace BotLogic
             else
             {
                 //take next enemy searching point
+                SetNewDistinationPoint();
             }
         }
 
         private void SetNewDistinationPoint()
         {
             // todo change UnityEngine.Random.Range(0, 101);
-            _destinationPoint = _sharedContext.MapHelper.EnemySearchingPoints[0];
+            // use Vector3.distance
+            _destinationPoint = _sharedContext.MapHelper.EnemySearchingPoints[UnityEngine.Random.Range(0, _sharedContext.MapHelper.EnemySearchingPoints.Count)];
             _botMovement.SetTarget(_destinationPoint.position);
         }
     }

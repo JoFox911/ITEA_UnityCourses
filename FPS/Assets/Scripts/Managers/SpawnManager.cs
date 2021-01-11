@@ -32,6 +32,8 @@ public class SpawnManager : MonoBehaviour
 
     void Awake()
     {
+        ServiceLocator.Register<SpawnManager>(this);
+
         _spawnsList = new List<Spawn>();
 
         foreach (var possition in _spawnPossitions)
@@ -43,7 +45,7 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    private void Update()
+    void Update()
     {
         foreach (var spawn in _spawnsList)
         {
@@ -53,6 +55,16 @@ public class SpawnManager : MonoBehaviour
                 StartCoroutine(SetItemToSpawn(spawn));
             }
         }
+    }
+
+    public List<Transform> GetAllSpawns()
+    {
+        var transformsList = new List<Transform>();
+        foreach (var spawn in _spawnsList)
+        {
+            transformsList.Add(spawn.transform);
+        }
+        return transformsList;
     }
 
     public IEnumerator SetItemToSpawn(Spawn spawn)

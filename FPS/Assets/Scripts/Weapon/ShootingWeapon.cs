@@ -12,7 +12,6 @@ public class ShootingWeapon : Weapon
 
 
     private float _nextTimeToFire = 0f;
-    private bool isReloading;
     private int _currentAmmo;
     private RaycastHit _hit;
 
@@ -25,7 +24,7 @@ public class ShootingWeapon : Weapon
     public override void Shoot(GameObject _raycastSource)
     {
 
-        if ((Time.time <= _nextTimeToFire) || _isOutOfAmmo || isReloading)
+        if ((Time.time <= _nextTimeToFire) || _isOutOfAmmo || _isReloading)
         {
             return;
         }
@@ -63,9 +62,9 @@ public class ShootingWeapon : Weapon
     public override void Reload(int enabledAmmoNumber, out int remaining)
     {
         var possibleAmmoForWeaponClip = 0;
-        if (!isReloading) 
+        if (!_isReloading) 
         {
-            isReloading = true;
+            _isReloading = true;
             possibleAmmoForWeaponClip = enabledAmmoNumber >= _ammoVolume - _currentAmmo
                                                     ? _ammoVolume - _currentAmmo
                                                     : enabledAmmoNumber;
@@ -79,7 +78,7 @@ public class ShootingWeapon : Weapon
     {
         yield return new WaitForSeconds(_reloadTime);
         _isOutOfAmmo = false;
-        isReloading = false;
+        _isReloading = false;
         
     }
 

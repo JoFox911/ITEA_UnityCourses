@@ -30,6 +30,7 @@ public abstract class Weapon : MonoBehaviour
     protected int _ammoVolume = 10;
 
     protected bool _isOutOfAmmo;
+    protected bool _isReloading;
 
 
     public abstract void Shoot(GameObject _raycastSource);
@@ -53,6 +54,11 @@ public abstract class Weapon : MonoBehaviour
     public bool GetIsOutOfAmmo()
     {
         return _isOutOfAmmo;
+    }
+
+    public bool GetIsReloading()
+    {
+        return _isReloading;
     }
 }
 

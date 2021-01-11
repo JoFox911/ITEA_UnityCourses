@@ -96,7 +96,7 @@ public class SoldierWeaponManager : MonoBehaviour
 
     public void Shoot(Action callback)
     {
-        if (_currentWeapon != null)
+        if (IsWeaponSelected())
         {
             _currentWeapon.Shoot(_raycastSource);
             callback?.Invoke();
@@ -105,7 +105,7 @@ public class SoldierWeaponManager : MonoBehaviour
 
     public void Reload(Action callback)
     {
-        if (_currentWeapon != null)
+        if (IsWeaponSelected())
         {
             var currentWeaponPossibleAmmo = _availableAmmo[_currentWeapon.GetWeaponAmmoType()];
             if (currentWeaponPossibleAmmo > 0)
@@ -121,6 +121,7 @@ public class SoldierWeaponManager : MonoBehaviour
     {
         if (_weaponsList[slotIndex] != null)
         {
+            Debug.Log("SelectSlotWeapon" + _weaponsList[slotIndex]);
             _currentWeapon = _weaponsList[slotIndex];
 
             _currentWeapon.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
@@ -150,6 +151,7 @@ public class SoldierWeaponManager : MonoBehaviour
             if (_weaponsList[slotIndex].gameObject.activeInHierarchy)
             {
                 weapon.gameObject.SetActive(true);
+                _currentWeapon = weapon;
             }
             //todo может не надо уничтожеать?
             Destroy(_weaponsList[slotIndex].gameObject);
@@ -188,6 +190,13 @@ public class SoldierWeaponManager : MonoBehaviour
         {
             return false;
         }
+        var t1 = weapon.GetIsOutOfAmmo();
+        var t2 = weapon.GetWeaponAmmoType();
+        if (_availableAmmo.ContainsKey(t2))
+        {
+            var t3 = _availableAmmo[t2];
+
+        }
         return !weapon.GetIsOutOfAmmo() || (_availableAmmo.ContainsKey(weapon.GetWeaponAmmoType()) && _availableAmmo[weapon.GetWeaponAmmoType()] > 0);
     }
 
@@ -203,6 +212,15 @@ public class SoldierWeaponManager : MonoBehaviour
             }
         }
         IsNoAmmoOnAllWeapons = true;
+    }
+
+    public bool GetReloadState()
+    {
+        if (IsWeaponSelected())
+        {
+            return _currentWeapon.GetIsReloading();
+        }
+        return false;
     }
 }
 

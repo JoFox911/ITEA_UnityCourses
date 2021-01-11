@@ -13,7 +13,7 @@ namespace BotLogic
 
         public override void OnStateEnter()
         {
-            //Debug.Log($"[{GetType().Name}][{MethodBase.GetCurrentMethod().Name}] - OK");
+            Debug.Log($"[{GetType().Name}][{MethodBase.GetCurrentMethod().Name}] - OK");
             if (_sharedContext == null)
             {
                 return;
@@ -48,14 +48,19 @@ namespace BotLogic
                         _sharedContext.WeaponManager.AddAmmo(ammo);
                     }
 
-                    if (_sharedContext.WeaponManager.IsWeaponSelected)
+                    if (_sharedContext.WeaponManager.IsWeaponSelected && !_sharedContext.WeaponManager.IsNoAmmoOnAllWeapons)
                     {
                         _stateSwitcher.Switch(typeof(SearchingEnemyState));
                     }
-                    else 
+                    else
                     {
                         SetNewDistinationPoint();
                     }
+                }
+                else
+                {
+                    // если мы пришли, а тут пусто, то идем на другую точку
+                    SetNewDistinationPoint();
                 }
                 
             }
@@ -63,8 +68,9 @@ namespace BotLogic
 
         private void SetNewDistinationPoint()
         {
+            // наверное надо вібирать ближающую или одну из ближайших
             // todo change UnityEngine.Random.Range(0, 101);
-            _destinationPoint = _sharedContext.MapHelper.ItemSpawnPoints[UnityEngine.Random.Range(0, 2)];
+            _destinationPoint = _sharedContext.MapHelper.ItemSpawnPoints[UnityEngine.Random.Range(0, _sharedContext.MapHelper.ItemSpawnPoints.Count)];
             _botMovement.SetTarget(_destinationPoint.position);
         }
     }
