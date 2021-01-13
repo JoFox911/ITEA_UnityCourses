@@ -1,17 +1,19 @@
 ﻿public class BotSharedContext
 {
-    public readonly BotWeaponManager WeaponManager;
-    public readonly BotEnemySpyManager EnemySpyManager;
-    public readonly BotMovementHelper MovementHelper;
+    public readonly CheckEnemyHelper EnemySpyManager;
+    public readonly BotMovementManager MovementManager;
     public readonly BotMapHelper MapHelper;
-    public readonly BotItemDetectionManager ItemDetectionManager;
+    public readonly PickUpHelper ItemDetectionManager;
+    public readonly SoldierWeaponManager WeaponManager;
 
-    public BotSharedContext()
+
+    public BotSharedContext(BotMovementManager movementHelper, PickUpHelper pickUpHelper, BotMapHelper mapHelper, CheckEnemyHelper enemySpyManager, SoldierWeaponManager soldierWeaponManager)
     {
-        WeaponManager = new BotWeaponManager();
-        EnemySpyManager = new BotEnemySpyManager();
-        MovementHelper = new BotMovementHelper();
-        MapHelper = new BotMapHelper();
-        ItemDetectionManager = new BotItemDetectionManager();
+
+        MovementManager = movementHelper;
+        ItemDetectionManager = pickUpHelper;
+        MapHelper = mapHelper;
+        EnemySpyManager = enemySpyManager;
+        WeaponManager = soldierWeaponManager;
     }
 }

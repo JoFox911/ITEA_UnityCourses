@@ -2,7 +2,6 @@
 using UnityEngine;
 using BotLogic;
 using System;
-using UnityEngine.AI;
 
 [RequireComponent(typeof(PickUpHelper))]
 [RequireComponent(typeof(CheckEnemyHelper))]
@@ -14,7 +13,7 @@ public class ControllerBotFSM : MonoBehaviour
     private List<Transform> _enemySearchingPoints;
 
     [SerializeField]
-    private BotSharedContext _botSharedContext = new BotSharedContext();
+    private BotSharedContext _botSharedContext;
 
     [SerializeField]
     private GameObject _raycastSource;
@@ -41,16 +40,23 @@ public class ControllerBotFSM : MonoBehaviour
         _botMovementManager = gameObject.GetComponent<BotMovementManager>();
 
         _spawnManager = ServiceLocator.Resolved<SpawnManager>();
-        
-    }
 
-    void Start()
-    {
         if (_spawnManager != null)
         {
             _itemSpawnPoints = _spawnManager.GetAllSpawns();
         }
 
+        var _mapHelper = new BotMapHelper(_enemySearchingPoints, _itemSpawnPoints);
+
+        _soldierWeaponManager.Initialize(_raycastSource);
+
+        _botSharedContext = new BotSharedContext(_botMovementManager, _pickUpHelper, _mapHelper, _checkEnemyHelper, _soldierWeaponManager);
+
+
+    }
+
+    void Start()
+    {
         InitFSM();
     }
 
@@ -60,25 +66,10 @@ public class ControllerBotFSM : MonoBehaviour
         {
             _finiteStateMachine.Update();
         }
-
-        UpdateContext();
-    }
-
-    private void UpdateContext()
-    {
-        _botSharedContext.MovementHelper.UpdateState();
-        _botSharedContext.WeaponManager.UpdateState();
-        _botSharedContext.ItemDetectionManager.UpdateState();
-        _botSharedContext.EnemySpyManager.UpdateState();
     }
 
     private void InitFSM()
     {
-        _botSharedContext.MovementHelper.Init(_botMovementManager);
-        _botSharedContext.MapHelper.Init(_enemySearchingPoints, _itemSpawnPoints);
-        _botSharedContext.ItemDetectionManager.Init(_pickUpHelper);
-        _botSharedContext.WeaponManager.Init(_soldierWeaponManager, _raycastSource);
-        _botSharedContext.EnemySpyManager.Init(_checkEnemyHelper);
 
         _finiteStateMachine = new FiniteStateMachine<BotSharedContext>();
 

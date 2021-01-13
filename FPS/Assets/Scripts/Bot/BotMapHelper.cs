@@ -6,7 +6,7 @@ public class BotMapHelper
     public List<Transform> EnemySearchingPoints = new List<Transform>();
     public List<Transform> ItemSpawnPoints = new List<Transform>();
 
-    public void Init(List<Transform> enemySearchingPoints, List<Transform> itemSpawnPoints)
+    public BotMapHelper(List<Transform> enemySearchingPoints, List<Transform> itemSpawnPoints)
     {
         EnemySearchingPoints = enemySearchingPoints;
         ItemSpawnPoints = itemSpawnPoints;

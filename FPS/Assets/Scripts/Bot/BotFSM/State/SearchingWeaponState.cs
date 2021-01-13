@@ -9,7 +9,7 @@ namespace BotLogic
         }
 
         private Transform _destinationPoint;
-        private BotMovementHelper _botMovement;
+        private BotMovementManager _botMovement;
 
         public override void OnStateEnter()
         {
@@ -19,7 +19,7 @@ namespace BotLogic
                 return;
             }
 
-            _botMovement = _sharedContext.MovementHelper;
+            _botMovement = _sharedContext.MovementManager;
             SetNewDistinationPoint();
         }
 
@@ -31,39 +31,36 @@ namespace BotLogic
                 return;
             }
 
-            if (_botMovement.IsMovementCompleted)
+            
+            if (_sharedContext.ItemDetectionManager.IsItemDetected)
             {
-                if (_sharedContext.ItemDetectionManager.IsItemDetected)
+                var item = _sharedContext.ItemDetectionManager.GetPickUpObject();
+                // check is weapon
+                var weapon = item.GetComponent<Weapon>();
+                var ammo = item.GetComponent<Ammo>();
+                if (weapon != null)
                 {
-                    var item = _sharedContext.ItemDetectionManager.GrabableObject;
-                    // check is weapon
-                    var weapon = item.GetComponent<Weapon>();
-                    var ammo = item.GetComponent<Ammo>();
-                    if (weapon != null)
-                    {
-                        Debug.Log("_sharedContext.WeaponManager.AddWeapon");
-                        _sharedContext.WeaponManager.AddWeapon(weapon);
-                    }
-                    else if (ammo != null)
-                    {
-                        _sharedContext.WeaponManager.AddAmmo(ammo);
-                    }
+                    Debug.Log("_sharedContext.WeaponManager.AddWeapon");
+                    _sharedContext.WeaponManager.AddWeapon(weapon, null);
+                }
+                else if (ammo != null)
+                {
+                    _sharedContext.WeaponManager.AddAmmo(ammo, null);
+                }
 
-                    if (_sharedContext.WeaponManager.IsWeaponSelected && !_sharedContext.WeaponManager.IsNoAmmoOnAllWeapons)
-                    {
-                        _stateSwitcher.Switch(typeof(SearchingEnemyState));
-                    }
-                    else
-                    {
-                        SetNewDistinationPoint();
-                    }
+                if (_sharedContext.WeaponManager.IsWeaponSelected() && !_sharedContext.WeaponManager.IsNoAmmoOnAllWeapons)
+                {
+                    _stateSwitcher.Switch(typeof(SearchingEnemyState));
                 }
                 else
                 {
-                    // если мы пришли, а тут пусто, то идем на другую точку
                     SetNewDistinationPoint();
                 }
-                
+            } 
+            else if (_botMovement.IsMovementCompleted)
+            {
+                // если мы пришли, а тут пусто, то идем на другую точку
+                SetNewDistinationPoint();
             }
         }
 

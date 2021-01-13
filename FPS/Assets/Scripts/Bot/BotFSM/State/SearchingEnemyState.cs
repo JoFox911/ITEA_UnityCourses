@@ -9,7 +9,7 @@ namespace BotLogic
         }
 
         private Transform _destinationPoint;
-        private BotMovementHelper _botMovement;
+        private BotMovementManager _botMovement;
 
         public override void OnStateEnter()
         {
@@ -18,7 +18,7 @@ namespace BotLogic
             {
                 return;
             }
-            _botMovement = _sharedContext.MovementHelper;
+            _botMovement = _sharedContext.MovementManager;
             SetNewDistinationPoint();
         }
 
@@ -30,15 +30,11 @@ namespace BotLogic
                 return;
             }
 
-            if (!_botMovement.IsMovementCompleted)
+            if (_sharedContext.EnemySpyManager.IsAnyEnemySpyed)
             {
-                //
-                if (_sharedContext.EnemySpyManager.IsAnyEnemySpyed)
-                {
-                    _stateSwitcher.Switch(typeof(EnemyAttackState));
-                }
+                _stateSwitcher.Switch(typeof(EnemyAttackState));
             }
-            else
+            else if (_botMovement.IsMovementCompleted)
             {
                 //take next enemy searching point
                 SetNewDistinationPoint();

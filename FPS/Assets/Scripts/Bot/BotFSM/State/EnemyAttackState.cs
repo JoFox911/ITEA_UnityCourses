@@ -5,8 +5,8 @@ namespace BotLogic
 {
     public class EnemyAttackState : BaseState<BotSharedContext>
     {
-        private BotMovementHelper _botMovement;
-        private BotWeaponManager _botWeapon;
+        private BotMovementManager _botMovement;
+        private SoldierWeaponManager _botWeapon;
         private GameObject _target;
 
         private float _folowDistance = 7f;
@@ -26,9 +26,9 @@ namespace BotLogic
                 return;
             }
 
-            _botMovement = _sharedContext.MovementHelper;
+            _botMovement = _sharedContext.MovementManager;
             _botWeapon = _sharedContext.WeaponManager;
-            _target = _sharedContext.EnemySpyManager.CurrentTarget;
+            _target = _sharedContext.EnemySpyManager.GetTarget();
 
             FolowTarget();
 
@@ -50,7 +50,7 @@ namespace BotLogic
                 {
                     _stateSwitcher.Switch(typeof(SearchingWeaponState));
                 } 
-                else if ((Time.time > _cooldownEndTime) && !_botWeapon.IsReload)
+                else if ((Time.time > _cooldownEndTime) && !_botWeapon.IsReload())
                 {
                     FolowTarget();
 
@@ -60,7 +60,7 @@ namespace BotLogic
                         Debug.Log("Shoot");
                         _cooldownEndTime = Time.time + _enemyCooldownAfterShoot;
 
-                        _botWeapon.Shoot();
+                        _botWeapon.Shoot(null);
                     //}
                 }
 

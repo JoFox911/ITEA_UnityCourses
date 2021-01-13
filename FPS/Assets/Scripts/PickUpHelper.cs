@@ -13,9 +13,16 @@ public class PickUpHelper : MonoBehaviour
     private RaycastHit _hit;
     private float _distanceToColPoint;
 
+    public bool IsItemDetected => _grabableObject != null;
+
     void Awake()
     {
         _charController = gameObject.GetComponent<CharacterController>();
+    }
+
+    void Update()
+    {
+        CheckGrab();
     }
 
     public bool CheckGrab()

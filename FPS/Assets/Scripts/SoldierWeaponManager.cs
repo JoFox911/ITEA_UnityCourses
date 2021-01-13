@@ -22,9 +22,33 @@ public class SoldierWeaponManager : MonoBehaviour
 
     private Animator _anim;
 
+    public bool IsNoAmmoOnAllWeapons;
+
     void Awake()
     {
         _anim = GetComponent<Animator>();
+    }
+
+    private void Update()
+    {
+        //  также можно использовать если захотим добавить код когда автоперезарядка и смена оружия
+        if (_isBot)
+        {
+            IsNoAmmoOnAllWeapons = !IsWeaponWithAvailableAmmoExists();
+
+            if (IsWeaponSelected() && !IsReload() && GetCurrentWeapon().GetIsOutOfAmmo())
+            {
+                if (IsCurrentWeaponAmmoAvailable())
+                {
+                    IsNoAmmoOnAllWeapons = false;
+                    Reload(null);
+                }
+                else
+                {
+                    TryToSelectWeaponWithAvailableAmmo();
+                }
+            }
+        }        
     }
 
     public void Initialize(GameObject raycastSource)
@@ -222,7 +246,7 @@ public class SoldierWeaponManager : MonoBehaviour
         return !weapon.GetIsOutOfAmmo() || (_availableAmmo.ContainsKey(weapon.GetWeaponAmmoType()) && _availableAmmo[weapon.GetWeaponAmmoType()] > 0);
     }
 
-    public void TryToSelectWeaponWithAvailableAmmo(out bool IsNoAmmoOnAllWeapons)
+    public void TryToSelectWeaponWithAvailableAmmo()
     {
         Debug.Log("TryToSelectWeaponWithAvailableAmmo");
         for (var i = 0; i < _weaponsList.Count; i++)
@@ -230,14 +254,24 @@ public class SoldierWeaponManager : MonoBehaviour
             if (_weaponsList[i] != null && IsWeaponAmmoAvailable(_weaponsList[i]))
             {
                 SelectSlotWeapon(i);
-                IsNoAmmoOnAllWeapons = false;
                 return;
             }
         }
-        IsNoAmmoOnAllWeapons = true;
     }
 
-    public bool GetReloadState()
+    public bool IsWeaponWithAvailableAmmoExists()
+    {
+        for (var i = 0; i < _weaponsList.Count; i++)
+        {
+            if (_weaponsList[i] != null && IsWeaponAmmoAvailable(_weaponsList[i]))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool IsReload()
     {
         if (IsWeaponSelected())
         {

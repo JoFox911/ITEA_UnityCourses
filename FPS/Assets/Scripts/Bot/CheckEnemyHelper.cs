@@ -12,23 +12,30 @@ public class CheckEnemyHelper : MonoBehaviour
 
     private RaycastHit _hit;
 
+    public bool IsAnyEnemySpyed => _target != null;
+
     void Awake()
     {
         _charController = gameObject.GetComponent<CharacterController>();
     }
 
-    public bool CheckEnemy()
+    private void Update()
     {
-        if (Physics.SphereCast(transform.position + _charController.center, _charController.radius * _castDistance, 
+        CheckEnemy();
+    }
+
+    public void CheckEnemy()
+    {
+        if (Physics.SphereCast(transform.position + _charController.center, _charController.radius * _castDistance,
                                transform.forward, out _hit, _castDistance, _enemyMask))
         {
             _target = _hit.transform.gameObject;
-            //Debug.Log("_target true");
-            return true;
         }
+        else
+        {
+            _target = null;
 
-        _target = null;
-        return false;
+        }
     }
 
     public GameObject GetTarget()

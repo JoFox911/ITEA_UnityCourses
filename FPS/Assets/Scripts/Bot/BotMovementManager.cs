@@ -5,12 +5,18 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Animator))]
 public class BotMovementManager : MonoBehaviour
 {
+    public bool IsMovementCompleted;
+
     private Animator _anim;
     private NavMeshAgent _agent;
+
+    private Vector3 _target;
+
     private Vector2 smoothDeltaPosition = Vector2.zero;
     private Vector2 velocity = Vector2.zero;
-
     private float _stoppingDistanceDelta = 0.1f;
+
+    
 
     void Awake()
     {
@@ -22,30 +28,41 @@ public class BotMovementManager : MonoBehaviour
 
     void Update()
     {
-        Vector3 worldDeltaPosition = _agent.nextPosition - transform.position;
-
-        // Map 'worldDeltaPosition' to local space
-        float dx = Vector3.Dot(transform.right, worldDeltaPosition);
-        float dy = Vector3.Dot(transform.forward, worldDeltaPosition);
-        Vector2 deltaPosition = new Vector2(dx, dy);
-
-        // Low-pass filter the deltaMove
-        float smooth = Mathf.Min(1.0f, Time.deltaTime / 0.15f);
-        smoothDeltaPosition = Vector2.Lerp(smoothDeltaPosition, deltaPosition, smooth);
-
-        // Update velocity if time advances
-        if (Time.deltaTime > 1e-5f)
+        if (IsNearDestinationPosition())
         {
-            velocity = smoothDeltaPosition / Time.deltaTime;
+            IsMovementCompleted = true;
+            StopMovement();
         }
+        else
+        {
+            IsMovementCompleted = false;
 
-        bool isMove = velocity.magnitude > 0.5f && _agent.remainingDistance > _agent.radius;
+            //todo может снаружи проверки
+            Vector3 worldDeltaPosition = _agent.nextPosition - transform.position;
 
-        // Update animation parameters
-        _anim.SetBool("move", isMove);
-        _anim.SetFloat("speed", _agent.speed);
-        //anim.SetFloat("velx", velocity.x);
-        //anim.SetFloat("vely", velocity.y);
+            // Map 'worldDeltaPosition' to local space
+            float dx = Vector3.Dot(transform.right, worldDeltaPosition);
+            float dy = Vector3.Dot(transform.forward, worldDeltaPosition);
+            Vector2 deltaPosition = new Vector2(dx, dy);
+
+            // Low-pass filter the deltaMove
+            float smooth = Mathf.Min(1.0f, Time.deltaTime / 0.15f);
+            smoothDeltaPosition = Vector2.Lerp(smoothDeltaPosition, deltaPosition, smooth);
+
+            // Update velocity if time advances
+            if (Time.deltaTime > 1e-5f)
+            {
+                velocity = smoothDeltaPosition / Time.deltaTime;
+            }
+
+            bool isMove = velocity.magnitude > 0.5f && _agent.remainingDistance > _agent.radius;
+
+            // Update animation parameters
+            _anim.SetBool("move", isMove);
+            _anim.SetFloat("speed", _agent.speed);
+            //anim.SetFloat("velx", velocity.x);
+            //anim.SetFloat("vely", velocity.y);
+        }
     }
 
     void OnAnimatorMove()
@@ -54,30 +71,47 @@ public class BotMovementManager : MonoBehaviour
         transform.position = _agent.nextPosition;
     }
 
-    public void SetTarget(Vector3 target, float stoppingDistance)
+    public void MoveToTarget(Vector3 target)
     {
-        _agent.SetDestination(target);
-        _agent.isStopped = false;
-        _agent.stoppingDistance = stoppingDistance;
+        _target = target;
+        SetTarget(target, 0);
     }
 
-    public void LookAtTarget(Vector3 target)
+    public void FolowTarget(Vector3 target, float distance)
     {
-        _agent.transform.LookAt(target);
+        _target = target;
+        SetTarget(target, distance);
     }
 
-    public bool IsNearDestinationPosition()
-    {
-        return _agent.remainingDistance <= _agent.stoppingDistance + _stoppingDistanceDelta;
-    }
+    
 
-    public void StopMovement()
+    public void LookAtTarget()
     {
-        _agent.isStopped = true;
+        _agent.transform.LookAt(_target);
     }
 
     public Vector3 GetCurrentPossition()
     {
         return _agent.nextPosition;
     }
+
+    private void SetTarget(Vector3 target, float stoppingDistance)
+    {
+        _agent.SetDestination(target);
+        _agent.isStopped = false;
+        _agent.stoppingDistance = stoppingDistance;
+    }
+
+
+    private bool IsNearDestinationPosition()
+    {
+        return _agent.remainingDistance <= _agent.stoppingDistance + _stoppingDistanceDelta;
+    }
+
+    private void StopMovement()
+    {
+        _agent.isStopped = true;
+    }
+
+    
 }
