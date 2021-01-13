@@ -5,14 +5,14 @@ namespace BotLogic
 {
     public class EnemyAttackState : BaseState<BotSharedContext>
     {
-        private BotMovementManager _botMovement;
+        private BotMovementHelper _botMovement;
         private BotWeaponManager _botWeapon;
         private GameObject _target;
 
         private float _folowDistance = 7f;
 
         private float _enemyCooldownAfterShoot = 1f;
-        private float _nextTimeToFire = 0f;
+        private float _cooldownEndTime = 0f;
 
         public EnemyAttackState(BotSharedContext sharedContext) : base(sharedContext)
         {
@@ -26,7 +26,7 @@ namespace BotLogic
                 return;
             }
 
-            _botMovement = _sharedContext.MovementManager;
+            _botMovement = _sharedContext.MovementHelper;
             _botWeapon = _sharedContext.WeaponManager;
             _target = _sharedContext.EnemySpyManager.CurrentTarget;
 
@@ -50,18 +50,18 @@ namespace BotLogic
                 {
                     _stateSwitcher.Switch(typeof(SearchingWeaponState));
                 } 
-                else if ((Time.time > _nextTimeToFire) && !_botWeapon.IsReload)
+                else if ((Time.time > _cooldownEndTime) && !_botWeapon.IsReload)
                 {
                     FolowTarget();
 
                     // делаем так, чтоб враг стрелял если подошел на какую-то подходящую ему дистанцию 
-                    if (IsTryToShootPossible())
-                    {
+                    //if (IsTryToShootPossible())
+                    //{
                         Debug.Log("Shoot");
-                        _nextTimeToFire = Time.time + _enemyCooldownAfterShoot;
+                        _cooldownEndTime = Time.time + _enemyCooldownAfterShoot;
 
                         _botWeapon.Shoot();
-                    }
+                    //}
                 }
 
                 // начать стрелять когда подходим на какое-то рандомное от 5-7 растояние, после вістрела, тупить секунду, потом _isShooting делаем фолс
@@ -86,13 +86,12 @@ namespace BotLogic
 
         private void FolowTarget()
         {
-            _botMovement.SetTarget(_target.transform.position);
-            _botMovement.FolowTarget(_folowDistance);
+            _botMovement.FolowTarget(_target.transform.position, _folowDistance);
         }
 
-        private bool IsTryToShootPossible()
-        {
-            return _botMovement.DistanceToTarget() < Random.Range(4, 10);
-        }
+        //private bool IsTryToShootPossible()
+        //{
+        //    return _botMovement.DistanceToTarget() < Random.Range(4, 10);
+        //}
     }
 }

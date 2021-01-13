@@ -1,77 +1,83 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-public class BotMovementManager
+[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Animator))]
+public class BotMovementManager : MonoBehaviour
 {
-    public bool IsMovementCompleted;
-    public bool IsRun;
+    private Animator _anim;
+    private NavMeshAgent _agent;
+    private Vector2 smoothDeltaPosition = Vector2.zero;
+    private Vector2 velocity = Vector2.zero;
 
-    private float _folowingDistance = 0f;
-    private Vector3 _target;
-    private NavMeshAgent _navMeshAgent;
+    private float _stoppingDistanceDelta = 0.1f;
 
-    public void UpdateState()
+    void Awake()
     {
-        if (_navMeshAgent != null)
+        _anim = GetComponent<Animator>();
+        _agent = GetComponent<NavMeshAgent>();
+        // Don’t update position automatically
+        _agent.updatePosition = false;
+    }
+
+    void Update()
+    {
+        Vector3 worldDeltaPosition = _agent.nextPosition - transform.position;
+
+        // Map 'worldDeltaPosition' to local space
+        float dx = Vector3.Dot(transform.right, worldDeltaPosition);
+        float dy = Vector3.Dot(transform.forward, worldDeltaPosition);
+        Vector2 deltaPosition = new Vector2(dx, dy);
+
+        // Low-pass filter the deltaMove
+        float smooth = Mathf.Min(1.0f, Time.deltaTime / 0.15f);
+        smoothDeltaPosition = Vector2.Lerp(smoothDeltaPosition, deltaPosition, smooth);
+
+        // Update velocity if time advances
+        if (Time.deltaTime > 1e-5f)
         {
-            if ((_navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance + 0.1f) ||
-                (Vector3.Distance(_target, _navMeshAgent.nextPosition) < _folowingDistance))
-            {
-                IsMovementCompleted = true;
-                _navMeshAgent.isStopped = true;
-            }
-        }       
-    }
-
-    public void Init(NavMeshAgent navMeshAgent)
-    {
-        _navMeshAgent = navMeshAgent;
-        SetIsRunState(false);
-    }
-
-    public void SetTarget(Vector3 target)
-    {
-        _target = target;
-        MoveToTarget();
-    }
-
-    public void MoveToTarget()
-    {
-        FolowTarget(0f);
-    }
-
-    public void FolowTarget(float distance)
-    {
-        _folowingDistance = distance;
-        if (Vector3.Distance(_target, _navMeshAgent.nextPosition) > _folowingDistance)
-        {
-            //Debug.Log("MoveToTarget " + _target);
-            _navMeshAgent.isStopped = false;
-            IsMovementCompleted = false;
-            _navMeshAgent.SetDestination(_target);
-        }        
-    }
-
-    public void LookAtTarget()
-    {
-        _navMeshAgent.transform.LookAt(_target);
-    }
-
-    public float DistanceToTarget()
-    {
-        return _navMeshAgent.remainingDistance;
-    }
-
-    public void SetIsRunState(bool value)
-    { 
-        IsRun = value;
-        if (IsRun)
-        {
-            _navMeshAgent.speed = 8;
+            velocity = smoothDeltaPosition / Time.deltaTime;
         }
-        else
-        {
-            _navMeshAgent.speed = 4;
-        }
+
+        bool isMove = velocity.magnitude > 0.5f && _agent.remainingDistance > _agent.radius;
+
+        // Update animation parameters
+        _anim.SetBool("move", isMove);
+        _anim.SetFloat("speed", _agent.speed);
+        //anim.SetFloat("velx", velocity.x);
+        //anim.SetFloat("vely", velocity.y);
+    }
+
+    void OnAnimatorMove()
+    {
+        // Update position to agent position
+        transform.position = _agent.nextPosition;
+    }
+
+    public void SetTarget(Vector3 target, float stoppingDistance)
+    {
+        _agent.SetDestination(target);
+        _agent.isStopped = false;
+        _agent.stoppingDistance = stoppingDistance;
+    }
+
+    public void LookAtTarget(Vector3 target)
+    {
+        _agent.transform.LookAt(target);
+    }
+
+    public bool IsNearDestinationPosition()
+    {
+        return _agent.remainingDistance <= _agent.stoppingDistance + _stoppingDistanceDelta;
+    }
+
+    public void StopMovement()
+    {
+        _agent.isStopped = true;
+    }
+
+    public Vector3 GetCurrentPossition()
+    {
+        return _agent.nextPosition;
     }
 }

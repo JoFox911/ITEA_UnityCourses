@@ -9,7 +9,7 @@ namespace BotLogic
         }
 
         private Transform _destinationPoint;
-        private BotMovementManager _botMovement;
+        private BotMovementHelper _botMovement;
 
         public override void OnStateEnter()
         {
@@ -19,7 +19,7 @@ namespace BotLogic
                 return;
             }
 
-            _botMovement = _sharedContext.MovementManager;
+            _botMovement = _sharedContext.MovementHelper;
             SetNewDistinationPoint();
         }
 
@@ -41,6 +41,7 @@ namespace BotLogic
                     var ammo = item.GetComponent<Ammo>();
                     if (weapon != null)
                     {
+                        Debug.Log("_sharedContext.WeaponManager.AddWeapon");
                         _sharedContext.WeaponManager.AddWeapon(weapon);
                     }
                     else if (ammo != null)
@@ -68,10 +69,10 @@ namespace BotLogic
 
         private void SetNewDistinationPoint()
         {
-            // наверное надо вібирать ближающую или одну из ближайших
-            // todo change UnityEngine.Random.Range(0, 101);
-            _destinationPoint = _sharedContext.MapHelper.ItemSpawnPoints[UnityEngine.Random.Range(0, _sharedContext.MapHelper.ItemSpawnPoints.Count)];
-            _botMovement.SetTarget(_destinationPoint.position);
+            _destinationPoint = Common.SetectOneOfTheNearestPoint(_sharedContext.MapHelper.ItemSpawnPoints,
+                                                                  _botMovement.GetCurrentPossition(),
+                                                                  5);
+            _botMovement.MoveToTarget(_destinationPoint.position);
         }
     }
 }

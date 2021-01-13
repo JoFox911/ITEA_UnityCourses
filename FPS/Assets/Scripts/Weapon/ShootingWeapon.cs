@@ -23,12 +23,6 @@ public class ShootingWeapon : Weapon
 
     public override void Shoot(GameObject _raycastSource)
     {
-
-        if ((Time.time <= _nextTimeToFire) || _isOutOfAmmo || _isReloading)
-        {
-            return;
-        }
-
         _currentAmmo--;
         if (_currentAmmo <= 0)
         {
@@ -85,5 +79,10 @@ public class ShootingWeapon : Weapon
     public int GetCurrentAmmo()
     {
         return _currentAmmo;
+    }
+
+    public override bool IsWeaponReady()
+    {
+        return (Time.time >= _nextTimeToFire) && !_isOutOfAmmo && !_isReloading;
     }
 }

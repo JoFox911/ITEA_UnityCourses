@@ -60,6 +60,8 @@ public abstract class Weapon : MonoBehaviour
     {
         return _isReloading;
     }
+
+    public abstract bool IsWeaponReady();
 }
 
 

@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+[RequireComponent(typeof(Animator))]
 public class SoldierWeaponManager : MonoBehaviour
 {
     [SerializeField]
     private GameObject _weaponHolder;
+
+    [SerializeField]
+    private bool _isBot;
 
     private Dictionary<AmmoType, int> _availableAmmo;
 
@@ -14,6 +19,13 @@ public class SoldierWeaponManager : MonoBehaviour
     private Weapon _currentWeapon;
 
     private GameObject _raycastSource;
+
+    private Animator _anim;
+
+    void Awake()
+    {
+        _anim = GetComponent<Animator>();
+    }
 
     public void Initialize(GameObject raycastSource)
     {
@@ -45,6 +57,7 @@ public class SoldierWeaponManager : MonoBehaviour
 
     public void AddWeapon(Weapon weapon, Action callback)
     {
+        Debug.Log("AddWeapon MN");
         // прячем объект и перемещаем в контейнер для оружия
         weapon.gameObject.SetActive(false);
         weapon.transform.SetParent(_weaponHolder.transform);
@@ -83,6 +96,7 @@ public class SoldierWeaponManager : MonoBehaviour
 
     private void AddAmmoByType(AmmoType ammoType, int ammoNumber)
     {
+        Debug.Log("AddAmmoByType MN");
         if (_availableAmmo.ContainsKey(ammoType))
         {
             _availableAmmo[ammoType] += ammoNumber;
@@ -96,15 +110,21 @@ public class SoldierWeaponManager : MonoBehaviour
 
     public void Shoot(Action callback)
     {
-        if (IsWeaponSelected())
+        Debug.Log("Shoot MN");
+        if (IsWeaponSelected() && _currentWeapon.IsWeaponReady())
         {
             _currentWeapon.Shoot(_raycastSource);
+            if (_isBot)
+            {
+                _anim.SetTrigger("shoot");
+            }
             callback?.Invoke();
         }
     }
 
     public void Reload(Action callback)
     {
+        Debug.Log("SelectSlotWeapon ");
         if (IsWeaponSelected())
         {
             var currentWeaponPossibleAmmo = _availableAmmo[_currentWeapon.GetWeaponAmmoType()];
@@ -119,6 +139,7 @@ public class SoldierWeaponManager : MonoBehaviour
 
     private void SelectSlotWeapon(int slotIndex)
     {
+        Debug.Log("SelectSlotWeapon " + slotIndex);
         if (_weaponsList[slotIndex] != null)
         {
             Debug.Log("SelectSlotWeapon" + _weaponsList[slotIndex]);
@@ -146,6 +167,7 @@ public class SoldierWeaponManager : MonoBehaviour
 
     private void AddWeaponToSlot(int slotIndex, Weapon weapon)
     {
+        Debug.Log("AddWeaponToSlot");
         if (_weaponsList[slotIndex] != null)
         {
             if (_weaponsList[slotIndex].gameObject.activeInHierarchy)
@@ -202,6 +224,7 @@ public class SoldierWeaponManager : MonoBehaviour
 
     public void TryToSelectWeaponWithAvailableAmmo(out bool IsNoAmmoOnAllWeapons)
     {
+        Debug.Log("TryToSelectWeaponWithAvailableAmmo");
         for (var i = 0; i < _weaponsList.Count; i++)
         {
             if (_weaponsList[i] != null && IsWeaponAmmoAvailable(_weaponsList[i]))

@@ -4,10 +4,10 @@ using BotLogic;
 using System;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(PickUpHelper))]
 [RequireComponent(typeof(CheckEnemyHelper))]
 [RequireComponent(typeof(SoldierWeaponManager))]
+[RequireComponent(typeof(BotMovementManager))]
 public class ControllerBotFSM : MonoBehaviour
 {
     [SerializeField]
@@ -27,18 +27,18 @@ public class ControllerBotFSM : MonoBehaviour
 
     private List<Transform> _itemSpawnPoints;
 
-    private NavMeshAgent _navMeshAgent;
     private PickUpHelper _pickUpHelper;
     private SoldierWeaponManager _soldierWeaponManager;
     private SpawnManager _spawnManager;
     private CheckEnemyHelper _checkEnemyHelper;
+    private BotMovementManager _botMovementManager;
 
     void Awake()
     {
         _pickUpHelper = gameObject.GetComponent<PickUpHelper>();
-        _navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         _soldierWeaponManager = gameObject.GetComponent<SoldierWeaponManager>();
-        _checkEnemyHelper = gameObject.GetComponent<CheckEnemyHelper>(); 
+        _checkEnemyHelper = gameObject.GetComponent<CheckEnemyHelper>();
+        _botMovementManager = gameObject.GetComponent<BotMovementManager>();
 
         _spawnManager = ServiceLocator.Resolved<SpawnManager>();
         
@@ -66,7 +66,7 @@ public class ControllerBotFSM : MonoBehaviour
 
     private void UpdateContext()
     {
-        _botSharedContext.MovementManager.UpdateState();
+        _botSharedContext.MovementHelper.UpdateState();
         _botSharedContext.WeaponManager.UpdateState();
         _botSharedContext.ItemDetectionManager.UpdateState();
         _botSharedContext.EnemySpyManager.UpdateState();
@@ -74,7 +74,7 @@ public class ControllerBotFSM : MonoBehaviour
 
     private void InitFSM()
     {
-        _botSharedContext.MovementManager.Init(_navMeshAgent);
+        _botSharedContext.MovementHelper.Init(_botMovementManager);
         _botSharedContext.MapHelper.Init(_enemySearchingPoints, _itemSpawnPoints);
         _botSharedContext.ItemDetectionManager.Init(_pickUpHelper);
         _botSharedContext.WeaponManager.Init(_soldierWeaponManager, _raycastSource);

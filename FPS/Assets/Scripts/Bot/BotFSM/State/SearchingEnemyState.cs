@@ -9,7 +9,7 @@ namespace BotLogic
         }
 
         private Transform _destinationPoint;
-        private BotMovementManager _botMovement;
+        private BotMovementHelper _botMovement;
 
         public override void OnStateEnter()
         {
@@ -18,7 +18,7 @@ namespace BotLogic
             {
                 return;
             }
-            _botMovement = _sharedContext.MovementManager;
+            _botMovement = _sharedContext.MovementHelper;
             SetNewDistinationPoint();
         }
 
@@ -47,10 +47,9 @@ namespace BotLogic
 
         private void SetNewDistinationPoint()
         {
-            // todo change UnityEngine.Random.Range(0, 101);
-            // use Vector3.distance
-            _destinationPoint = _sharedContext.MapHelper.EnemySearchingPoints[UnityEngine.Random.Range(0, _sharedContext.MapHelper.EnemySearchingPoints.Count)];
-            _botMovement.SetTarget(_destinationPoint.position);
+            _destinationPoint = Common.SetectOneOfTheNearestPoint(_sharedContext.MapHelper.EnemySearchingPoints,
+                                                                  _botMovement.GetCurrentPossition(), 2);
+            _botMovement.MoveToTarget(_destinationPoint.position);
         }
     }
 }

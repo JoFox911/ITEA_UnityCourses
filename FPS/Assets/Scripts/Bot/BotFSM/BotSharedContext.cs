@@ -2,7 +2,7 @@
 {
     public readonly BotWeaponManager WeaponManager;
     public readonly BotEnemySpyManager EnemySpyManager;
-    public readonly BotMovementManager MovementManager;
+    public readonly BotMovementHelper MovementHelper;
     public readonly BotMapHelper MapHelper;
     public readonly BotItemDetectionManager ItemDetectionManager;
 
@@ -10,7 +10,7 @@
     {
         WeaponManager = new BotWeaponManager();
         EnemySpyManager = new BotEnemySpyManager();
-        MovementManager = new BotMovementManager();
+        MovementHelper = new BotMovementHelper();
         MapHelper = new BotMapHelper();
         ItemDetectionManager = new BotItemDetectionManager();
     }
