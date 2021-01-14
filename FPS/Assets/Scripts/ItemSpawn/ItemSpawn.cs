@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Spawn : MonoBehaviour
+public class ItemSpawn : MonoBehaviour
 {
     [SerializeField]
     private GameObject itemContainer;

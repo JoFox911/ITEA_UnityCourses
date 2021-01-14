@@ -25,7 +25,11 @@ namespace BotLogic
         public override void Execute()
         {
             //Debug.Log($"[{GetType().Name}][{MethodBase.GetCurrentMethod().Name}] - OK");
-            if (_botMovement == null)
+            if (!_sharedContext.SoldierState.IsAlive())
+            {
+                _stateSwitcher.Switch(typeof(DeadState));
+            }
+            else if (_botMovement == null)
             {
                 return;
             }

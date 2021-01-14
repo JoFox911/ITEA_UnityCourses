@@ -25,14 +25,18 @@ namespace BotLogic
 
         public override void Execute()
         {
+
             //Debug.Log($"[{GetType().Name}][{MethodBase.GetCurrentMethod().Name}] - OK");
             if (_botMovement == null)
             {
                 return;
             }
 
-            
-            if (_sharedContext.ItemDetectionManager.IsItemDetected)
+            if (!_sharedContext.SoldierState.IsAlive())
+            {
+                _stateSwitcher.Switch(typeof(DeadState));
+            }
+            else if (_sharedContext.ItemDetectionManager.IsItemDetected)
             {
                 var item = _sharedContext.ItemDetectionManager.GetPickUpObject();
                 // check is weapon

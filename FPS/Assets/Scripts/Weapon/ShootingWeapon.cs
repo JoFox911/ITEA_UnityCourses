@@ -21,7 +21,7 @@ public class ShootingWeapon : Weapon
         _isOutOfAmmo = true;
     }
 
-    public override void Shoot(GameObject _raycastSource)
+    public override void Shoot(GameObject _raycastSource, string shooterName)
     {
         _currentAmmo--;
         if (_currentAmmo <= 0)
@@ -40,7 +40,8 @@ public class ShootingWeapon : Weapon
             var target = _hit.transform.GetComponent<IShootable>();
             if (target != null)
             {
-                target.TakeDamage(_damage);
+                var shootData = new AttackData(_damage, shooterName, _weaponName);
+                target.TakeDamage(shootData);
             }
 
             if (_hit.rigidbody != null)

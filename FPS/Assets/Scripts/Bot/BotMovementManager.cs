@@ -108,7 +108,7 @@ public class BotMovementManager : MonoBehaviour
         return _agent.remainingDistance <= _agent.stoppingDistance + _stoppingDistanceDelta;
     }
 
-    private void StopMovement()
+    public void StopMovement()
     {
         _agent.isStopped = true;
     }

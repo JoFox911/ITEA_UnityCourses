@@ -37,7 +37,11 @@ namespace BotLogic
 
         public override void Execute()
         {
-            if (!_sharedContext.EnemySpyManager.IsAnyEnemySpyed)
+            if (!_sharedContext.SoldierState.IsAlive())
+            {
+                _stateSwitcher.Switch(typeof(DeadState));
+            } 
+            else if (!_sharedContext.EnemySpyManager.IsAnyEnemySpyed)
             {
                 Debug.Log("Lost ENEMY");
                 _stateSwitcher.Switch(typeof(SearchingEnemyState));

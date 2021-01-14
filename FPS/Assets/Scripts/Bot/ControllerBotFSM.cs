@@ -7,6 +7,7 @@ using System;
 [RequireComponent(typeof(CheckEnemyHelper))]
 [RequireComponent(typeof(SoldierWeaponManager))]
 [RequireComponent(typeof(BotMovementManager))]
+[RequireComponent(typeof(Soldier))]
 public class ControllerBotFSM : MonoBehaviour
 {
 
@@ -29,7 +30,8 @@ public class ControllerBotFSM : MonoBehaviour
     private CheckEnemyHelper _checkEnemyHelper;
     private BotMovementManager _botMovementManager;
     private ItemsSpawnsManager _itemsSpawnManager;
-    private ComandsSpawnsManager _comandsSpawnManager;
+    private TeamsManager _teamsSpawnManager;
+    private Soldier _soldier;
 
     void Awake()
     {
@@ -37,9 +39,10 @@ public class ControllerBotFSM : MonoBehaviour
         _soldierWeaponManager = gameObject.GetComponent<SoldierWeaponManager>();
         _checkEnemyHelper = gameObject.GetComponent<CheckEnemyHelper>();
         _botMovementManager = gameObject.GetComponent<BotMovementManager>();
+        _soldier = gameObject.GetComponent<Soldier>();
 
         _itemsSpawnManager = ServiceLocator.Resolved<ItemsSpawnsManager>();
-        _comandsSpawnManager = ServiceLocator.Resolved<ComandsSpawnsManager>();
+        _teamsSpawnManager = ServiceLocator.Resolved<TeamsManager>();
     }
 
     void Start()
@@ -51,14 +54,14 @@ public class ControllerBotFSM : MonoBehaviour
 
         if (_itemsSpawnManager != null)
         {
-            _enemySearchingPoints = _comandsSpawnManager.GetAllSpawns();
+            _enemySearchingPoints = _teamsSpawnManager.GetAllSpawns();
         }
 
         var _mapHelper = new BotMapHelper(_enemySearchingPoints, _itemSpawnPoints);
 
         _soldierWeaponManager.Initialize(_raycastSource);
 
-        _botSharedContext = new BotSharedContext(_botMovementManager, _pickUpHelper, _mapHelper, _checkEnemyHelper, _soldierWeaponManager);
+        _botSharedContext = new BotSharedContext(_botMovementManager, _pickUpHelper, _mapHelper, _checkEnemyHelper, _soldierWeaponManager, _soldier);
 
         InitFSM();
     }
@@ -79,6 +82,7 @@ public class ControllerBotFSM : MonoBehaviour
         _allBotStates[typeof(SearchingEnemyState)] = new SearchingEnemyState(_botSharedContext);
         _allBotStates[typeof(EnemyAttackState)] = new EnemyAttackState(_botSharedContext);
         _allBotStates[typeof(SearchingWeaponState)] = new SearchingWeaponState(_botSharedContext);
+        _allBotStates[typeof(DeadState)] = new DeadState(_botSharedContext);
 
         _finiteStateMachine.InitStates(_allBotStates);
 

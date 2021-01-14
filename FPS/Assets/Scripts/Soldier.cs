@@ -1,24 +1,68 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public class Soldier : MonoBehaviour, IShootable
 {
     [SerializeField]
     private float _health = 50f;
 
+    [SerializeField]
+    private bool _isBot;
 
 
-    public void TakeDamage(float amount)
+    [SerializeField]
+    private string _name;
+
+    private Animator _anim;
+
+    void Awake()
     {
-        _health -= amount;
+        _anim = GetComponent<Animator>();
+        if (_isBot)
+        {
+            _name = NamesGenerator.GenerateRandomName();
+        }
+        
+    }
+
+    public bool IsAlive()
+    {
+        return _health > 0;
+    }
+
+    public void TakeDamage(AttackData attackData)
+    {
+        _health -= attackData.damage;
         if (_health <= 0)
         {
-            Die();
+            Die(attackData);
         }
     }
 
-    private void Die()
+    private void Die(AttackData attackData)
     {
+        _anim.SetTrigger("dead");
+        EventAgregator.Post(this, new SoldierKilledEvent(attackData.shooterName, attackData.weaponName, _name));
+        if (!_isBot)
+        {
+            EventAgregator.Post(this, new PlayerKilledEvent());
+        }
+
+        if (_isBot)
+        {
+            StartCoroutine(DestroyPlayer());
+        }
+    }
+
+    public IEnumerator DestroyPlayer()
+    {
+        yield return new WaitForSeconds(2f);
         Destroy(gameObject);
     }
 
+    public string GetName()
+    {
+        return _name;
+    }
 }

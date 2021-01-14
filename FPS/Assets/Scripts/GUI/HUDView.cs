@@ -45,6 +45,12 @@ public class HUDView : MonoBehaviour
         EventAgregator.Subscribe<ChangeAmmoInClipVolumeEvent>(SetAmmoInClipVolume);
         EventAgregator.Subscribe<ChangeAmmoInStockVolumeEvent>(SetAmmoInStockVolume);
         EventAgregator.Subscribe<ChangeIsWeaponSelectedUIVisibleElementsEvent>(SetIsWeaponSelectedUIVisibleElements);
+        EventAgregator.Subscribe<SoldierKilledEvent>(PrintKillData);
+    }
+
+    private void PrintKillData(object sender, SoldierKilledEvent eventData)
+    {
+        Debug.Log(eventData.killerName + " " + eventData.killerWeaponName + " killed : " + eventData.victimName);
     }
 
     private void EmitJumpBtnClickedEvent()

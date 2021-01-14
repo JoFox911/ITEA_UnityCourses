@@ -11,7 +11,7 @@ public class ItemsSpawnsManager : MonoBehaviour
     private List<Vector3> _spawnPossitions;
 
     [SerializeField]
-    private Spawn _spawnsPrefab;
+    private ItemSpawn _spawnsPrefab;
 
     [SerializeField]
     [Range(0, 100)]
@@ -28,13 +28,13 @@ public class ItemsSpawnsManager : MonoBehaviour
     [SerializeField]
     private float _nextItemDelay = 10;
 
-    private List<Spawn> _spawnsList;
+    private List<ItemSpawn> _spawnsList;
 
     void Awake()
     {
         ServiceLocator.Register<ItemsSpawnsManager>(this);
 
-        _spawnsList = new List<Spawn>();
+        _spawnsList = new List<ItemSpawn>();
 
         foreach (var possition in _spawnPossitions)
         {
@@ -67,7 +67,7 @@ public class ItemsSpawnsManager : MonoBehaviour
         return transformsList;
     }
 
-    public IEnumerator SetItemToSpawn(Spawn spawn)
+    public IEnumerator SetItemToSpawn(ItemSpawn spawn)
     {
         yield return new WaitForSeconds(_nextItemDelay);
         spawn.SetItemToContainer(GetItemPrefab());

@@ -33,7 +33,7 @@ public abstract class Weapon : MonoBehaviour
     protected bool _isReloading;
 
 
-    public abstract void Shoot(GameObject _raycastSource);
+    public abstract void Shoot(GameObject _raycastSource, string shooterName);
     public abstract void Reload(int enabledAmmoNumber, out int remaining);
 
     public SlotWeaponType GetWeaponSlotType()
@@ -77,4 +77,18 @@ public enum SlotWeaponType
 {
     FirstSlotWeapon,
     SecondSlotWeapon
+}
+
+public class AttackData
+{
+    public float damage;
+    public string shooterName;
+    public string weaponName;
+
+    public AttackData(float _damage, string _shooterName, string _weaponName)
+    {
+        damage = _damage;
+        shooterName = _shooterName;
+        weaponName = _weaponName;
+    }
 }

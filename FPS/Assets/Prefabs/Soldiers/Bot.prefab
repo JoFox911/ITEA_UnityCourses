@@ -358,6 +358,7 @@ GameObject:
   - component: {fileID: 8045185840851986004}
   - component: {fileID: 8045185840851986007}
   - component: {fileID: 8045185840851986025}
+  - component: {fileID: 7165471661145786076}
   m_Layer: 12
   m_Name: Bot
   m_TagString: Untagged
@@ -431,9 +432,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17cc00d86bb69e544ac3382263c4783d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemySearchingPoints:
-  - {fileID: 0}
-  - {fileID: 0}
   _raycastSource: {fileID: 3352073613717569302}
 --- !u!195 &8045185840851986002
 NavMeshAgent:
@@ -471,6 +469,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _weaponHolder: {fileID: 4653327748509850304}
   _isBot: 1
+  IsNoAmmoOnAllWeapons: 0
 --- !u!114 &8045185840851986004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -515,6 +514,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 530c3bbd2093e6c448dd09442f3dfd27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsMovementCompleted: 0
+--- !u!114 &7165471661145786076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4653327748509850318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9775f371eccb2994cbdba784669e0e0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _health: 50
+  _isBot: 1
+  _name: 
 --- !u!1 &4653327748509850400
 GameObject:
   m_ObjectHideFlags: 0

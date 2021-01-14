@@ -4,6 +4,7 @@ using UnityEngine;
 
 
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Soldier))]
 public class SoldierWeaponManager : MonoBehaviour
 {
     [SerializeField]
@@ -21,12 +22,14 @@ public class SoldierWeaponManager : MonoBehaviour
     private GameObject _raycastSource;
 
     private Animator _anim;
+    private Soldier _soldier;
 
     public bool IsNoAmmoOnAllWeapons;
 
     void Awake()
     {
         _anim = GetComponent<Animator>();
+        _soldier = GetComponent<Soldier>();
     }
 
     private void Update()
@@ -137,7 +140,7 @@ public class SoldierWeaponManager : MonoBehaviour
         Debug.Log("Shoot MN");
         if (IsWeaponSelected() && _currentWeapon.IsWeaponReady())
         {
-            _currentWeapon.Shoot(_raycastSource);
+            _currentWeapon.Shoot(_raycastSource, _soldier.GetName());
             if (_isBot)
             {
                 _anim.SetTrigger("shoot");

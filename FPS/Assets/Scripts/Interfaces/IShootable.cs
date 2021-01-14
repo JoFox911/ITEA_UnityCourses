@@ -1,4 +1,4 @@
 ﻿interface IShootable
 {
-    void TakeDamage(float amount);
+    void TakeDamage(AttackData data);
 }
