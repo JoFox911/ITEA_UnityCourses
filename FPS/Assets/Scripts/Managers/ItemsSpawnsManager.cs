@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpawnManager : MonoBehaviour
+public class ItemsSpawnsManager : MonoBehaviour
 {
     [SerializeField]
     private GameObject _spawnsContainer;
@@ -32,7 +32,7 @@ public class SpawnManager : MonoBehaviour
 
     void Awake()
     {
-        ServiceLocator.Register<SpawnManager>(this);
+        ServiceLocator.Register<ItemsSpawnsManager>(this);
 
         _spawnsList = new List<Spawn>();
 

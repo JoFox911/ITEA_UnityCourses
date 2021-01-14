@@ -9,10 +9,7 @@ using System;
 [RequireComponent(typeof(BotMovementManager))]
 public class ControllerBotFSM : MonoBehaviour
 {
-    [SerializeField]
-    private List<Transform> _enemySearchingPoints;
 
-    [SerializeField]
     private BotSharedContext _botSharedContext;
 
     [SerializeField]
@@ -25,12 +22,14 @@ public class ControllerBotFSM : MonoBehaviour
 
 
     private List<Transform> _itemSpawnPoints;
+    private List<Transform> _enemySearchingPoints;
 
     private PickUpHelper _pickUpHelper;
     private SoldierWeaponManager _soldierWeaponManager;
-    private SpawnManager _spawnManager;
     private CheckEnemyHelper _checkEnemyHelper;
     private BotMovementManager _botMovementManager;
+    private ItemsSpawnsManager _itemsSpawnManager;
+    private ComandsSpawnsManager _comandsSpawnManager;
 
     void Awake()
     {
@@ -39,11 +38,20 @@ public class ControllerBotFSM : MonoBehaviour
         _checkEnemyHelper = gameObject.GetComponent<CheckEnemyHelper>();
         _botMovementManager = gameObject.GetComponent<BotMovementManager>();
 
-        _spawnManager = ServiceLocator.Resolved<SpawnManager>();
+        _itemsSpawnManager = ServiceLocator.Resolved<ItemsSpawnsManager>();
+        _comandsSpawnManager = ServiceLocator.Resolved<ComandsSpawnsManager>();
+    }
 
-        if (_spawnManager != null)
+    void Start()
+    {
+        if (_itemsSpawnManager != null)
         {
-            _itemSpawnPoints = _spawnManager.GetAllSpawns();
+            _itemSpawnPoints = _itemsSpawnManager.GetAllSpawns();
+        }
+
+        if (_itemsSpawnManager != null)
+        {
+            _enemySearchingPoints = _comandsSpawnManager.GetAllSpawns();
         }
 
         var _mapHelper = new BotMapHelper(_enemySearchingPoints, _itemSpawnPoints);
@@ -52,11 +60,6 @@ public class ControllerBotFSM : MonoBehaviour
 
         _botSharedContext = new BotSharedContext(_botMovementManager, _pickUpHelper, _mapHelper, _checkEnemyHelper, _soldierWeaponManager);
 
-
-    }
-
-    void Start()
-    {
         InitFSM();
     }
 
