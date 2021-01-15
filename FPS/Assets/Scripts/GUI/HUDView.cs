@@ -32,6 +32,9 @@ public class HUDView : MonoBehaviour
     [SerializeField]
     private GameObject _aimImg;
 
+    [SerializeField]
+    private Slider _healthBar;
+
     void Awake()
     {
         _jumpBtn.onClick.AddListener(EmitJumpBtnClickedEvent);
@@ -46,6 +49,7 @@ public class HUDView : MonoBehaviour
         EventAgregator.Subscribe<ChangeAmmoInStockVolumeEvent>(SetAmmoInStockVolume);
         EventAgregator.Subscribe<ChangeIsWeaponSelectedUIVisibleElementsEvent>(SetIsWeaponSelectedUIVisibleElements);
         EventAgregator.Subscribe<SoldierKilledEvent>(PrintKillData);
+        EventAgregator.Subscribe<ChangeHealthEvent>(SetNewHealthValue);
     }
 
     private void PrintKillData(object sender, SoldierKilledEvent eventData)
@@ -116,5 +120,8 @@ public class HUDView : MonoBehaviour
         _shootBtn.gameObject.SetActive(eventData.NewIsWeaponSelectedValue);
     }
 
-    
+    private void SetNewHealthValue(object sender, ChangeHealthEvent eventData)
+    {
+        _healthBar.value = eventData.newValue;
+    }
 }

@@ -49,10 +49,10 @@ public class JoystickLook : MonoBehaviour
 
         if (_isRotationStarted)
         {
-            xRotation = transform.localEulerAngles.x - _direction.y;
+            xRotation = transform.localEulerAngles.x - (_direction.y * _joystickSensitivity);
             if (xRotation <= _maxVerticalLookAngle || xRotation >= _minVerticalLookAngle)
             {
-                transform.localRotation = Quaternion.Euler(xRotation * _joystickSensitivity, 0f, 0f);
+                transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
             }
 
             _playerBody.Rotate(Vector3.up * _direction.x * _joystickSensitivity);

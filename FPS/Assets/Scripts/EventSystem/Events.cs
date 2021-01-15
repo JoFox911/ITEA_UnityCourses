@@ -47,6 +47,17 @@ public class ChangeAmmoInStockVolumeEvent
     public int newVolume;
 }
 
+
+public class ChangeHealthEvent
+{
+    public float newValue;
+
+    public ChangeHealthEvent(float value)
+    {
+        newValue = value;
+    }
+}
+
 public class PlayerKilledEvent
 {
     public int newVolume;

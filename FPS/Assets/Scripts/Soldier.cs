@@ -8,6 +8,9 @@ public class Soldier : MonoBehaviour, IShootable
     private float _health = 50f;
 
     [SerializeField]
+    private float _maxHealth = 50f;
+
+    [SerializeField]
     private bool _isBot;
 
 
@@ -33,7 +36,8 @@ public class Soldier : MonoBehaviour, IShootable
 
     public void TakeDamage(AttackData attackData)
     {
-        _health -= attackData.damage;
+        SetNewHealthValue(_health - attackData.damage);
+
         if (_health <= 0)
         {
             Die(attackData);
@@ -64,5 +68,14 @@ public class Soldier : MonoBehaviour, IShootable
     public string GetName()
     {
         return _name;
+    }
+
+    private void SetNewHealthValue(float newValue)
+    {
+        _health = newValue;
+        if (!_isBot)
+        {
+            EventAgregator.Post(this, new ChangeHealthEvent(_health / _maxHealth));
+        }
     }
 }
