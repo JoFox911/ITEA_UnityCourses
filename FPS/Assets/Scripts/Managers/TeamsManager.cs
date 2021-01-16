@@ -46,7 +46,9 @@ public class TeamsManager: MonoBehaviour
 
         if (team.IsPlayerTeam)
         {
+            _player.SetActive(false);
             _player.transform.position = pos;
+            _player.SetActive(true);
             var soldierComponent = _player.GetComponent<Soldier>();
             if (soldierComponent != null)
             {
