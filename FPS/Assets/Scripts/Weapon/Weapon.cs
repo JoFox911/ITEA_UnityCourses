@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public abstract class Weapon : MonoBehaviour
 {
@@ -28,6 +29,9 @@ public abstract class Weapon : MonoBehaviour
 
     [SerializeField]
     protected int _ammoVolume = 10;
+
+    [SerializeField]
+    protected Sprite _weaponIcon;
 
     protected bool _isOutOfAmmo;
     protected bool _isReloading;
@@ -61,7 +65,13 @@ public abstract class Weapon : MonoBehaviour
         return _isReloading;
     }
 
+    public Sprite GetWeaponIcon()
+    {
+        return _weaponIcon;
+    }
+
     public abstract bool IsWeaponReady();
+    public abstract int GetCurrentAmmo();
 }
 
 

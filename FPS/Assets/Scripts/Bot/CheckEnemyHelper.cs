@@ -28,6 +28,10 @@ public class CheckEnemyHelper : MonoBehaviour
     {
         if (Physics.SphereCast(transform.position + _charController.center, _charController.radius * _castDistance,
                                transform.forward, out _hit, _castDistance, _enemyMask))
+        //var hitsInfoArray = Physics.OverlapSphere(transform.position, _castDistance, _enemyMask);
+        //var objects = Physics.SphereCast(own.position, radius, own.forward);
+        //if (Physics.SphereCast(transform.position + _charController.center, _castRadius,
+        //                   transform.forward, out _hit, 0.1f, _enemyMask))
         {
             _target = _hit.transform.gameObject;
         }
@@ -43,8 +47,8 @@ public class CheckEnemyHelper : MonoBehaviour
         return _target;
     }
 
-    public float GetInSightDistance()
-    {
-        return _castDistance;
-    }
+    //public float GetInSightDistance()
+    //{
+    //    return _castDistance;
+    //}
 }

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 [RequireComponent (typeof(SoldierWeaponManager))]
 [RequireComponent(typeof(PickUpHelper))]
@@ -12,8 +14,7 @@ public class FpsController : MonoBehaviour
 
     private bool _isGrabPossible;
     private bool _isWeaponSelected;
-    private int _ammoInClip = int.MinValue;
-    private int _ammoInStock = int.MinValue;
+    private List<Tuple<int, int>> _lastWeaponAmmoStatus;
 
     void Awake()
     {
@@ -53,6 +54,14 @@ public class FpsController : MonoBehaviour
             if (weapon != null)
             {
                 _soldierWeaponManager.AddWeapon(weapon, UpdateWeaponUI);
+                if (weapon.GetWeaponSlotType() == SlotWeaponType.FirstSlotWeapon)
+                {
+                    EventAgregator.Post(this, new ChangeFirstSlotWeaponIconEvent(weapon.GetWeaponIcon()));
+                }
+                else if (weapon.GetWeaponSlotType() == SlotWeaponType.SecondSlotWeapon)
+                {
+                    EventAgregator.Post(this, new ChangeSecondSlotWeaponIconEvent(weapon.GetWeaponIcon()));
+                }
             } 
             else if (ammo != null)
             {
@@ -95,41 +104,44 @@ public class FpsController : MonoBehaviour
 
     private void UpdateWeaponUI()
     {
-        Debug.Log("UpdateWeaponUI");
-
-
         var newIsWeaponSelectedValue = _soldierWeaponManager.IsWeaponSelected();
         if (_isWeaponSelected != newIsWeaponSelectedValue)
         {
             _isWeaponSelected = newIsWeaponSelectedValue;
-            var ChangeIsWeaponSelectedUIVisibleElementsEvent = new ChangeIsWeaponSelectedUIVisibleElementsEvent();
-            ChangeIsWeaponSelectedUIVisibleElementsEvent.NewIsWeaponSelectedValue = newIsWeaponSelectedValue;
-            EventAgregator.Post(this, ChangeIsWeaponSelectedUIVisibleElementsEvent);
+            EventAgregator.Post(this, new ChangeIsWeaponSelectedUIVisibleElementsEvent(newIsWeaponSelectedValue));
         }
 
-        var weapon = (ShootingWeapon)_soldierWeaponManager.GetCurrentWeapon();
-        if (weapon != null)
+
+        var newAmmoStatus = _soldierWeaponManager.GetWeaponAmmoStatuses();
+
+        if (newAmmoStatus[0] != null)
         {
-            var newAmmoInClipValue = weapon.GetCurrentAmmo();
-            if (_ammoInClip != newAmmoInClipValue)
+            if (_lastWeaponAmmoStatus == null || _lastWeaponAmmoStatus[0] == null ||
+                (_lastWeaponAmmoStatus != null && _lastWeaponAmmoStatus[0] != null && newAmmoStatus[0].Item1 != _lastWeaponAmmoStatus[0].Item1))
             {
-                _ammoInClip = newAmmoInClipValue;
-                var ChangeAmmoInClipVolumeEvent = new ChangeAmmoInClipVolumeEvent();
-                ChangeAmmoInClipVolumeEvent.newVolume = newAmmoInClipValue;
-                EventAgregator.Post(this, ChangeAmmoInClipVolumeEvent);
+                EventAgregator.Post(this, new ChangeFirstSlotWeaponAmmoInClipVolumeEvent(newAmmoStatus[0].Item1));
+            }
+            if (_lastWeaponAmmoStatus == null || _lastWeaponAmmoStatus[0] == null ||
+                (_lastWeaponAmmoStatus != null && _lastWeaponAmmoStatus[0] != null && newAmmoStatus[0].Item2 != _lastWeaponAmmoStatus[0].Item2))
+            {
+                EventAgregator.Post(this, new ChangeFirstSlotWeaponAmmoInStockVolumeEvent(newAmmoStatus[0].Item2));
             }
         }
-       
 
-
-        var newAmmoInStockValue = _soldierWeaponManager.GetCurrentWeaponAvailableAmmo();
-        if (_ammoInStock != newAmmoInStockValue)
+        if (newAmmoStatus[1] != null)
         {
-            _ammoInStock = newAmmoInStockValue;
-            var ChangeAmmoInStockVolumeEvent = new ChangeAmmoInStockVolumeEvent();
-            ChangeAmmoInStockVolumeEvent.newVolume = newAmmoInStockValue;
-            EventAgregator.Post(this, ChangeAmmoInStockVolumeEvent);
+            if (_lastWeaponAmmoStatus == null || _lastWeaponAmmoStatus[1] == null ||
+                (_lastWeaponAmmoStatus != null && _lastWeaponAmmoStatus[1] != null && newAmmoStatus[1].Item1 != _lastWeaponAmmoStatus[1].Item1))
+            {
+                EventAgregator.Post(this, new ChangeSecondSlotWeaponAmmoInClipVolumeEvent(newAmmoStatus[1].Item1));
+            }
+            if (_lastWeaponAmmoStatus == null || _lastWeaponAmmoStatus[1] == null ||
+                (_lastWeaponAmmoStatus != null && _lastWeaponAmmoStatus[1] != null && newAmmoStatus[1].Item2 != _lastWeaponAmmoStatus[1].Item2))
+            {
+                EventAgregator.Post(this, new ChangeSecondSlotWeaponAmmoInStockVolumeEvent(newAmmoStatus[1].Item2));
+            }
         }
+        _lastWeaponAmmoStatus = newAmmoStatus;
     }
 
 }

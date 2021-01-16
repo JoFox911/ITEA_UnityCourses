@@ -3,11 +3,13 @@ using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(AudioSource))]
 public class BotMovementManager : MonoBehaviour
 {
     public bool IsMovementCompleted;
 
     private Animator _anim;
+    private AudioSource _audioSource;
     private NavMeshAgent _agent;
 
     private Vector3 _target;
@@ -16,12 +18,16 @@ public class BotMovementManager : MonoBehaviour
     private Vector2 velocity = Vector2.zero;
     private float _stoppingDistanceDelta = 0.1f;
 
+    private float nextStepSoundDelay = 0.3f;
+    private float nextStepSoundTime = 0f;
+
     
 
     void Awake()
     {
         _anim = GetComponent<Animator>();
         _agent = GetComponent<NavMeshAgent>();
+        _audioSource = GetComponent<AudioSource>();
         // Don’t update position automatically
         _agent.updatePosition = false;
     }
@@ -56,6 +62,14 @@ public class BotMovementManager : MonoBehaviour
             }
 
             bool isMove = velocity.magnitude > 0.5f && _agent.remainingDistance > _agent.radius;
+
+            if (isMove && Time.time > nextStepSoundTime)
+            {
+                _audioSource.volume = Random.Range(0.8f, 1);
+                _audioSource.pitch = Random.Range(0.8f, 1.1f);
+                nextStepSoundTime = Time.time + nextStepSoundDelay;
+                AudioManager.PlaySFXOnAudioSource(SFXType.Steps, _audioSource);
+            }
 
             // Update animation parameters
             _anim.SetBool("move", isMove);

@@ -24,16 +24,28 @@ public class HUDView : MonoBehaviour
     private Button _reloadBtn;
 
     [SerializeField]
-    private TextMeshProUGUI _ammoInClip;
+    private TextMeshProUGUI _firstSlotWeaponAmmoInClip;
 
     [SerializeField]
-    private TextMeshProUGUI _ammoInStock;
+    private TextMeshProUGUI _firstSlotWeaponAmmoInStock;
+
+    [SerializeField]
+    private TextMeshProUGUI _secondSlotWeaponAmmoInClip;
+
+    [SerializeField]
+    private TextMeshProUGUI _secondSlotWeaponAmmoInStock;
 
     [SerializeField]
     private GameObject _aimImg;
 
     [SerializeField]
     private Slider _healthBar;
+
+    [SerializeField]
+    private Image _firstSlotWeaponIcon;
+
+    [SerializeField]
+    private Image _secondSlotWeaponIcon;
 
     void Awake()
     {
@@ -45,11 +57,16 @@ public class HUDView : MonoBehaviour
         _reloadBtn.onClick.AddListener(EmitReloadBtnClickedEvent);
 
         EventAgregator.Subscribe<ChangeGrabBtnVisibilityEvent>(SetGrabBtnVisibility);
-        EventAgregator.Subscribe<ChangeAmmoInClipVolumeEvent>(SetAmmoInClipVolume);
-        EventAgregator.Subscribe<ChangeAmmoInStockVolumeEvent>(SetAmmoInStockVolume);
         EventAgregator.Subscribe<ChangeIsWeaponSelectedUIVisibleElementsEvent>(SetIsWeaponSelectedUIVisibleElements);
         EventAgregator.Subscribe<SoldierKilledEvent>(PrintKillData);
         EventAgregator.Subscribe<ChangeHealthEvent>(SetNewHealthValue);
+
+        EventAgregator.Subscribe<ChangeFirstSlotWeaponAmmoInClipVolumeEvent>(SetFirstSlotAmmoInClipVolume);
+        EventAgregator.Subscribe<ChangeFirstSlotWeaponAmmoInStockVolumeEvent>(SetFirstSlotAmmoInStockVolume);
+        EventAgregator.Subscribe<ChangeSecondSlotWeaponAmmoInClipVolumeEvent>(SetSecondSlotAmmoInClipVolume);
+        EventAgregator.Subscribe<ChangeSecondSlotWeaponAmmoInStockVolumeEvent>(SetSecondSlotAmmoInStockVolume);
+        EventAgregator.Subscribe<ChangeFirstSlotWeaponIconEvent>(ChangeFirstSlotWeaponIcon);
+        EventAgregator.Subscribe<ChangeSecondSlotWeaponIconEvent>(ChangeSecondSlotWeaponIcon);
     }
 
     private void PrintKillData(object sender, SoldierKilledEvent eventData)
@@ -98,23 +115,45 @@ public class HUDView : MonoBehaviour
         _grabBtn.gameObject.SetActive(eventData.NewVisibilityValue);
     }
 
-    private void SetAmmoInClipVolume(object sender, ChangeAmmoInClipVolumeEvent eventData)
+    private void SetFirstSlotAmmoInClipVolume(object sender, ChangeFirstSlotWeaponAmmoInClipVolumeEvent eventData)
     {
-        Debug.Log("HUD SET AMMO IN CLIP VOLUME");
-        _ammoInClip.SetText(eventData.newVolume.ToString());
+        Debug.Log("HUD SET FS AMMO IN CLIP VOLUME");
+        _firstSlotWeaponAmmoInClip.SetText(eventData.newVolume.ToString());
     }
 
-    private void SetAmmoInStockVolume(object sender, ChangeAmmoInStockVolumeEvent eventData)
+    private void SetFirstSlotAmmoInStockVolume(object sender, ChangeFirstSlotWeaponAmmoInStockVolumeEvent eventData)
     {
-        Debug.Log("HUD SET AMMO IN STOCK VOLUME");
-        _ammoInStock.SetText(eventData.newVolume.ToString());
+        Debug.Log("HUD SET FS AMMO IN STOCK VOLUME");
+        _firstSlotWeaponAmmoInStock.SetText("/" + eventData.newVolume.ToString());
+    }
+
+    private void SetSecondSlotAmmoInClipVolume(object sender, ChangeSecondSlotWeaponAmmoInClipVolumeEvent eventData)
+    {
+        Debug.Log("HUD SET SS AMMO IN CLIP VOLUME");
+        _secondSlotWeaponAmmoInClip.SetText(eventData.newVolume.ToString());
+    }
+
+    private void SetSecondSlotAmmoInStockVolume(object sender, ChangeSecondSlotWeaponAmmoInStockVolumeEvent eventData)
+    {
+        Debug.Log("HUD SET SS AMMO IN STOCK VOLUME");
+        _secondSlotWeaponAmmoInStock.SetText("/" + eventData.newVolume.ToString());
+    }
+
+    private void ChangeFirstSlotWeaponIcon(object sender, ChangeFirstSlotWeaponIconEvent eventData)
+    {
+        Debug.Log("HUD ChangeSecondSlotWeaponIcon");
+        _firstSlotWeaponIcon.sprite = eventData.NewIcon;
+    }
+
+    private void ChangeSecondSlotWeaponIcon(object sender, ChangeSecondSlotWeaponIconEvent eventData)
+    {
+        Debug.Log("HUD ChangeSecondSlotWeaponIcon");
+        _secondSlotWeaponIcon.sprite = eventData.NewIcon;
     }
 
     private void SetIsWeaponSelectedUIVisibleElements(object sender, ChangeIsWeaponSelectedUIVisibleElementsEvent eventData)
     {
         Debug.Log("HUD SET VISIBILITY ON CHANGE IS WEAPON SELECTED");
-        _ammoInStock.gameObject.SetActive(eventData.NewIsWeaponSelectedValue);
-        _ammoInClip.gameObject.SetActive(eventData.NewIsWeaponSelectedValue);
         _aimImg.gameObject.SetActive(eventData.NewIsWeaponSelectedValue);
         _reloadBtn.gameObject.SetActive(eventData.NewIsWeaponSelectedValue);
         _shootBtn.gameObject.SetActive(eventData.NewIsWeaponSelectedValue);

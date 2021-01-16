@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerTakeWeaponEvent
 { }
@@ -20,7 +21,34 @@ public class ChangeGrabBtnVisibilityEvent
 public class ChangeIsWeaponSelectedUIVisibleElementsEvent
 {
     public bool NewIsWeaponSelectedValue;
+
+    public ChangeIsWeaponSelectedUIVisibleElementsEvent(bool _newIsWeaponSelectedValue)
+    {
+        NewIsWeaponSelectedValue = _newIsWeaponSelectedValue;
+    }
 }
+
+public class ChangeFirstSlotWeaponIconEvent
+{
+    public Sprite NewIcon;
+
+    public ChangeFirstSlotWeaponIconEvent(Sprite _newIcon)
+    {
+        NewIcon = _newIcon;
+    }
+}
+
+public class ChangeSecondSlotWeaponIconEvent
+{
+    public Sprite NewIcon;
+
+    public ChangeSecondSlotWeaponIconEvent(Sprite _newIcon)
+    {
+        NewIcon = _newIcon;
+    }
+}
+
+
 
 
 public class ShootBtnClickedEvent
@@ -37,16 +65,45 @@ public class ReloadBtnClickedEvent
 { }
 
 
-public class ChangeAmmoInClipVolumeEvent
+public class ChangeFirstSlotWeaponAmmoInClipVolumeEvent
 {
     public int newVolume;
+
+    public ChangeFirstSlotWeaponAmmoInClipVolumeEvent(int _newVolume)
+    {
+        newVolume = _newVolume;
+    }
 }
 
-public class ChangeAmmoInStockVolumeEvent
+public class ChangeFirstSlotWeaponAmmoInStockVolumeEvent
 {
     public int newVolume;
+
+    public ChangeFirstSlotWeaponAmmoInStockVolumeEvent(int _newVolume)
+    {
+        newVolume = _newVolume;
+    }
 }
 
+public class ChangeSecondSlotWeaponAmmoInClipVolumeEvent
+{
+    public int newVolume;
+
+    public ChangeSecondSlotWeaponAmmoInClipVolumeEvent(int _newVolume)
+    {
+        newVolume = _newVolume;
+    }
+}
+
+public class ChangeSecondSlotWeaponAmmoInStockVolumeEvent
+{
+    public int newVolume;
+
+    public ChangeSecondSlotWeaponAmmoInStockVolumeEvent(int _newVolume)
+    {
+        newVolume = _newVolume;
+    }
+}
 
 public class ChangeHealthEvent
 {
@@ -76,4 +133,16 @@ public class SoldierKilledEvent
         killerWeaponName = _killerWeaponName;
         victimName = _victimName;
     }
+}
+
+public class MasterVolumeChangedEvent
+{
+}
+
+public class MusicVolumeChangedEvent
+{
+}
+
+public class SFXVolumeChangedEvent
+{
 }

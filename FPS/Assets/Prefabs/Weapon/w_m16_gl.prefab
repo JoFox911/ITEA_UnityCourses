@@ -133,6 +133,7 @@ MonoBehaviour:
   _reloadTime: 1
   _ammoType: 2
   _ammoVolume: 10
+  _weaponIcon: {fileID: 21300000, guid: cc15713be59a9f54989e202db1be8c5d, type: 3}
   _fireRate: 20
   _muzzleFlash: {fileID: 6817197441069754868}
   _impactEffect: {fileID: 6899934165692146724, guid: effb2751fe5539549b4e4c361fc3095d,

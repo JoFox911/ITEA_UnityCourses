@@ -4,6 +4,7 @@ using UnityEngine;
 
 
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(AudioSource))]
 [RequireComponent(typeof(Soldier))]
 public class SoldierWeaponManager : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class SoldierWeaponManager : MonoBehaviour
     private GameObject _raycastSource;
 
     private Animator _anim;
+    private AudioSource _audioSource;
     private Soldier _soldier;
 
     public bool IsNoAmmoOnAllWeapons;
@@ -30,6 +32,7 @@ public class SoldierWeaponManager : MonoBehaviour
     {
         _anim = GetComponent<Animator>();
         _soldier = GetComponent<Soldier>();
+        _audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -51,7 +54,7 @@ public class SoldierWeaponManager : MonoBehaviour
                     TryToSelectWeaponWithAvailableAmmo();
                 }
             }
-        }        
+        }
     }
 
     public void Initialize(GameObject raycastSource)
@@ -84,7 +87,7 @@ public class SoldierWeaponManager : MonoBehaviour
 
     public void AddWeapon(Weapon weapon, Action callback)
     {
-        Debug.Log("AddWeapon MN");
+        //Debug.Log("AddWeapon MN");
         // прячем объект и перемещаем в контейнер для оружия
         weapon.gameObject.SetActive(false);
         weapon.transform.SetParent(_weaponHolder.transform);
@@ -123,7 +126,7 @@ public class SoldierWeaponManager : MonoBehaviour
 
     private void AddAmmoByType(AmmoType ammoType, int ammoNumber)
     {
-        Debug.Log("AddAmmoByType MN");
+        //Debug.Log("AddAmmoByType MN");
         if (_availableAmmo.ContainsKey(ammoType))
         {
             _availableAmmo[ammoType] += ammoNumber;
@@ -137,13 +140,14 @@ public class SoldierWeaponManager : MonoBehaviour
 
     public void Shoot(Action callback)
     {
-        Debug.Log("Shoot MN");
+        //Debug.Log("Shoot MN");
         if (IsWeaponSelected() && _currentWeapon.IsWeaponReady())
         {
             _currentWeapon.Shoot(_raycastSource, _soldier.GetName());
             if (_isBot)
             {
                 _anim.SetTrigger("shoot");
+                AudioManager.PlaySFXOnAudioSource(SFXType.Shoot, _audioSource);
             }
             callback?.Invoke();
         }
@@ -151,7 +155,7 @@ public class SoldierWeaponManager : MonoBehaviour
 
     public void Reload(Action callback)
     {
-        Debug.Log("SelectSlotWeapon ");
+        //Debug.Log("SelectSlotWeapon ");
         if (IsWeaponSelected())
         {
             var currentWeaponPossibleAmmo = _availableAmmo[_currentWeapon.GetWeaponAmmoType()];
@@ -166,10 +170,10 @@ public class SoldierWeaponManager : MonoBehaviour
 
     private void SelectSlotWeapon(int slotIndex)
     {
-        Debug.Log("SelectSlotWeapon " + slotIndex);
+        //Debug.Log("SelectSlotWeapon " + slotIndex);
         if (_weaponsList[slotIndex] != null)
         {
-            Debug.Log("SelectSlotWeapon" + _weaponsList[slotIndex]);
+            //Debug.Log("SelectSlotWeapon" + _weaponsList[slotIndex]);
             _currentWeapon = _weaponsList[slotIndex];
 
             _currentWeapon.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
@@ -194,7 +198,7 @@ public class SoldierWeaponManager : MonoBehaviour
 
     private void AddWeaponToSlot(int slotIndex, Weapon weapon)
     {
-        Debug.Log("AddWeaponToSlot");
+        //Debug.Log("AddWeaponToSlot");
         if (_weaponsList[slotIndex] != null)
         {
             if (_weaponsList[slotIndex].gameObject.activeInHierarchy)
@@ -251,7 +255,7 @@ public class SoldierWeaponManager : MonoBehaviour
 
     public void TryToSelectWeaponWithAvailableAmmo()
     {
-        Debug.Log("TryToSelectWeaponWithAvailableAmmo");
+        //Debug.Log("TryToSelectWeaponWithAvailableAmmo");
         for (var i = 0; i < _weaponsList.Count; i++)
         {
             if (_weaponsList[i] != null && IsWeaponAmmoAvailable(_weaponsList[i]))
@@ -281,6 +285,23 @@ public class SoldierWeaponManager : MonoBehaviour
             return _currentWeapon.GetIsReloading();
         }
         return false;
+    }
+
+    public List<Tuple<int, int>> GetWeaponAmmoStatuses()
+    {
+        var result = new List<Tuple<int, int>>();
+        foreach (var weapon in _weaponsList)
+        {
+            if (weapon != null)
+            {
+                result.Add(new Tuple<int, int>(weapon.GetCurrentAmmo(), _availableAmmo[weapon.GetWeaponAmmoType()]));
+            }
+            else
+            {
+                result.Add(null);
+            }
+        }
+        return result;
     }
 }
 

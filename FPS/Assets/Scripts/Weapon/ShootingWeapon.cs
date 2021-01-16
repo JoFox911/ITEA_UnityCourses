@@ -21,6 +21,12 @@ public class ShootingWeapon : Weapon
         _isOutOfAmmo = true;
     }
 
+    void OnDisable()
+    {
+        _isReloading = false;
+        _isOutOfAmmo = _currentAmmo == 0;
+    }
+
     public override void Shoot(GameObject _raycastSource, string shooterName)
     {
         _currentAmmo--;
@@ -77,7 +83,7 @@ public class ShootingWeapon : Weapon
         
     }
 
-    public int GetCurrentAmmo()
+    public override int GetCurrentAmmo()
     {
         return _currentAmmo;
     }
