@@ -8,37 +8,36 @@ public class Soldier : MonoBehaviour, IShootable
     private float _health = 50f;
 
     [SerializeField]
-    private float _maxHealth = 50f;
-
-    [SerializeField]
     private bool _isBot;
-
 
     [SerializeField]
     private string _name;
 
     private Animator _anim;
+    private float _maxHealth = 50f;
+    private bool _isAlive = true;
+
 
     void Awake()
     {
         _anim = GetComponent<Animator>();
+        _maxHealth = _health;
         if (_isBot)
         {
             _name = NamesGenerator.GenerateRandomName();
-        }
-        
+        }        
     }
 
     public bool IsAlive()
     {
-        return _health > 0;
+        return _isAlive;
     }
 
     public void TakeDamage(AttackData attackData)
     {
         SetNewHealthValue(_health - attackData.damage);
 
-        if (_health <= 0)
+        if (_isAlive && _health <= 0)
         {
             Die(attackData);
         }
@@ -46,15 +45,19 @@ public class Soldier : MonoBehaviour, IShootable
 
     private void Die(AttackData attackData)
     {
+        _isAlive = false;
         _anim.SetTrigger("dead");
+
         EventAgregator.Post(this, new SoldierKilledEvent( new KillInfoData(attackData.shooterName, _name, attackData.weaponIcon, attackData.weaponName)));
+        
         if (!_isBot)
         {
             EventAgregator.Post(this, new PlayerKilledEvent());
-        }
-
-        if (_isBot)
+        } 
+        else
         {
+            // not correct. each bor kill be summed there
+            ServiceLocator.Resolved<GameController>()?.AddKilledEnemy();
             StartCoroutine(DestroyPlayer());
         }
     }
@@ -83,4 +86,6 @@ public class Soldier : MonoBehaviour, IShootable
             EventAgregator.Post(this, new ChangeHealthEvent(_health / _maxHealth));
         }
     }
+
+
 }

@@ -43,7 +43,9 @@ public class AudioManager : MonoBehaviour
 
     void OnDestroy()
     {
-        //todo unsubscribe
+        EventAgregator.Unsubscribe<MasterVolumeChangedEvent>(OnMasterVolumeChange);
+        EventAgregator.Unsubscribe<MusicVolumeChangedEvent>(OnMusicVolumeChange);
+        EventAgregator.Unsubscribe<SFXVolumeChangedEvent>(OnSFXVolumeChange);
     }
 
     public static void PlayMusic(MusicType type)

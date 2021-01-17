@@ -33,17 +33,6 @@ public class JoystickLook : MonoBehaviour
         _rotationJoystickDetector.Direction += OnDirectionChange;
     }
 
-    private void SetIsRotationStarted(bool isRotationStarted) 
-    {
-        _isRotationStarted = isRotationStarted;
-        _direction = Vector2.zero;
-    }
-
-    private void OnDirectionChange(Vector2 Direction)
-    {
-        _direction = Direction;
-    }
-
     void FixedUpdate()
     {
 
@@ -57,6 +46,23 @@ public class JoystickLook : MonoBehaviour
 
             _playerBody.Rotate(Vector3.up * _direction.x * _joystickSensitivity);
         }
+    }
+
+    void OnDestroy()
+    {
+        _rotationJoystickDetector.IsJoystickUse -= SetIsRotationStarted;
+        _rotationJoystickDetector.Direction -= OnDirectionChange;
+    }
+
+    private void SetIsRotationStarted(bool isRotationStarted)
+    {
+        _isRotationStarted = isRotationStarted;
+        _direction = Vector2.zero;
+    }
+
+    private void OnDirectionChange(Vector2 Direction)
+    {
+        _direction = Direction;
     }
 
 

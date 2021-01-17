@@ -16,9 +16,10 @@ public class BotMovementManager : MonoBehaviour
 
     private Vector2 smoothDeltaPosition = Vector2.zero;
     private Vector2 velocity = Vector2.zero;
-    private float _stoppingDistanceDelta = 0.1f;
 
-    private float nextStepSoundDelay = 0.3f;
+    private readonly float _stoppingDistanceDelta = 0.1f;
+    private readonly float nextStepSoundDelay = 0.3f;
+
     private float nextStepSoundTime = 0f;
 
     
@@ -28,12 +29,19 @@ public class BotMovementManager : MonoBehaviour
         _anim = GetComponent<Animator>();
         _agent = GetComponent<NavMeshAgent>();
         _audioSource = GetComponent<AudioSource>();
+
         // Don’t update position automatically
         _agent.updatePosition = false;
     }
 
     void Update()
     {
+        if (_agent.pathPending)
+        {
+            IsMovementCompleted = false;
+            return;
+        }
+
         if (IsNearDestinationPosition())
         {
             IsMovementCompleted = true;
@@ -43,7 +51,6 @@ public class BotMovementManager : MonoBehaviour
         {
             IsMovementCompleted = false;
 
-            //todo может снаружи проверки
             Vector3 worldDeltaPosition = _agent.nextPosition - transform.position;
 
             // Map 'worldDeltaPosition' to local space
@@ -74,8 +81,6 @@ public class BotMovementManager : MonoBehaviour
             // Update animation parameters
             _anim.SetBool("move", isMove);
             _anim.SetFloat("speed", _agent.speed);
-            //anim.SetFloat("velx", velocity.x);
-            //anim.SetFloat("vely", velocity.y);
         }
     }
 
@@ -97,8 +102,6 @@ public class BotMovementManager : MonoBehaviour
         SetTarget(target, distance);
     }
 
-    
-
     public void LookAtTarget()
     {
         _agent.transform.LookAt(_target);
@@ -111,6 +114,9 @@ public class BotMovementManager : MonoBehaviour
 
     private void SetTarget(Vector3 target, float stoppingDistance)
     {
+        _agent.ResetPath();
+
+        IsMovementCompleted = false;
         _agent.SetDestination(target);
         _agent.isStopped = false;
         _agent.stoppingDistance = stoppingDistance;

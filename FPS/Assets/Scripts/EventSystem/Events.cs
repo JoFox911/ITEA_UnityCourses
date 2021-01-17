@@ -24,7 +24,25 @@ public class GameFinishedEvent
 public class ChangeGrabBtnVisibilityEvent
 {
     public bool NewVisibilityValue;
+
+    public ChangeGrabBtnVisibilityEvent(bool _newValue)
+    {
+        NewVisibilityValue = _newValue;
+    }
 }
+
+public class ChangeSlotWeaponIconEvent
+{
+    public SlotWeaponType slotWeaponType;
+    public Sprite weaponIcon;
+
+    public ChangeSlotWeaponIconEvent(SlotWeaponType _slotWeaponType, Sprite _weaponIcon)
+    {
+        slotWeaponType = _slotWeaponType;
+        weaponIcon = _weaponIcon;
+    }
+}
+
 
 public class ChangeFirstSlotWeaponIconEvent
 {
@@ -172,5 +190,27 @@ public class CurrentWeaponChangedEvent
     public CurrentWeaponChangedEvent(SlotWeaponType _newType)
     {
         slotWeaponType = _newType;
+    }
+}
+
+
+
+public class ChangeAliveEnemiesEvent
+{
+    public int enemiesNumber;
+
+    public ChangeAliveEnemiesEvent(int _enemiesNumber)
+    {
+        enemiesNumber = _enemiesNumber;
+    }
+}
+
+public class ChangeKilledEnemiesEvent
+{
+    public int enemiesNumber;
+
+    public ChangeKilledEnemiesEvent(int _enemiesNumber)
+    {
+        enemiesNumber = _enemiesNumber;
     }
 }

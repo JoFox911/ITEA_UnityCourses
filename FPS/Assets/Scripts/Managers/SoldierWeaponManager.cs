@@ -42,7 +42,21 @@ public class SoldierWeaponManager : MonoBehaviour
         {
             IsNoAmmoOnAllWeapons = !IsWeaponWithAvailableAmmoExists();
 
-            if (IsWeaponSelected() && !IsReload() && GetCurrentWeapon().GetIsOutOfAmmo())
+            //var tet = IsCurrentWeaponAmmoAvailable();
+
+            //var t1 = IsWeaponSelected();
+            //var t2 = IsReload();
+            //if (t1)
+            //{
+            //    var t3 = GetCurrentWeapon().GetIsOutOfAmmo();
+            //    var t4 = GetCurrentWeapon().GetWeaponSlotType() == SlotWeaponType.ThirdSlotWeapon;
+            //    var t5 = IsCurrentWeaponAmmoAvailable();
+            //}
+            
+
+
+            if (IsWeaponSelected() && !IsReload() && (GetCurrentWeapon().GetIsOutOfAmmo() || 
+                GetCurrentWeapon().GetWeaponSlotType() == SlotWeaponType.ThirdSlotWeapon && !IsCurrentWeaponAmmoAvailable()))
             {
                 if (IsCurrentWeaponAmmoAvailable())
                 {
@@ -262,6 +276,11 @@ public class SoldierWeaponManager : MonoBehaviour
             Destroy(_weaponsList[slotIndex].gameObject);
         }
 
+        if (!_soldier.GetIsBot())
+        {
+            EventAgregator.Post(this, new ChangeSlotWeaponIconEvent(weapon.GetWeaponSlotType(), weapon.GetWeaponIcon()));
+        }
+
         _weaponsList[slotIndex] = weapon;
 
         if (!IsWeaponSelected())
@@ -302,6 +321,7 @@ public class SoldierWeaponManager : MonoBehaviour
         //    var t3 = _availableAmmo[t2];
 
         //}
+        //var res = (weapon.GetWeaponSlotType() != SlotWeaponType.ThirdSlotWeapon && !weapon.GetIsOutOfAmmo()) || (_availableAmmo.ContainsKey(weapon.GetWeaponAmmoType()) && _availableAmmo[weapon.GetWeaponAmmoType()] > 0);
         return (weapon.GetWeaponSlotType() != SlotWeaponType.ThirdSlotWeapon && !weapon.GetIsOutOfAmmo()) || (_availableAmmo.ContainsKey(weapon.GetWeaponAmmoType()) && _availableAmmo[weapon.GetWeaponAmmoType()] > 0);
     }
 

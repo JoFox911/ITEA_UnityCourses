@@ -57,6 +57,11 @@ public class ItemsSpawnsManager : MonoBehaviour
         }
     }
 
+    void OnDestroy()
+    {
+        ServiceLocator.Unregister<ItemsSpawnsManager>();
+    }
+
     public List<Transform> GetAllSpawns()
     {
         var transformsList = new List<Transform>();

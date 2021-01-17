@@ -4,7 +4,7 @@ using UnityEngine;
 
 [RequireComponent (typeof(SoldierWeaponManager))]
 [RequireComponent(typeof(PickUpHelper))]
-public class FpsController : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     [SerializeField]
     private Camera _fpsCamera;
@@ -23,98 +23,82 @@ public class FpsController : MonoBehaviour
         _soldierWeaponManager.Initialize(_fpsCamera.gameObject);
 
         EventAgregator.Subscribe<GrabBtnClickedEvent>(Grab);
-        EventAgregator.Subscribe<AttacklickedEvent>(Attck);
+        EventAgregator.Subscribe<AttacklickedEvent>(Attack);
         EventAgregator.Subscribe<ReloadBtnClickedEvent>(Reload);
         EventAgregator.Subscribe<FirstSlotWeaponBtnClickedEvent>(SelectFirstSlotWeapon);
         EventAgregator.Subscribe<SecondSlotWeaponBtnClickedEvent>(SelectSecondSlotWeapon);
         EventAgregator.Subscribe<ThirdSlotWeaponBtnClickedEvent>(SelectThirdSlotWeapon);
     }
-    private void FixedUpdate()
+    private void Update()
     {
-        // todo redo
-        var newValue = _pickUpHelper.CheckGrab();
-        if (newValue != _isGrabPossible) {
-            _isGrabPossible = newValue;
-            var ChangeGrabBtnVisibilityEvent = new ChangeGrabBtnVisibilityEvent();
-            ChangeGrabBtnVisibilityEvent.NewVisibilityValue = newValue;
-            EventAgregator.Post(this, ChangeGrabBtnVisibilityEvent);
+        if (_pickUpHelper.IsItemDetected != _isGrabPossible) {
+            _isGrabPossible = _pickUpHelper.IsItemDetected;
+            EventAgregator.Post(this, new ChangeGrabBtnVisibilityEvent(_isGrabPossible));
         }
+    }
+
+    void OnDestroy()
+    {
+        EventAgregator.Unsubscribe<GrabBtnClickedEvent>(Grab);
+        EventAgregator.Unsubscribe<AttacklickedEvent>(Attack);
+        EventAgregator.Unsubscribe<ReloadBtnClickedEvent>(Reload);
+        EventAgregator.Unsubscribe<FirstSlotWeaponBtnClickedEvent>(SelectFirstSlotWeapon);
+        EventAgregator.Unsubscribe<SecondSlotWeaponBtnClickedEvent>(SelectSecondSlotWeapon);
+        EventAgregator.Unsubscribe<ThirdSlotWeaponBtnClickedEvent>(SelectThirdSlotWeapon);
     }
 
     private void Grab(object sender, GrabBtnClickedEvent eventData)
     {
-        Debug.Log("FPS GRAB");
-
         if (_isGrabPossible)
         {
             var item = _pickUpHelper.GetPickUpObject();
             // check is weapon
             var weapon = item.GetComponent<Weapon>();
             var ammo = item.GetComponent<Ammo>();
+
             if (weapon != null)
             {
-                _soldierWeaponManager.AddWeapon(weapon, UpdateWeaponUI);
-                if (weapon.GetWeaponSlotType() == SlotWeaponType.FirstSlotWeapon)
-                {
-                    EventAgregator.Post(this, new ChangeFirstSlotWeaponIconEvent(weapon.GetWeaponIcon()));
-                }
-                else if (weapon.GetWeaponSlotType() == SlotWeaponType.SecondSlotWeapon)
-                {
-                    EventAgregator.Post(this, new ChangeSecondSlotWeaponIconEvent(weapon.GetWeaponIcon()));
-                }
-                else if (weapon.GetWeaponSlotType() == SlotWeaponType.ThirdSlotWeapon)
-                {
-                    EventAgregator.Post(this, new ChangeThirdSlotWeaponIconEvent(weapon.GetWeaponIcon()));
-                }
+                _soldierWeaponManager.AddWeapon(weapon, UpdateAmmoUI);
             } 
             else if (ammo != null)
             {
-                _soldierWeaponManager.AddAmmo(ammo, UpdateWeaponUI);
+                _soldierWeaponManager.AddAmmo(ammo, UpdateAmmoUI);
             }
         }            
     }
 
-    private void Attck(object sender, AttacklickedEvent eventData)
+    private void Attack(object sender, AttacklickedEvent eventData)
     {
-        Debug.Log("FPS Shoot");
-
-        _soldierWeaponManager.Attack(UpdateWeaponUI);
+        _soldierWeaponManager.Attack(UpdateAmmoUI);
     }
 
     private void Reload(object sender, ReloadBtnClickedEvent eventData)
     {
-        Debug.Log("FPS Reload");
-
-        _soldierWeaponManager.Reload(UpdateWeaponUI);
+        _soldierWeaponManager.Reload(UpdateAmmoUI);
     }
 
     private void SelectFirstSlotWeapon(object sender, FirstSlotWeaponBtnClickedEvent eventData)
     {
-        Debug.Log("FPS SelectFirstSlotWeapon");
-
         _soldierWeaponManager.SelectFirstSlotWeapon();
-        UpdateWeaponUI();
+        UpdateAmmoUI();
     }
 
 
     private void SelectSecondSlotWeapon(object sender, SecondSlotWeaponBtnClickedEvent eventData)
     {
-        Debug.Log("FPS SelectSecondSlotWeapon");
-
         _soldierWeaponManager.SelectSecondSlotWeapon();
-        UpdateWeaponUI();
+        UpdateAmmoUI();
     }
 
     private void SelectThirdSlotWeapon(object sender, ThirdSlotWeaponBtnClickedEvent eventData)
     {
-        Debug.Log("FPS SelectSecondSlotWeapon");
-
         _soldierWeaponManager.SelectThirdSlotWeapon();
-        UpdateWeaponUI();
+        UpdateAmmoUI();
     }
 
 
-    private void UpdateWeaponUI()
+    // todo redo?
+    private void UpdateAmmoUI()
     {
         var newAmmoStatus = _soldierWeaponManager.GetWeaponAmmoStatuses();
 

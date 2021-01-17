@@ -12,6 +12,8 @@ public class CheckEnemyHelper : MonoBehaviour
 
     private RaycastHit _hit;
 
+    private string _teamTag;
+
     public bool IsAnyEnemySpyed => _target != null;
 
     void Awake()
@@ -33,7 +35,14 @@ public class CheckEnemyHelper : MonoBehaviour
         //if (Physics.SphereCast(transform.position + _charController.center, _castRadius,
         //                   transform.forward, out _hit, 0.1f, _enemyMask))
         {
-            _target = _hit.transform.gameObject;
+            if (_teamTag == string.Empty || !_hit.transform.gameObject.CompareTag(_teamTag))
+            {
+                _target = _hit.transform.gameObject;
+            }
+            else 
+            {
+                _target = null;
+            }
         }
         else
         {
@@ -47,8 +56,8 @@ public class CheckEnemyHelper : MonoBehaviour
         return _target;
     }
 
-    //public float GetInSightDistance()
-    //{
-    //    return _castDistance;
-    //}
+    public void SetTeamTag(string tag)
+    {
+        _teamTag = tag;
+    }
 }

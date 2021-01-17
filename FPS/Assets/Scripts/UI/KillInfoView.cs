@@ -9,7 +9,7 @@ public class KillInfoView : MonoBehaviour
     private Transform _parentForKillInfoItems;
 
     [SerializeField]
-    private float _killInfoPreviewTime =3f;
+    private float _killInfoPreviewTime = 3f;
 
     public void AddKillInfoItem(KillInfoData data)
     {

@@ -1,16 +1,49 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField]
+    private float _endGameDelay = 2f;
+    
     private TeamsManager _teamsManager;
+    private GameController _gameController;
 
     void Awake()
     {
-        EventAgregator.Subscribe<SoldierKilledEvent>(CheckGameState);
+        _gameController = new GameController();
+
         EventAgregator.Subscribe<PlayerKilledEvent>(GameOver);
         EventAgregator.Subscribe<PauseClickedEvent>(PauseGame);
         EventAgregator.Subscribe<UnpauseClickedEvent>(UnpauseGame);
+
+        ServiceLocator.Register<GameController>(_gameController);
+    }
+
+    void Update()
+    {
+        _gameController.SetAliveEnemies(_teamsManager.GetAliveEnemiesNumber());
+        if (_gameController.AliveEnemiesNumber < 1)
+        {
+            StartCoroutine(StopGameWithDelay());
+        }
+    }
+
+    void OnDestroy()
+    {
+        EventAgregator.Unsubscribe<PlayerKilledEvent>(GameOver);
+        EventAgregator.Unsubscribe<PauseClickedEvent>(PauseGame);
+        EventAgregator.Unsubscribe<UnpauseClickedEvent>(UnpauseGame);
+
+        ServiceLocator.Unregister<GameController>();
+    }
+
+    private IEnumerator StopGameWithDelay()
+    {
+        yield return new WaitForSeconds(_endGameDelay);
+        PauseGame();
+        EventAgregator.Post(this, new GameFinishedEvent());
     }
 
     private void PauseGame(object sender, PauseClickedEvent eventData)
@@ -28,23 +61,9 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1;
     }
 
-    private void CheckGameState(object sender, SoldierKilledEvent eventData)
-    {
-        Debug.Log("CheckGameState after kill");
-
-        if (_teamsManager.IsAllBotTeamsKilled())
-        {
-            Debug.Log("YOU WIN");
-            PauseGame();
-            //EventAgregator.Post(this, new GameFinishedEvent());
-        }
-    }
-
     private void GameOver(object sender, PlayerKilledEvent eventData)
     {
-        Debug.Log("GAME OVER");
-        PauseGame();
-        //EventAgregator.Post(this, new GameFinishedEvent());
+        StartCoroutine(StopGameWithDelay());
     }
 
     // Start is called before the first frame update
@@ -53,26 +72,38 @@ public class GameManager : MonoBehaviour
         _teamsManager = ServiceLocator.Resolved<TeamsManager>();
 
         TeamData comand1 = new TeamData();
+        comand1.Tag = "TeamA";
         comand1.IsPlayerTeam = true;
-        comand1.BotsNumber = 0;
+        comand1.BotsNumber = 1;
 
         TeamData comand2 = new TeamData();
         comand2.BotsNumber = 1;
+        comand2.Tag = "TeamB";
         comand2.IsPlayerTeam = false;
 
         _teamsManager.InitAndSpawnTeam(comand1);
         _teamsManager.InitAndSpawnTeam(comand2);
 
     }
+}
 
-    // Update is called once per frame
-    void Update()
+public class GameController
+{
+    public int KilledEnemiesNumber = 0;
+    public int AliveEnemiesNumber = 0;
+
+    public void SetAliveEnemies(int number)
     {
-        
+        if (AliveEnemiesNumber != number)
+        {
+            AliveEnemiesNumber = number;
+            EventAgregator.Post(this, new ChangeAliveEnemiesEvent(AliveEnemiesNumber));
+        }
     }
 
-    private void StartAllAgainstAllGame()
-    { 
-        
+    public void AddKilledEnemy()
+    {
+        KilledEnemiesNumber ++;
+        EventAgregator.Post(this, new ChangeKilledEnemiesEvent(KilledEnemiesNumber));
     }
 }

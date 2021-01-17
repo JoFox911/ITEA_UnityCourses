@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
 using UnityEngine;
 namespace BotLogic
 {
@@ -47,7 +48,7 @@ namespace BotLogic
 
         private void SetNewDistinationPoint()
         {
-            _destinationPoint = Common.SetectOneOfTheNearestPoint(_sharedContext.MapHelper.EnemySearchingPoints,
+            _destinationPoint = Common.SetectOneOfTheNearestPoint(_sharedContext.MapHelper.EnemySearchingPoints.Where(point => point != _destinationPoint).ToList(),
                                                                   _botMovement.GetCurrentPossition(), 2);
             _botMovement.MoveToTarget(_destinationPoint.position);
         }

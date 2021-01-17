@@ -43,7 +43,7 @@ namespace BotLogic
             } 
             else if (!_sharedContext.EnemySpyManager.IsAnyEnemySpyed)
             {
-                Debug.Log("Lost ENEMY");
+                //Debug.Log("Lost ENEMY");
                 _stateSwitcher.Switch(typeof(SearchingEnemyState));
             }
             else
@@ -58,34 +58,12 @@ namespace BotLogic
                 {
                     FolowTarget();
 
-                    // делаем так, чтоб враг стрелял если подошел на какую-то подходящую ему дистанцию 
-                    //if (IsTryToShootPossible())
-                    //{
-                        Debug.Log("Shoot");
-                        _cooldownEndTime = Time.time + _enemyCooldownAfterShoot;
+                    //Debug.Log("Shoot");
+                    _cooldownEndTime = Time.time + _enemyCooldownAfterShoot;
 
-                        _botWeapon.Attack(null);
-                    //}
+                    _botWeapon.Attack(null);
                 }
-
-                // начать стрелять когда подходим на какое-то рандомное от 5-7 растояние, после вістрела, тупить секунду, потом _isShooting делаем фолс
             }
-
-            //if (!_sharedContext.Weapon.IsTargetIsDead)
-            //{
-            //    if (_sharedContext.Weapon.IsWeapoReady)
-            //    {
-            //        _sharedContext.Weapon.Fire();
-            //    }
-            //    else
-            //    {
-            //        //switch to reload system
-            //    }
-            //}
-            //else
-            //{
-            //    _stateSwitcher.Switch(typeof(SearchingEnemyState));
-            //}
         }
 
         private void FolowTarget()
@@ -93,9 +71,5 @@ namespace BotLogic
             _botMovement.FolowTarget(_target.transform.position, _folowDistance);
         }
 
-        //private bool IsTryToShootPossible()
-        //{
-        //    return _botMovement.DistanceToTarget() < Random.Range(4, 10);
-        //}
     }
 }

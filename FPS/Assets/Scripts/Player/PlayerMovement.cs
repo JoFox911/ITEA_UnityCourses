@@ -63,6 +63,9 @@ public class PlayerMovement: MonoBehaviour
     void OnDestroy()
     {
         EventAgregator.Unsubscribe<JumpBtnClickedEvent>(Jump);
+
+        _movementJoystickDetector.IsJoystickUse -= SetIsMovementStarted;
+        _movementJoystickDetector.Direction -= OnDirectionChange;
     }
 
     private void SetIsMovementStarted(bool isMovementStarted)

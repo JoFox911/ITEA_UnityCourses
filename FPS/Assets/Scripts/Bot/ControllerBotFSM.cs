@@ -18,7 +18,7 @@ public class ControllerBotFSM : MonoBehaviour
 
     private FiniteStateMachine<BotSharedContext> _finiteStateMachine;
 
-    private Dictionary<Type, BaseState<BotSharedContext>> _allBotStates = new Dictionary<Type, BaseState<BotSharedContext>>();
+    private Dictionary<Type, BaseState<BotSharedContext>> _allBotStates;
 
 
 
@@ -79,10 +79,13 @@ public class ControllerBotFSM : MonoBehaviour
 
         _finiteStateMachine = new FiniteStateMachine<BotSharedContext>();
 
-        _allBotStates[typeof(SearchingEnemyState)] = new SearchingEnemyState(_botSharedContext);
-        _allBotStates[typeof(EnemyAttackState)] = new EnemyAttackState(_botSharedContext);
-        _allBotStates[typeof(SearchingWeaponState)] = new SearchingWeaponState(_botSharedContext);
-        _allBotStates[typeof(DeadState)] = new DeadState(_botSharedContext);
+        _allBotStates = new Dictionary<Type, BaseState<BotSharedContext>>
+        {
+            [typeof(SearchingEnemyState)] = new SearchingEnemyState(_botSharedContext),
+            [typeof(EnemyAttackState)] = new EnemyAttackState(_botSharedContext),
+            [typeof(SearchingWeaponState)] = new SearchingWeaponState(_botSharedContext),
+            [typeof(DeadState)] = new DeadState(_botSharedContext)
+        };
 
         _finiteStateMachine.InitStates(_allBotStates);
 

@@ -44,7 +44,6 @@ namespace BotLogic
                 var ammo = item.GetComponent<Ammo>();
                 if (weapon != null)
                 {
-                    Debug.Log("_sharedContext.WeaponManager.AddWeapon");
                     _sharedContext.WeaponManager.AddWeapon(weapon, null);
                 }
                 else if (ammo != null)
