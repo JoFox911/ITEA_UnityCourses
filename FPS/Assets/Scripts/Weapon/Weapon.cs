@@ -10,7 +10,7 @@ public abstract class Weapon : MonoBehaviour
     protected float _damage = 10f;
 
     [SerializeField]
-    protected float _range = 100f;
+    protected GameObject _impactEffect;
 
     [SerializeField]
     protected float _impactForce = 30f;
@@ -86,7 +86,8 @@ public enum WeaponShootType
 public enum SlotWeaponType
 {
     FirstSlotWeapon,
-    SecondSlotWeapon
+    SecondSlotWeapon,
+    ThirdSlotWeapon
 }
 
 public class AttackData
@@ -94,11 +95,13 @@ public class AttackData
     public float damage;
     public string shooterName;
     public string weaponName;
+    public Sprite weaponIcon;
 
-    public AttackData(float _damage, string _shooterName, string _weaponName)
+    public AttackData(float _damage, string _shooterName, string _weaponName, Sprite _weaponIcon)
     {
         damage = _damage;
         shooterName = _shooterName;
         weaponName = _weaponName;
+        weaponIcon = _weaponIcon;
     }
 }

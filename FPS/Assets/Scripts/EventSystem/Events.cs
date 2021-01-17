@@ -12,20 +12,18 @@ public class JumpBtnClickedEvent
 public class GrabBtnClickedEvent
 { }
 
+public class PauseClickedEvent
+{ }
+
+public class UnpauseClickedEvent
+{ }
+public class GameFinishedEvent
+{ }
+
 
 public class ChangeGrabBtnVisibilityEvent
 {
     public bool NewVisibilityValue;
-}
-
-public class ChangeIsWeaponSelectedUIVisibleElementsEvent
-{
-    public bool NewIsWeaponSelectedValue;
-
-    public ChangeIsWeaponSelectedUIVisibleElementsEvent(bool _newIsWeaponSelectedValue)
-    {
-        NewIsWeaponSelectedValue = _newIsWeaponSelectedValue;
-    }
 }
 
 public class ChangeFirstSlotWeaponIconEvent
@@ -48,17 +46,30 @@ public class ChangeSecondSlotWeaponIconEvent
     }
 }
 
+public class ChangeThirdSlotWeaponIconEvent
+{
+    public Sprite NewIcon;
+
+    public ChangeThirdSlotWeaponIconEvent(Sprite _newIcon)
+    {
+        NewIcon = _newIcon;
+    }
+}
 
 
 
-public class ShootBtnClickedEvent
-{}
+public class AttacklickedEvent
+{ }
 
 public class FirstSlotWeaponBtnClickedEvent
 { }
 
 public class SecondSlotWeaponBtnClickedEvent
 { }
+
+public class ThirdSlotWeaponBtnClickedEvent
+{ }
+
 
 
 public class ReloadBtnClickedEvent
@@ -105,6 +116,16 @@ public class ChangeSecondSlotWeaponAmmoInStockVolumeEvent
     }
 }
 
+public class ChangeThirdSlotWeaponAmmoVolumeEvent
+{
+    public int newVolume;
+
+    public ChangeThirdSlotWeaponAmmoVolumeEvent(int _newVolume)
+    {
+        newVolume = _newVolume;
+    }
+}
+
 public class ChangeHealthEvent
 {
     public float newValue;
@@ -123,15 +144,12 @@ public class PlayerKilledEvent
 
 public class SoldierKilledEvent
 {
-    public string killerName;
-    public string killerWeaponName;
-    public string victimName;
 
-    public SoldierKilledEvent(string _killerName, string _killerWeaponName, string _victimName)
+    public KillInfoData killerInfo;
+
+    public SoldierKilledEvent(KillInfoData _killerInfo)
     {
-        killerName = _killerName;
-        killerWeaponName = _killerWeaponName;
-        victimName = _victimName;
+        killerInfo = _killerInfo;
     }
 }
 
@@ -145,4 +163,14 @@ public class MusicVolumeChangedEvent
 
 public class SFXVolumeChangedEvent
 {
+}
+
+public class CurrentWeaponChangedEvent
+{
+    public SlotWeaponType slotWeaponType;
+
+    public CurrentWeaponChangedEvent(SlotWeaponType _newType)
+    {
+        slotWeaponType = _newType;
+    }
 }

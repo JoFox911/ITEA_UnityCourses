@@ -64,7 +64,7 @@ namespace BotLogic
                         Debug.Log("Shoot");
                         _cooldownEndTime = Time.time + _enemyCooldownAfterShoot;
 
-                        _botWeapon.Shoot(null);
+                        _botWeapon.Attack(null);
                     //}
                 }
 

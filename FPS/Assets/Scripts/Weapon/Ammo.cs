@@ -25,5 +25,6 @@ public enum AmmoType
     Pistol,
     Shotgun,
     Submachinegun,
-    Rifle
+    Rifle,
+    Grenade
 }

@@ -47,7 +47,7 @@ public class Soldier : MonoBehaviour, IShootable
     private void Die(AttackData attackData)
     {
         _anim.SetTrigger("dead");
-        EventAgregator.Post(this, new SoldierKilledEvent(attackData.shooterName, attackData.weaponName, _name));
+        EventAgregator.Post(this, new SoldierKilledEvent( new KillInfoData(attackData.shooterName, _name, attackData.weaponIcon, attackData.weaponName)));
         if (!_isBot)
         {
             EventAgregator.Post(this, new PlayerKilledEvent());
@@ -68,6 +68,11 @@ public class Soldier : MonoBehaviour, IShootable
     public string GetName()
     {
         return _name;
+    }
+
+    public bool GetIsBot()
+    {
+        return _isBot;
     }
 
     private void SetNewHealthValue(float newValue)

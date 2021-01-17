@@ -9,14 +9,14 @@ using UnityEngine;
 public class SoldierWeaponManager : MonoBehaviour
 {
     [SerializeField]
-    private GameObject _weaponHolder;
+    protected float _throwGrenadeRange = 10f;
 
     [SerializeField]
-    private bool _isBot;
+    private GameObject _weaponHolder;
 
     private Dictionary<AmmoType, int> _availableAmmo;
 
-    private readonly int _slotsNumber = 2;
+    private readonly int _slotsNumber = 3;
     private List<Weapon> _weaponsList;
     private Weapon _currentWeapon;
 
@@ -38,7 +38,7 @@ public class SoldierWeaponManager : MonoBehaviour
     private void Update()
     {
         //  также можно использовать если захотим добавить код когда автоперезарядка и смена оружия
-        if (_isBot)
+        if (_soldier.GetIsBot())
         {
             IsNoAmmoOnAllWeapons = !IsWeaponWithAvailableAmmoExists();
 
@@ -80,6 +80,11 @@ public class SoldierWeaponManager : MonoBehaviour
         SelectSlotWeapon(1);
     }
 
+    public void SelectThirdSlotWeapon()
+    {
+        SelectSlotWeapon(2);
+    }
+
     public Weapon GetCurrentWeapon()
     {
         return _currentWeapon;
@@ -87,7 +92,6 @@ public class SoldierWeaponManager : MonoBehaviour
 
     public void AddWeapon(Weapon weapon, Action callback)
     {
-        //Debug.Log("AddWeapon MN");
         // прячем объект и перемещаем в контейнер для оружия
         weapon.gameObject.SetActive(false);
         weapon.transform.SetParent(_weaponHolder.transform);
@@ -98,8 +102,8 @@ public class SoldierWeaponManager : MonoBehaviour
         weapon.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
         weapon.transform.localPosition = new Vector3(0, 0, 0);
 
-        var shootingWeapon = (ShootingWeapon)weapon;
-        AddAmmoByType(shootingWeapon.GetWeaponAmmoType(), shootingWeapon.GetWeaponAmmoVolume());
+        // add ammo from weapon to all ammo list
+        AddAmmoByType(weapon.GetWeaponAmmoType(), weapon.GetWeaponAmmoVolume());
 
         if (weapon.GetWeaponSlotType() == SlotWeaponType.FirstSlotWeapon)
         {
@@ -108,6 +112,10 @@ public class SoldierWeaponManager : MonoBehaviour
         else if (weapon.GetWeaponSlotType() == SlotWeaponType.SecondSlotWeapon)
         {
             AddWeaponToSlot(1, weapon);
+        }
+        else if (weapon.GetWeaponSlotType() == SlotWeaponType.ThirdSlotWeapon)
+        {
+            AddWeaponToSlot(2, weapon);
         }
 
         callback?.Invoke();
@@ -126,7 +134,6 @@ public class SoldierWeaponManager : MonoBehaviour
 
     private void AddAmmoByType(AmmoType ammoType, int ammoNumber)
     {
-        //Debug.Log("AddAmmoByType MN");
         if (_availableAmmo.ContainsKey(ammoType))
         {
             _availableAmmo[ammoType] += ammoNumber;
@@ -138,29 +145,70 @@ public class SoldierWeaponManager : MonoBehaviour
 
     }
 
-    public void Shoot(Action callback)
+    public void Attack(Action callback)
     {
-        //Debug.Log("Shoot MN");
         if (IsWeaponSelected() && _currentWeapon.IsWeaponReady())
         {
-            _currentWeapon.Shoot(_raycastSource, _soldier.GetName());
-            if (_isBot)
+            if (_currentWeapon.GetWeaponSlotType() == SlotWeaponType.ThirdSlotWeapon)
             {
-                _anim.SetTrigger("shoot");
-                AudioManager.PlaySFXOnAudioSource(SFXType.Shoot, _audioSource);
+                ThrowGrenade();
+            }
+            else
+            {
+                Shoot();
             }
             callback?.Invoke();
         }
     }
 
+    private void ThrowGrenade()
+    {
+        if (_availableAmmo.ContainsKey(AmmoType.Grenade) && _availableAmmo[AmmoType.Grenade] > 0)
+        {
+            var grenadeInstance = Instantiate(_weaponsList[2]);
+            _availableAmmo[AmmoType.Grenade]--;
+            grenadeInstance.transform.position = _weaponsList[2].transform.position;
+
+            if (_soldier.GetIsBot())
+            {
+                //_anim.SetTrigger("throwGrenage");
+            }
+
+            var rigidBody = grenadeInstance.GetComponent<Rigidbody>();
+            if (rigidBody != null)
+            {
+                rigidBody.isKinematic = false;
+                rigidBody.useGravity = true;
+                rigidBody.AddForce(_raycastSource.transform.forward * _throwGrenadeRange, ForceMode.Impulse);
+            }
+
+            
+            grenadeInstance.Shoot(null, _soldier.GetName());
+        }
+    }
+
+    private void Shoot()
+    {
+        _currentWeapon.Shoot(_raycastSource, _soldier.GetName());
+        if (_soldier.GetIsBot())
+        {
+            _anim.SetTrigger("shoot");
+            AudioManager.PlaySFXOnAudioSource(SFXType.Shoot, _audioSource);
+        }
+    }
+
     public void Reload(Action callback)
     {
-        //Debug.Log("SelectSlotWeapon ");
         if (IsWeaponSelected())
         {
             var currentWeaponPossibleAmmo = _availableAmmo[_currentWeapon.GetWeaponAmmoType()];
             if (currentWeaponPossibleAmmo > 0)
             {
+                if (_soldier.GetIsBot())
+                {
+                    _anim.SetTrigger("reload");
+                    AudioManager.PlaySFXOnAudioSource(SFXType.Shoot, _audioSource);
+                }
                 _currentWeapon.Reload(currentWeaponPossibleAmmo, out int remaining);
                 _availableAmmo[_currentWeapon.GetWeaponAmmoType()] = remaining;
                 callback?.Invoke();
@@ -170,10 +218,8 @@ public class SoldierWeaponManager : MonoBehaviour
 
     private void SelectSlotWeapon(int slotIndex)
     {
-        //Debug.Log("SelectSlotWeapon " + slotIndex);
         if (_weaponsList[slotIndex] != null)
         {
-            //Debug.Log("SelectSlotWeapon" + _weaponsList[slotIndex]);
             _currentWeapon = _weaponsList[slotIndex];
 
             _currentWeapon.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
@@ -192,6 +238,12 @@ public class SoldierWeaponManager : MonoBehaviour
                         _weaponsList[i].gameObject.SetActive(false);
                     }
                 }
+            }
+
+            if (!_soldier.GetIsBot())
+            {
+                
+                EventAgregator.Post(this, new CurrentWeaponChangedEvent(_currentWeapon.GetWeaponSlotType()));
             }
         }
     }
@@ -243,14 +295,14 @@ public class SoldierWeaponManager : MonoBehaviour
         {
             return false;
         }
-        var t1 = weapon.GetIsOutOfAmmo();
-        var t2 = weapon.GetWeaponAmmoType();
-        if (_availableAmmo.ContainsKey(t2))
-        {
-            var t3 = _availableAmmo[t2];
+        //var t1 = weapon.GetIsOutOfAmmo();
+        //var t2 = weapon.GetWeaponAmmoType();
+        //if (_availableAmmo.ContainsKey(t2))
+        //{
+        //    var t3 = _availableAmmo[t2];
 
-        }
-        return !weapon.GetIsOutOfAmmo() || (_availableAmmo.ContainsKey(weapon.GetWeaponAmmoType()) && _availableAmmo[weapon.GetWeaponAmmoType()] > 0);
+        //}
+        return (weapon.GetWeaponSlotType() != SlotWeaponType.ThirdSlotWeapon && !weapon.GetIsOutOfAmmo()) || (_availableAmmo.ContainsKey(weapon.GetWeaponAmmoType()) && _availableAmmo[weapon.GetWeaponAmmoType()] > 0);
     }
 
     public void TryToSelectWeaponWithAvailableAmmo()
@@ -303,5 +355,7 @@ public class SoldierWeaponManager : MonoBehaviour
         }
         return result;
     }
+
+    
 }
 

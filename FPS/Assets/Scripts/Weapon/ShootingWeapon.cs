@@ -7,8 +7,9 @@ public class ShootingWeapon : Weapon
     private float _fireRate = 15f;
     [SerializeField]
     private ParticleSystem _muzzleFlash;
+    
     [SerializeField]
-    private GameObject _impactEffect;
+    protected float _range = 100f;
 
 
     private float _nextTimeToFire = 0f;
@@ -46,7 +47,7 @@ public class ShootingWeapon : Weapon
             var target = _hit.transform.GetComponent<IShootable>();
             if (target != null)
             {
-                var shootData = new AttackData(_damage, shooterName, _weaponName);
+                var shootData = new AttackData(_damage, shooterName, _weaponName, _weaponIcon);
                 target.TakeDamage(shootData);
             }
 

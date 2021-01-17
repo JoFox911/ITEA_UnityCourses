@@ -13,7 +13,6 @@ public class FpsController : MonoBehaviour
     private PickUpHelper _pickUpHelper;
 
     private bool _isGrabPossible;
-    private bool _isWeaponSelected;
     private List<Tuple<int, int>> _lastWeaponAmmoStatus;
 
     void Awake()
@@ -24,10 +23,11 @@ public class FpsController : MonoBehaviour
         _soldierWeaponManager.Initialize(_fpsCamera.gameObject);
 
         EventAgregator.Subscribe<GrabBtnClickedEvent>(Grab);
-        EventAgregator.Subscribe<ShootBtnClickedEvent>(Shoot);
+        EventAgregator.Subscribe<AttacklickedEvent>(Attck);
         EventAgregator.Subscribe<ReloadBtnClickedEvent>(Reload);
         EventAgregator.Subscribe<FirstSlotWeaponBtnClickedEvent>(SelectFirstSlotWeapon);
         EventAgregator.Subscribe<SecondSlotWeaponBtnClickedEvent>(SelectSecondSlotWeapon);
+        EventAgregator.Subscribe<ThirdSlotWeaponBtnClickedEvent>(SelectThirdSlotWeapon);
     }
     private void FixedUpdate()
     {
@@ -62,6 +62,10 @@ public class FpsController : MonoBehaviour
                 {
                     EventAgregator.Post(this, new ChangeSecondSlotWeaponIconEvent(weapon.GetWeaponIcon()));
                 }
+                else if (weapon.GetWeaponSlotType() == SlotWeaponType.ThirdSlotWeapon)
+                {
+                    EventAgregator.Post(this, new ChangeThirdSlotWeaponIconEvent(weapon.GetWeaponIcon()));
+                }
             } 
             else if (ammo != null)
             {
@@ -70,11 +74,11 @@ public class FpsController : MonoBehaviour
         }            
     }
 
-    private void Shoot(object sender, ShootBtnClickedEvent eventData)
+    private void Attck(object sender, AttacklickedEvent eventData)
     {
         Debug.Log("FPS Shoot");
 
-        _soldierWeaponManager.Shoot(UpdateWeaponUI);
+        _soldierWeaponManager.Attack(UpdateWeaponUI);
     }
 
     private void Reload(object sender, ReloadBtnClickedEvent eventData)
@@ -101,17 +105,17 @@ public class FpsController : MonoBehaviour
         UpdateWeaponUI();
     }
 
+    private void SelectThirdSlotWeapon(object sender, ThirdSlotWeaponBtnClickedEvent eventData)
+    {
+        Debug.Log("FPS SelectSecondSlotWeapon");
+
+        _soldierWeaponManager.SelectThirdSlotWeapon();
+        UpdateWeaponUI();
+    }
+
 
     private void UpdateWeaponUI()
     {
-        var newIsWeaponSelectedValue = _soldierWeaponManager.IsWeaponSelected();
-        if (_isWeaponSelected != newIsWeaponSelectedValue)
-        {
-            _isWeaponSelected = newIsWeaponSelectedValue;
-            EventAgregator.Post(this, new ChangeIsWeaponSelectedUIVisibleElementsEvent(newIsWeaponSelectedValue));
-        }
-
-
         var newAmmoStatus = _soldierWeaponManager.GetWeaponAmmoStatuses();
 
         if (newAmmoStatus[0] != null)
@@ -141,6 +145,18 @@ public class FpsController : MonoBehaviour
                 EventAgregator.Post(this, new ChangeSecondSlotWeaponAmmoInStockVolumeEvent(newAmmoStatus[1].Item2));
             }
         }
+
+        if (newAmmoStatus[2] != null)
+        {
+            if (_lastWeaponAmmoStatus == null || _lastWeaponAmmoStatus[2] == null ||
+                (_lastWeaponAmmoStatus != null && _lastWeaponAmmoStatus[2] != null && newAmmoStatus[2].Item2 != _lastWeaponAmmoStatus[2].Item2))
+            {
+                EventAgregator.Post(this, new ChangeThirdSlotWeaponAmmoVolumeEvent(newAmmoStatus[2].Item2));
+            }
+        }
+
+
+        
         _lastWeaponAmmoStatus = newAmmoStatus;
     }
 
