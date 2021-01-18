@@ -10,9 +10,23 @@ public class GameManager : MonoBehaviour
     private TeamsManager _teamsManager;
     private GameController _gameController;
 
+
+
     void Awake()
     {
         _gameController = new GameController();
+
+        GameTypes gameType = GameTypes.BattleRoyalMatch;
+
+        if (PlayerPrefs.HasKey("GameType"))
+        {
+            gameType = PlayerPrefs.GetString("GameType").ToEnum<GameTypes>();
+        }
+
+        _gameController.SetGameType(gameType);
+
+
+
 
         EventAgregator.Subscribe<PlayerKilledEvent>(GameOver);
         EventAgregator.Subscribe<PauseClickedEvent>(PauseGame);
@@ -69,6 +83,19 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        if (_gameController.gameType == GameTypes.TeamMatch)
+        {
+            LoadTeamMatch();
+        }
+        else
+        {
+            LoadBattleRoyalMatch();
+        }
+    }
+
+    private void LoadTeamMatch()
+    {
         _teamsManager = ServiceLocator.Resolved<TeamsManager>();
 
         TeamData comand1 = new TeamData();
@@ -77,20 +104,53 @@ public class GameManager : MonoBehaviour
         comand1.BotsNumber = 1;
 
         TeamData comand2 = new TeamData();
-        comand2.BotsNumber = 1;
+        comand2.BotsNumber = 2;
         comand2.Tag = "TeamB";
         comand2.IsPlayerTeam = false;
 
         _teamsManager.InitAndSpawnTeam(comand1);
         _teamsManager.InitAndSpawnTeam(comand2);
-
     }
+
+    private void LoadBattleRoyalMatch()
+    {
+        _teamsManager = ServiceLocator.Resolved<TeamsManager>();
+
+        TeamData comand1 = new TeamData();
+        comand1.Tag = "TeamA";
+        comand1.IsPlayerTeam = true;
+        comand1.BotsNumber = 0;
+
+        TeamData comand2 = new TeamData();
+        comand2.Tag = "TeamB";
+        comand2.BotsNumber = 1;
+        comand2.IsPlayerTeam = false;
+
+        TeamData comand3 = new TeamData();
+        comand3.Tag = "TeamC";
+        comand3.BotsNumber = 1;
+        comand3.IsPlayerTeam = false;
+
+        TeamData comand4 = new TeamData();
+        comand4.Tag = "TeamD";
+        comand4.BotsNumber = 1;
+        comand4.IsPlayerTeam = false;
+
+
+        _teamsManager.InitAndSpawnTeam(comand1);
+        _teamsManager.InitAndSpawnTeam(comand2);
+        _teamsManager.InitAndSpawnTeam(comand3);
+        _teamsManager.InitAndSpawnTeam(comand4);
+    }
+
 }
 
 public class GameController
 {
     public int KilledEnemiesNumber = 0;
     public int AliveEnemiesNumber = 0;
+
+    public GameTypes gameType;
 
     public void SetAliveEnemies(int number)
     {
@@ -106,4 +166,15 @@ public class GameController
         KilledEnemiesNumber ++;
         EventAgregator.Post(this, new ChangeKilledEnemiesEvent(KilledEnemiesNumber));
     }
+
+    public void SetGameType(GameTypes type)
+    {
+        gameType = type;
+    }
+}
+
+public enum GameTypes
+{
+    TeamMatch,
+    BattleRoyalMatch
 }

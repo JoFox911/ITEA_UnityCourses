@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -14,6 +15,11 @@ public static class Common
         var orderedSearchingPoints = transformList.OrderBy(transform => Vector3.Distance(transform.position, currentPossition)).ToList();
         var nearestPointDispersion = transformList.Count < variabilityNumber ? transformList.Count : variabilityNumber;
 
-        return orderedSearchingPoints[Random.Range(0, nearestPointDispersion)];
+        return orderedSearchingPoints[UnityEngine.Random.Range(0, nearestPointDispersion)];
+    }
+
+    public static T ToEnum<T>(this string value)
+    {
+        return (T)Enum.Parse(typeof(T), value, true);
     }
 }

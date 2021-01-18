@@ -8,6 +8,8 @@ TagManager:
   - CanGrab
   - TeamA
   - TeamB
+  - TeamC
+  - TeamD
   layers:
   - Default
   - TransparentFX

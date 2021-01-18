@@ -15,6 +15,9 @@ public class TeamsManager: MonoBehaviour
     [SerializeField]
     private GameObject _player;
 
+    //[SerializeField]
+    //private Sprite _teammateIcon;
+
     private List<TeamData> _teamsList;
 
 

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 namespace BotLogic
@@ -11,6 +12,8 @@ namespace BotLogic
 
         private Transform _destinationPoint;
         private BotMovementManager _botMovement;
+
+        private List<Transform> pointsList;
 
         public override void OnStateEnter()
         {
@@ -48,8 +51,9 @@ namespace BotLogic
 
         private void SetNewDistinationPoint()
         {
-            _destinationPoint = Common.SetectOneOfTheNearestPoint(_sharedContext.MapHelper.EnemySearchingPoints.Where(point => point != _destinationPoint).ToList(),
-                                                                  _botMovement.GetCurrentPossition(), 2);
+            pointsList = _sharedContext.MapHelper.EnemySearchingPoints.Where(point => point != _destinationPoint).ToList();
+            _destinationPoint = Common.SetectOneOfTheNearestPoint(pointsList,
+                                                                  _botMovement.GetCurrentPossition(), pointsList.Count);
             _botMovement.MoveToTarget(_destinationPoint.position);
         }
     }

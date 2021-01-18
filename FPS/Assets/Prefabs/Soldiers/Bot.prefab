@@ -468,8 +468,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f1ed5127d11a254d9c0fa00f1563403, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _throwGrenadeRange: 10
   _weaponHolder: {fileID: 4653327748509850304}
-  _isBot: 1
   IsNoAmmoOnAllWeapons: 0
 --- !u!114 &8045185840851986004
 MonoBehaviour:
@@ -529,7 +529,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _health: 50
-  _maxHealth: 50
   _isBot: 1
   _name: 
 --- !u!82 &3006933009408729930

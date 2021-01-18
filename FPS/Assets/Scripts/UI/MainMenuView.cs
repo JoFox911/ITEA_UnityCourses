@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MainMenuView : MonoBehaviour
@@ -16,11 +15,14 @@ public class MainMenuView : MonoBehaviour
     [SerializeField]
     private GameObject _settingsScreen;
 
+    [SerializeField]
+    private GameObject _newGameScreen;
+
     void Awake()
     {
         if (_newGameBtn != null)
         {
-            _newGameBtn.onClick.AddListener(NewGameClicked);
+            _newGameBtn.onClick.AddListener(OpenNewGameScreen);
         }
         else
         {
@@ -52,9 +54,16 @@ public class MainMenuView : MonoBehaviour
         AudioManager.PlayMusic(MusicType.InMenu);
     }
 
-    private void NewGameClicked()
+    private void OpenNewGameScreen()
     {
-        SceneManager.LoadScene(1);
+        if (_newGameScreen != null)
+        {
+            _newGameScreen.SetActive(true);
+        }
+        else
+        {
+            Common.ObjectNotAssignedWarning("NewGameScreen");
+        }
     }
 
 

@@ -39,7 +39,14 @@ public class Soldier : MonoBehaviour, IShootable
 
         if (_isAlive && _health <= 0)
         {
-            Die(attackData);
+            if (_health <= 0)
+            {
+                Die(attackData);
+            }
+            else if (_isBot)
+            {
+                _anim.SetTrigger("damage");
+            }
         }
     }
 
