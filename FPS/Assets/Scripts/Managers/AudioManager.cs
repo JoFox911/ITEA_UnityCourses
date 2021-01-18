@@ -131,7 +131,10 @@ public class AudioManager : MonoBehaviour
 public enum SFXType
 {
     Steps,
-    Shoot
+    Reload,
+    Pistol,
+    SubmachineGun,
+    Grenade
 }
 
 [Serializable]

@@ -71,6 +71,10 @@ public class TeamsManager: MonoBehaviour
             var soldierComponent = member.GetComponent<Soldier>();
             if (soldierComponent != null)
             {
+                if (team.IsPlayerTeam)
+                {
+                    soldierComponent.ShowFriendIndicator();
+                }
                 team.memdersList.Add(soldierComponent);
             }
 

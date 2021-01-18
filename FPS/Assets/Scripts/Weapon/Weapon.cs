@@ -30,6 +30,9 @@ public abstract class Weapon : MonoBehaviour
     [SerializeField]
     protected Sprite _weaponIcon;
 
+    [SerializeField]
+    protected SFXType _weaponSound;
+
     protected bool _isOutOfAmmo;
 
 
@@ -59,6 +62,11 @@ public abstract class Weapon : MonoBehaviour
     public Sprite GetWeaponIcon()
     {
         return _weaponIcon;
+    }
+
+    public SFXType GetWeaponSound()
+    {
+        return _weaponSound;
     }
 
     public abstract bool IsWeaponReady();

@@ -208,10 +208,15 @@ public class SoldierWeaponManager : MonoBehaviour
     private void Shoot()
     {
         _currentWeapon.Shoot(_raycastSource, _soldier.GetName());
+
         if (_soldier.GetIsBot())
         {
             _anim.SetTrigger("shoot");
-            AudioManager.PlaySFXOnAudioSource(SFXType.Shoot, _audioSource);
+            AudioManager.PlaySFXOnAudioSource(_currentWeapon.GetWeaponSound(), _audioSource);
+        }
+        else
+        {
+            AudioManager.PlaySFX(_currentWeapon.GetWeaponSound());
         }
     }
 
@@ -222,11 +227,16 @@ public class SoldierWeaponManager : MonoBehaviour
             var currentWeaponPossibleAmmo = _availableAmmo[_currentWeapon.GetWeaponAmmoType()];
             if (currentWeaponPossibleAmmo > 0)
             {
+                _anim.Play("m_weapon_reload", 0, 0f);
                 if (_soldier.GetIsBot())
                 {
-                    _anim.Play("m_weapon_reload", 0, 0f);
-                    AudioManager.PlaySFXOnAudioSource(SFXType.Shoot, _audioSource);
+                    AudioManager.PlaySFXOnAudioSource(SFXType.Reload, _audioSource);
                 }
+                else
+                {
+                    AudioManager.PlaySFX(SFXType.Reload);
+                }
+
                 _currentWeapon.Reload(currentWeaponPossibleAmmo, out int remaining);
                 _availableAmmo[_currentWeapon.GetWeaponAmmoType()] = remaining;
                 callback?.Invoke();

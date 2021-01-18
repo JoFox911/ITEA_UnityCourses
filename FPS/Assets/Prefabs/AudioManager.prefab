@@ -176,7 +176,15 @@ MonoBehaviour:
   _mixer: {fileID: 24100000, guid: a695b90ddb1ea184e892a585af251620, type: 2}
   _sfxDataList:
   - Type: 0
-    Clip: {fileID: 8300000, guid: c4f0793fc606d8947ace858a8a79ea94, type: 3}
+    Clip: {fileID: 8300000, guid: aad1784ed3292f649961b0e769da84e1, type: 3}
+  - Type: 1
+    Clip: {fileID: 8300000, guid: c60953862b92d8e4d96e7f4a04670036, type: 3}
+  - Type: 2
+    Clip: {fileID: 8300000, guid: ec1b3822c0212dd4b9f97253922e025d, type: 3}
+  - Type: 3
+    Clip: {fileID: 8300000, guid: aca1f6fe674fb0447b46274884b43e0f, type: 3}
+  - Type: 4
+    Clip: {fileID: 8300000, guid: 4891343243a72074f97a9c9ac92321ab, type: 3}
   _musicDataList:
   - Type: 0
     Music: {fileID: 8300000, guid: c4f0793fc606d8947ace858a8a79ea94, type: 3}

@@ -131,10 +131,10 @@ MonoBehaviour:
   _impactForce: 30
   _slotType: 0
   _shootType: 0
-  _reloadTime: 1.5
   _ammoType: 0
   _ammoVolume: 8
   _weaponIcon: {fileID: 21300000, guid: 9c0625d4bb97daf4e938a4c241dee4f0, type: 3}
+  _weaponSound: 2
   _fireRate: 10
   _muzzleFlash: {fileID: 3478790503618845577}
   _range: 100

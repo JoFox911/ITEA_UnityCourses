@@ -13,6 +13,9 @@ public class Soldier : MonoBehaviour, IShootable
     [SerializeField]
     private string _name;
 
+    [SerializeField]
+    private GameObject _friendIndicator;
+
     private Animator _anim;
     private float _maxHealth = 50f;
     private bool _isAlive = true;
@@ -85,6 +88,10 @@ public class Soldier : MonoBehaviour, IShootable
         return _isBot;
     }
 
+    public void ShowFriendIndicator()
+    {
+        _friendIndicator.SetActive(true);
+    }
     private void SetNewHealthValue(float newValue)
     {
         _health = newValue;
