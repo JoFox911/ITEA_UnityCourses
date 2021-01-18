@@ -126,18 +126,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _weaponName: M16
   _damage: 20
-  _range: 100
+  _impactEffect: {fileID: 6899934165692146724, guid: effb2751fe5539549b4e4c361fc3095d,
+    type: 3}
   _impactForce: 50
   _slotType: 1
   _shootType: 1
-  _reloadTime: 1
+  _reloadTime: 1.5
   _ammoType: 2
   _ammoVolume: 10
   _weaponIcon: {fileID: 21300000, guid: cc15713be59a9f54989e202db1be8c5d, type: 3}
   _fireRate: 20
   _muzzleFlash: {fileID: 6817197441069754868}
-  _impactEffect: {fileID: 6899934165692146724, guid: effb2751fe5539549b4e4c361fc3095d,
-    type: 3}
+  _range: 100
 --- !u!1001 &1159695952581740381
 PrefabInstance:
   m_ObjectHideFlags: 0

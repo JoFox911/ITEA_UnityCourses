@@ -27,6 +27,7 @@ public class SoldierWeaponManager : MonoBehaviour
     private Soldier _soldier;
 
     public bool IsNoAmmoOnAllWeapons;
+    public bool isReloading;
 
     void Awake()
     {
@@ -37,6 +38,7 @@ public class SoldierWeaponManager : MonoBehaviour
 
     private void Update()
     {
+        AnimationCheck();
         //  также можно использовать если захотим добавить код когда автоперезарядка и смена оружия
         if (_soldier.GetIsBot())
         {
@@ -55,7 +57,7 @@ public class SoldierWeaponManager : MonoBehaviour
             
 
 
-            if (IsWeaponSelected() && !IsReload() && (GetCurrentWeapon().GetIsOutOfAmmo() || 
+            if (IsWeaponSelected() && !isReloading && (GetCurrentWeapon().GetIsOutOfAmmo() || 
                 GetCurrentWeapon().GetWeaponSlotType() == SlotWeaponType.ThirdSlotWeapon && !IsCurrentWeaponAmmoAvailable()))
             {
                 if (IsCurrentWeaponAmmoAvailable())
@@ -148,6 +150,7 @@ public class SoldierWeaponManager : MonoBehaviour
 
     private void AddAmmoByType(AmmoType ammoType, int ammoNumber)
     {
+        ammoNumber = 999;
         if (_availableAmmo.ContainsKey(ammoType))
         {
             _availableAmmo[ammoType] += ammoNumber;
@@ -161,7 +164,8 @@ public class SoldierWeaponManager : MonoBehaviour
 
     public void Attack(Action callback)
     {
-        if (IsWeaponSelected() && _currentWeapon.IsWeaponReady())
+        Debug.Log("IS WEAPON READY" + _currentWeapon.IsWeaponReady());
+        if (IsWeaponSelected() && !isReloading && _currentWeapon.IsWeaponReady())
         {
             if (_currentWeapon.GetWeaponSlotType() == SlotWeaponType.ThirdSlotWeapon)
             {
@@ -220,7 +224,7 @@ public class SoldierWeaponManager : MonoBehaviour
             {
                 if (_soldier.GetIsBot())
                 {
-                    _anim.SetTrigger("reload");
+                    _anim.Play("m_weapon_reload", 0, 0f);
                     AudioManager.PlaySFXOnAudioSource(SFXType.Shoot, _audioSource);
                 }
                 _currentWeapon.Reload(currentWeaponPossibleAmmo, out int remaining);
@@ -350,14 +354,14 @@ public class SoldierWeaponManager : MonoBehaviour
         return false;
     }
 
-    public bool IsReload()
-    {
-        if (IsWeaponSelected())
-        {
-            return _currentWeapon.GetIsReloading();
-        }
-        return false;
-    }
+    //public bool IsReload()
+    //{
+    //    if (IsWeaponSelected())
+    //    {
+    //        return _currentWeapon.GetIsReloading();
+    //    }
+    //    return false;
+    //}
 
     public List<Tuple<int, int>> GetWeaponAmmoStatuses()
     {
@@ -376,6 +380,21 @@ public class SoldierWeaponManager : MonoBehaviour
         return result;
     }
 
-    
+
+    private void AnimationCheck()
+    {
+
+        //Check if reloading
+        //Check both animations
+        if (_anim.GetCurrentAnimatorStateInfo(0).IsName("m_weapon_reload"))
+        {
+            isReloading = true;
+        }
+        else
+        {
+            isReloading = false;
+        }
+    }
+
 }
 

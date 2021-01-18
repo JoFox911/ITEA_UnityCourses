@@ -101,7 +101,7 @@ MonoBehaviour:
   _impactForce: 5
   _slotType: 2
   _shootType: 0
-  _reloadTime: 1
+  _reloadTime: 2
   _ammoType: 4
   _ammoVolume: 1
   _weaponIcon: {fileID: 21300000, guid: c44f35d0755157b4a958f40a5a8ffb7e, type: 3}

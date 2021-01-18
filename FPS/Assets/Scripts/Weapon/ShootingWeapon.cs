@@ -24,7 +24,6 @@ public class ShootingWeapon : Weapon
 
     void OnDisable()
     {
-        _isReloading = false;
         _isOutOfAmmo = _currentAmmo == 0;
     }
 
@@ -63,25 +62,13 @@ public class ShootingWeapon : Weapon
 
     public override void Reload(int enabledAmmoNumber, out int remaining)
     {
-        var possibleAmmoForWeaponClip = 0;
-        if (!_isReloading) 
-        {
-            _isReloading = true;
-            possibleAmmoForWeaponClip = enabledAmmoNumber >= _ammoVolume - _currentAmmo
-                                                    ? _ammoVolume - _currentAmmo
-                                                    : enabledAmmoNumber;
-            StartCoroutine(FinishReload());
-            _currentAmmo += possibleAmmoForWeaponClip;
-        }
-        remaining = enabledAmmoNumber - possibleAmmoForWeaponClip;
-    }
+        var possibleAmmoForWeaponClip = enabledAmmoNumber >= _ammoVolume - _currentAmmo
+                                                ? _ammoVolume - _currentAmmo
+                                                : enabledAmmoNumber;
 
-    public IEnumerator FinishReload()
-    {
-        yield return new WaitForSeconds(_reloadTime);
+        remaining = enabledAmmoNumber - possibleAmmoForWeaponClip;
+        _currentAmmo += possibleAmmoForWeaponClip;
         _isOutOfAmmo = false;
-        _isReloading = false;
-        
     }
 
     public override int GetCurrentAmmo()
@@ -91,6 +78,6 @@ public class ShootingWeapon : Weapon
 
     public override bool IsWeaponReady()
     {
-        return (Time.time >= _nextTimeToFire) && !_isOutOfAmmo && !_isReloading;
+        return (Time.time >= _nextTimeToFire) && !_isOutOfAmmo;
     }
 }

@@ -22,9 +22,6 @@ public abstract class Weapon : MonoBehaviour
     protected WeaponShootType _shootType;
 
     [SerializeField]
-    protected float _reloadTime = 1f;
-
-    [SerializeField]
     protected AmmoType _ammoType;
 
     [SerializeField]
@@ -34,7 +31,6 @@ public abstract class Weapon : MonoBehaviour
     protected Sprite _weaponIcon;
 
     protected bool _isOutOfAmmo;
-    protected bool _isReloading;
 
 
     public abstract void Shoot(GameObject _raycastSource, string shooterName);
@@ -58,11 +54,6 @@ public abstract class Weapon : MonoBehaviour
     public bool GetIsOutOfAmmo()
     {
         return _isOutOfAmmo;
-    }
-
-    public bool GetIsReloading()
-    {
-        return _isReloading;
     }
 
     public Sprite GetWeaponIcon()

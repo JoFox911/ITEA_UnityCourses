@@ -6,20 +6,18 @@ public class CheckEnemyHelper : MonoBehaviour
     private float _castDistance = 7f;
     [SerializeField]
     private LayerMask _enemyMask;
-
-    private CharacterController _charController;
-    private GameObject _target;
-
-    private RaycastHit _hit;
-
-    private string _teamTag;
+    [SerializeField]
+    private float _lostEnemyDelay;
 
     public bool IsAnyEnemySpyed => _target != null;
 
-    void Awake()
-    {
-        _charController = gameObject.GetComponent<CharacterController>();
-    }
+    private string _teamTag;
+
+    private GameObject _target;
+    private GameObject _tempTarget;
+
+    private Collider[] _hitsInfoArray;
+    private float _lostEnemyTime = 0;
 
     private void Update()
     {
@@ -28,26 +26,24 @@ public class CheckEnemyHelper : MonoBehaviour
 
     public void CheckEnemy()
     {
-        if (Physics.SphereCast(transform.position + _charController.center, _charController.radius * _castDistance,
-                               transform.forward, out _hit, _castDistance, _enemyMask))
-        //var hitsInfoArray = Physics.OverlapSphere(transform.position, _castDistance, _enemyMask);
-        //var objects = Physics.SphereCast(own.position, radius, own.forward);
-        //if (Physics.SphereCast(transform.position + _charController.center, _castRadius,
-        //                   transform.forward, out _hit, 0.1f, _enemyMask))
+        _tempTarget = null;
+        _hitsInfoArray = Physics.OverlapSphere(transform.position, _castDistance, _enemyMask);
+        foreach (var hitCollider in _hitsInfoArray)
         {
-            if (_teamTag == string.Empty || !_hit.transform.gameObject.CompareTag(_teamTag))
+            if (!hitCollider.transform.gameObject.CompareTag(_teamTag))
             {
-                _target = _hit.transform.gameObject;
-            }
-            else 
-            {
-                _target = null;
+                _tempTarget = hitCollider.transform.gameObject;
             }
         }
-        else
+
+        if (Time.time > _lostEnemyTime && _tempTarget == null)
         {
             _target = null;
-
+        }
+        else if (_tempTarget != null)
+        {
+            _target = _tempTarget;
+            _lostEnemyTime = Time.time + _lostEnemyDelay;
         }
     }
 

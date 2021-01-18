@@ -83,15 +83,15 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
-        if (_gameController.gameType == GameTypes.TeamMatch)
-        {
-            LoadTeamMatch();
-        }
-        else
-        {
-            LoadBattleRoyalMatch();
-        }
+        LoadTestMatch();
+        //if (_gameController.gameType == GameTypes.TeamMatch)
+        //{
+        //    LoadTeamMatch();
+        //}
+        //else
+        //{
+        //    LoadBattleRoyalMatch();
+        //}
     }
 
     private void LoadTeamMatch()
@@ -141,6 +141,24 @@ public class GameManager : MonoBehaviour
         _teamsManager.InitAndSpawnTeam(comand2);
         _teamsManager.InitAndSpawnTeam(comand3);
         _teamsManager.InitAndSpawnTeam(comand4);
+    }
+
+    private void LoadTestMatch()
+    {
+        _teamsManager = ServiceLocator.Resolved<TeamsManager>();
+
+        TeamData comand1 = new TeamData();
+        comand1.Tag = "TeamA";
+        comand1.IsPlayerTeam = true;
+        comand1.BotsNumber = 0;
+
+        TeamData comand2 = new TeamData();
+        comand2.BotsNumber = 1;
+        comand2.Tag = "TeamB";
+        comand2.IsPlayerTeam = false;
+
+        _teamsManager.InitAndSpawnTeam(comand1);
+        _teamsManager.InitAndSpawnTeam(comand2);
     }
 
 }

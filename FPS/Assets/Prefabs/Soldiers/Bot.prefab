@@ -499,10 +499,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12f05c904bcfec14195c056e425bc6d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _castDistance: 7
+  _castDistance: 10
   _enemyMask:
     serializedVersion: 2
     m_Bits: 4096
+  _lostEnemyDelay: 5
 --- !u!114 &8045185840851986025
 MonoBehaviour:
   m_ObjectHideFlags: 0

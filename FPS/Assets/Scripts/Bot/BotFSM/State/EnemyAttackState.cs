@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using UnityEngine;
 
 namespace BotLogic
@@ -11,7 +12,7 @@ namespace BotLogic
 
         private float _folowDistance = 7f;
 
-        private float _enemyCooldownAfterShoot = 1f;
+        private float _enemyCooldownAfterShoot = 1.5f;
         private float _cooldownEndTime = 0f;
 
         public EnemyAttackState(BotSharedContext sharedContext) : base(sharedContext)
@@ -31,8 +32,6 @@ namespace BotLogic
             _target = _sharedContext.EnemySpyManager.GetTarget();
 
             FolowTarget();
-
-            // _sharedContext.Weapon.SetAttackTarget(_sharedContext.EnemySpyed.CurrentTarget);
         }
 
         public override void Execute()
@@ -54,16 +53,17 @@ namespace BotLogic
                 {
                     _stateSwitcher.Switch(typeof(SearchingWeaponState));
                 } 
-                else if ((Time.time > _cooldownEndTime) && !_botWeapon.IsReload())
+                else if ((Time.time > _cooldownEndTime) && !_botWeapon.isReloading)
                 {
                     FolowTarget();
-
-                    //Debug.Log("Shoot");
-                    _cooldownEndTime = Time.time + _enemyCooldownAfterShoot;
-
-                    _botWeapon.Attack(null);
+                    _botWeapon.Attack(UpdateEndCooldownTime);
                 }
             }
+        }
+
+        private void UpdateEndCooldownTime()
+        {
+            _cooldownEndTime = Time.time + _enemyCooldownAfterShoot;
         }
 
         private void FolowTarget()

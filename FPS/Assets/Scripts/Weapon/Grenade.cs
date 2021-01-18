@@ -10,6 +10,9 @@ public class Grenade : Weapon
     [SerializeField]
     protected float _impactRadius = 6f;
 
+    [SerializeField]
+    protected float _reloadTime = 1f;
+
     private float _nextTimeToFire = 0f;
 
     public override void Shoot(GameObject _raycastSource, string shooterName)
@@ -57,6 +60,6 @@ public class Grenade : Weapon
 
     public override bool IsWeaponReady()
     {
-        return (Time.time >= _nextTimeToFire) && !_isOutOfAmmo && !_isReloading;
+        return (Time.time >= _nextTimeToFire) && !_isOutOfAmmo;
     }
 }
