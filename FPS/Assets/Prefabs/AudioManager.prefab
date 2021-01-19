@@ -187,7 +187,11 @@ MonoBehaviour:
     Clip: {fileID: 8300000, guid: 4891343243a72074f97a9c9ac92321ab, type: 3}
   _musicDataList:
   - Type: 0
-    Music: {fileID: 8300000, guid: c4f0793fc606d8947ace858a8a79ea94, type: 3}
+    Music: {fileID: 8300000, guid: 679273fa806001d4986cae6ddae4f6ff, type: 3}
+  - Type: 1
+    Music: {fileID: 8300000, guid: 0a3c0ad4d5688db4b8a0fdce163b2540, type: 3}
+  - Type: 2
+    Music: {fileID: 8300000, guid: 0a3c0ad4d5688db4b8a0fdce163b2540, type: 3}
   _musicSource: {fileID: 313356982868065601}
   _sfxSource: {fileID: 313356983378128766}
 --- !u!1 &313356983378128736

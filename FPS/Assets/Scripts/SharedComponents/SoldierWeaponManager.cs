@@ -150,7 +150,6 @@ public class SoldierWeaponManager : MonoBehaviour
 
     private void AddAmmoByType(AmmoType ammoType, int ammoNumber)
     {
-        ammoNumber = 999;
         if (_availableAmmo.ContainsKey(ammoType))
         {
             _availableAmmo[ammoType] += ammoNumber;
@@ -354,24 +353,19 @@ public class SoldierWeaponManager : MonoBehaviour
 
     public bool IsWeaponWithAvailableAmmoExists()
     {
-        for (var i = 0; i < _weaponsList.Count; i++)
+        if (_weaponsList != null)
         {
-            if (_weaponsList[i] != null && IsWeaponAmmoAvailable(_weaponsList[i]))
+            for (var i = 0; i < _weaponsList.Count; i++)
             {
-                return true;
+                if (_weaponsList[i] != null && IsWeaponAmmoAvailable(_weaponsList[i]))
+                {
+                    return true;
+                }
             }
         }
+       
         return false;
     }
-
-    //public bool IsReload()
-    //{
-    //    if (IsWeaponSelected())
-    //    {
-    //        return _currentWeapon.GetIsReloading();
-    //    }
-    //    return false;
-    //}
 
     public List<Tuple<int, int>> GetWeaponAmmoStatuses()
     {

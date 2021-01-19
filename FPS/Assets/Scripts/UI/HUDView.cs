@@ -252,12 +252,14 @@ public class HUDView : MonoBehaviour
         {
             _reloadBtn.gameObject.SetActive(true);
             _shootBtn.gameObject.SetActive(true);
+            _shootBtn2.gameObject.SetActive(true);            
             _throwGrenadeBtn.gameObject.SetActive(false);
         }
         else if (eventData.slotWeaponType == SlotWeaponType.ThirdSlotWeapon)
         {
             _reloadBtn.gameObject.SetActive(false);
             _shootBtn.gameObject.SetActive(false);
+            _shootBtn2.gameObject.SetActive(false);
             _throwGrenadeBtn.gameObject.SetActive(true);
         }
     }

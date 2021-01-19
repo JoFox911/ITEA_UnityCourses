@@ -2,6 +2,13 @@
 
 public class Look : MonoBehaviour
 {
+    [SerializeField]
+    private float _minVerticalLookAngle = -40f;
+
+    [SerializeField]
+    private float _maxVerticalLookAngle = 75f;
+
+
     // References
     public Transform cameraTransform;
     public CharacterController characterController;
@@ -99,7 +106,7 @@ public class Look : MonoBehaviour
     {
 
         // vertical (pitch) rotation
-        cameraPitch = Mathf.Clamp(cameraPitch - lookInput.y, -90f, 90f);
+        cameraPitch = Mathf.Clamp(cameraPitch - lookInput.y, _minVerticalLookAngle, _maxVerticalLookAngle);
         cameraTransform.localRotation = Quaternion.Euler(cameraPitch, 0, 0);
 
         // horizontal (yaw) rotation

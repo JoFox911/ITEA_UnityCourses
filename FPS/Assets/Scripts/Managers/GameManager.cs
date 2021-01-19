@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        UnpauseGame();
+
         _gameController = new GameController();
 
         GameTypes gameType = GameTypes.BattleRoyalMatch;
@@ -71,6 +73,10 @@ public class GameManager : MonoBehaviour
     }
 
     private void UnpauseGame(object sender, UnpauseClickedEvent eventData)
+    {
+        UnpauseGame();
+    }
+    private void UnpauseGame()
     {
         Time.timeScale = 1;
     }
