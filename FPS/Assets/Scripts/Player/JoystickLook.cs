@@ -38,6 +38,7 @@ public class JoystickLook : MonoBehaviour
 
         if (_isRotationStarted)
         {
+            
             xRotation = transform.localEulerAngles.x - (_direction.y * _joystickSensitivity);
             if (xRotation <= _maxVerticalLookAngle || xRotation >= _minVerticalLookAngle)
             {
@@ -74,9 +75,9 @@ public class JoystickLook : MonoBehaviour
     //    return Mathf.Clamp(rotationY, minY + 0.01f, maxY - 0.01f);
     //}
 
-    ///// Normalize an angle between -180 and 180 degrees.
-    ///// <param name="angleDegrees">angle to normalize</param>
-    ///// <returns>normalized angle</returns>
+    /// Normalize an angle between -180 and 180 degrees.
+    /// <param name="angleDegrees">angle to normalize</param>
+    /// <returns>normalized angle</returns>
     //private float NormalizeAngle(float angleDegrees)
     //{
     //    while (angleDegrees > 180f)

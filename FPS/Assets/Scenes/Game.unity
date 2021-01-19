@@ -4674,14 +4674,18 @@ MonoBehaviour:
   - {x: -52.5, y: 1, z: 32.5}
   _spawnsPrefab: {fileID: 8092187084488447767, guid: f058219250239634bb4583db00bdba23,
     type: 3}
-  _weaponToHealRatio: 100
-  _availableHealPrefabs: []
+  _weaponToHealRatio: 0
+  _availableHealPrefabs:
+  - {fileID: 3552858320538759928, guid: 02c853d00b14a6a40910ced6491a4f0a, type: 3}
   _availableWeaponPrefabs:
   - {fileID: 3478790504961449316, guid: a6b2fa271d603144080edbea24e69f4a, type: 3}
+  - {fileID: 4342989060788443877, guid: b88d8006396a84748a65798bef316731, type: 3}
   - {fileID: 1159695952702554789, guid: ea43e0070bc56244fa7cd57ff981c793, type: 3}
+  - {fileID: 942560954303986275, guid: 2159aa52225936f41ad16ea491f6beca, type: 3}
+  - {fileID: 2180278832311749604, guid: df6dfde744f979f4e9d8a4f0d0cb7537, type: 3}
   - {fileID: 2180902459734007106, guid: b30835c32b38ace438b00e0ff85b9c33, type: 3}
-  - {fileID: 1927718506962715386, guid: 6b3bc8c7e70a173498400afad5dfad05, type: 3}
   - {fileID: 7081318984548397702, guid: ea3e24d42ab59e74ba5849f49fdf5fbe, type: 3}
+  - {fileID: 1927718506962715386, guid: 6b3bc8c7e70a173498400afad5dfad05, type: 3}
   _nextItemDelay: 10
 --- !u!1 &380348604
 GameObject:
@@ -27820,6 +27824,21 @@ PrefabInstance:
       propertyPath: _rotationJoystick
       value: 
       objectReference: {fileID: 908240440}
+    - target: {fileID: 7474037363738919008, guid: 53b0b39d7eda15d4182b1482fd1918a8,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7474037363738919008, guid: 53b0b39d7eda15d4182b1482fd1918a8,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7474037363738919008, guid: 53b0b39d7eda15d4182b1482fd1918a8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7474037363738919009, guid: 53b0b39d7eda15d4182b1482fd1918a8,
         type: 3}
       propertyPath: m_IsActive
@@ -27834,6 +27853,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _joystickSensitivity
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7474037363738919011, guid: 53b0b39d7eda15d4182b1482fd1918a8,
+        type: 3}
+      propertyPath: _minVerticalLookAngle
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 7474037365489040232, guid: 53b0b39d7eda15d4182b1482fd1918a8,
         type: 3}

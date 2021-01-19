@@ -4,6 +4,7 @@ using UnityEngine;
 
 [RequireComponent (typeof(SoldierWeaponManager))]
 [RequireComponent(typeof(PickUpHelper))]
+[RequireComponent(typeof(Soldier))]
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
@@ -11,6 +12,7 @@ public class PlayerController : MonoBehaviour
 
     private SoldierWeaponManager _soldierWeaponManager;
     private PickUpHelper _pickUpHelper;
+    private Soldier _soldier;
 
     private bool _isGrabPossible;
     private List<Tuple<int, int>> _lastWeaponAmmoStatus;
@@ -19,6 +21,7 @@ public class PlayerController : MonoBehaviour
     {
         _soldierWeaponManager = gameObject.GetComponent<SoldierWeaponManager>();
         _pickUpHelper = gameObject.GetComponent<PickUpHelper>();
+        _soldier = gameObject.GetComponent<Soldier>();
 
         _soldierWeaponManager.Initialize(_fpsCamera.gameObject);
 
@@ -55,6 +58,7 @@ public class PlayerController : MonoBehaviour
             // check is weapon
             var weapon = item.GetComponent<Weapon>();
             var ammo = item.GetComponent<Ammo>();
+            var heal = item.GetComponent<Heal>();
 
             if (weapon != null)
             {
@@ -63,6 +67,11 @@ public class PlayerController : MonoBehaviour
             else if (ammo != null)
             {
                 _soldierWeaponManager.AddAmmo(ammo, UpdateAmmoUI);
+            }
+            else if (heal != null)
+            {
+                Destroy(heal.transform.gameObject);
+                _soldier.ApplyHeal(heal.GetHealpoints());
             }
         }            
     }

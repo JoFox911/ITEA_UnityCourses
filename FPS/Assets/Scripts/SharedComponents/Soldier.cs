@@ -101,5 +101,8 @@ public class Soldier : MonoBehaviour, IShootable
         }
     }
 
-
+    public void ApplyHeal(float healpoints)
+    {
+        SetNewHealthValue(Mathf.Clamp(_health + healpoints, 0, _maxHealth));
+    }
 }

@@ -150,7 +150,7 @@ public class GameManager : MonoBehaviour
         TeamData comand1 = new TeamData();
         comand1.Tag = "TeamA";
         comand1.IsPlayerTeam = true;
-        comand1.BotsNumber = 1;
+        comand1.BotsNumber = 0;
 
         TeamData comand2 = new TeamData();
         comand2.BotsNumber = 1;
