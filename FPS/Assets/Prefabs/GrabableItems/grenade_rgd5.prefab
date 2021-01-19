@@ -96,7 +96,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _weaponName: 
   _damage: 10
-  _impactEffect: {fileID: 1337198075554910, guid: 73a720289c27bb649a40683a7706b6b0,
+  _impactEffect: {fileID: 1337198075554910, guid: 25c7aa9ad705fe143a4d71c1c8deb7d4,
     type: 3}
   _impactForce: 5
   _slotType: 2

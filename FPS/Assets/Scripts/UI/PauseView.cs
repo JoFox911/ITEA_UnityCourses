@@ -46,15 +46,15 @@ public class PauseView : MonoBehaviour
         }
     }
 
-    //void OnEnable()
-    //{
-    //    //AudioManager.PlayMusic(MusicType.Pause);
-    //}
+    void OnEnable()
+    {
+        AudioManager.PlayMusic(MusicType.Pause);
+    }
 
-    //private void OnDisable()
-    //{
-    //    //AudioManager.StopMusic();
-    //}
+    private void OnDisable()
+    {
+        AudioManager.StopMusic();
+    }
 
     private void ContinueGame()
     {

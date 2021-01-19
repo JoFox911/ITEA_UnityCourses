@@ -114,27 +114,6 @@ PrefabInstance:
       propertyPath: m_text
       value: Master Volume
       objectReference: {fileID: 0}
-    - target: {fileID: 5855426638778432396, guid: 0ecc85001290ddb41b13ec5145f2ebd2,
-        type: 3}
-      propertyPath: m_fontAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee,
-        type: 2}
-    - target: {fileID: 5855426638778432396, guid: 0ecc85001290ddb41b13ec5145f2ebd2,
-        type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-    - target: {fileID: 5855426638778432396, guid: 0ecc85001290ddb41b13ec5145f2ebd2,
-        type: 3}
-      propertyPath: m_fontSize
-      value: 36
-      objectReference: {fileID: 0}
-    - target: {fileID: 5855426638778432396, guid: 0ecc85001290ddb41b13ec5145f2ebd2,
-        type: 3}
-      propertyPath: m_fontSizeBase
-      value: 36
-      objectReference: {fileID: 0}
     - target: {fileID: 5855426638967338855, guid: 0ecc85001290ddb41b13ec5145f2ebd2,
         type: 3}
       propertyPath: m_Name
@@ -302,27 +281,6 @@ PrefabInstance:
       value: 'Music Volume
 
 '
-      objectReference: {fileID: 0}
-    - target: {fileID: 5855426638778432396, guid: 0ecc85001290ddb41b13ec5145f2ebd2,
-        type: 3}
-      propertyPath: m_fontAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee,
-        type: 2}
-    - target: {fileID: 5855426638778432396, guid: 0ecc85001290ddb41b13ec5145f2ebd2,
-        type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-    - target: {fileID: 5855426638778432396, guid: 0ecc85001290ddb41b13ec5145f2ebd2,
-        type: 3}
-      propertyPath: m_fontSize
-      value: 36
-      objectReference: {fileID: 0}
-    - target: {fileID: 5855426638778432396, guid: 0ecc85001290ddb41b13ec5145f2ebd2,
-        type: 3}
-      propertyPath: m_fontSizeBase
-      value: 36
       objectReference: {fileID: 0}
     - target: {fileID: 5855426638967338855, guid: 0ecc85001290ddb41b13ec5145f2ebd2,
         type: 3}
@@ -661,6 +619,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1811606316565033829}
     m_Modifications:
+    - target: {fileID: 1845077717310033200, guid: b5ba966b8dac0294d9e5b0e296f364c4,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 1088036117241738459, guid: ce698170a61512e4fb8ca57e8a25062d,
+        type: 3}
+    - target: {fileID: 1845077717310033200, guid: b5ba966b8dac0294d9e5b0e296f364c4,
+        type: 3}
+      propertyPath: m_Type
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1845077717310033202, guid: b5ba966b8dac0294d9e5b0e296f364c4,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -776,27 +745,6 @@ PrefabInstance:
       propertyPath: m_text
       value: OK
       objectReference: {fileID: 0}
-    - target: {fileID: 1845077717925566651, guid: b5ba966b8dac0294d9e5b0e296f364c4,
-        type: 3}
-      propertyPath: m_fontAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee,
-        type: 2}
-    - target: {fileID: 1845077717925566651, guid: b5ba966b8dac0294d9e5b0e296f364c4,
-        type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-    - target: {fileID: 1845077717925566651, guid: b5ba966b8dac0294d9e5b0e296f364c4,
-        type: 3}
-      propertyPath: m_fontSize
-      value: 36
-      objectReference: {fileID: 0}
-    - target: {fileID: 1845077717925566651, guid: b5ba966b8dac0294d9e5b0e296f364c4,
-        type: 3}
-      propertyPath: m_fontSizeBase
-      value: 36
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b5ba966b8dac0294d9e5b0e296f364c4, type: 3}
 --- !u!114 &8608675668379014558 stripped
@@ -832,27 +780,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_text
       value: Sounds volume
-      objectReference: {fileID: 0}
-    - target: {fileID: 5855426638778432396, guid: 0ecc85001290ddb41b13ec5145f2ebd2,
-        type: 3}
-      propertyPath: m_fontAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee,
-        type: 2}
-    - target: {fileID: 5855426638778432396, guid: 0ecc85001290ddb41b13ec5145f2ebd2,
-        type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-    - target: {fileID: 5855426638778432396, guid: 0ecc85001290ddb41b13ec5145f2ebd2,
-        type: 3}
-      propertyPath: m_fontSize
-      value: 36
-      objectReference: {fileID: 0}
-    - target: {fileID: 5855426638778432396, guid: 0ecc85001290ddb41b13ec5145f2ebd2,
-        type: 3}
-      propertyPath: m_fontSizeBase
-      value: 36
       objectReference: {fileID: 0}
     - target: {fileID: 5855426638967338855, guid: 0ecc85001290ddb41b13ec5145f2ebd2,
         type: 3}

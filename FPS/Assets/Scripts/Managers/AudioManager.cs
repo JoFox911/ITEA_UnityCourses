@@ -148,7 +148,7 @@ public enum MusicType
 {
     InMenu,
     Pause,
-    Victory
+    EndGame
 }
 
 [Serializable]

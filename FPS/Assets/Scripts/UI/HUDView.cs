@@ -15,6 +15,9 @@ public class HUDView : MonoBehaviour
     private Button _shootBtn;
 
     [SerializeField]
+    private Button _shootBtn2;
+
+    [SerializeField]
     private Button _firstSlotWeaponBtn;
 
     [SerializeField]
@@ -76,6 +79,7 @@ public class HUDView : MonoBehaviour
         _jumpBtn.onClick.AddListener(EmitJumpBtnClickedEvent);
         _grabBtn.onClick.AddListener(EmitGrabBtnClickedEvent);
         _shootBtn.onClick.AddListener(EmitShootBtnClickedEvent);
+        _shootBtn2.onClick.AddListener(EmitShootBtnClickedEvent);
         _firstSlotWeaponBtn.onClick.AddListener(EmitFirstSlotWeaponBtnClickedEvent);
         _secondSlotWeaponBtn.onClick.AddListener(EmitSecondSlotWeaponBtnClickedEvent);
         _thirdSlotWeaponBtn.onClick.AddListener(EmitThirdSlotWeaponBtnClickedEvent);        

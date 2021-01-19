@@ -46,15 +46,15 @@ public class FinishView : MonoBehaviour
        
     }
 
-    //void OnEnable()
-    //{
-    //    AudioManager.PlayMusic(MusicType.Victory);
-    //}
+    void OnEnable()
+    {
+        AudioManager.PlayMusic(MusicType.EndGame);
+    }
 
-    //private void OnDisable()
-    //{
-    //    AudioManager.StopMusic();
-    //}
+    private void OnDisable()
+    {
+        AudioManager.StopMusic();
+    }
 
     private void GoToMenu()
     {
