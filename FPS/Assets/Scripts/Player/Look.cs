@@ -3,10 +3,10 @@
 public class Look : MonoBehaviour
 {
     [SerializeField]
-    private float _minVerticalLookAngle = -40f;
+    private float _minVerticalLookAngle = -75f;
 
     [SerializeField]
-    private float _maxVerticalLookAngle = 75f;
+    private float _maxVerticalLookAngle = 40f;
 
 
     // References

@@ -12,7 +12,7 @@ public class NewGameView : MonoBehaviour
     private Button _teamaBtn;
 
     [SerializeField]
-    private Button _battleRoyalGameBtn;
+    private Button _deathGameBtn;
 
     [SerializeField]
     private Button _cancelBtn;
@@ -32,13 +32,13 @@ public class NewGameView : MonoBehaviour
             Common.ObjectNotAssignedWarning("TeamaBtn");
         }
 
-        if (_battleRoyalGameBtn != null)
+        if (_deathGameBtn != null)
         {
-            _battleRoyalGameBtn.onClick.AddListener(BattleRoyalBtnClicked);
+            _deathGameBtn.onClick.AddListener(DeathBtnClicked);
         }
         else
         {
-            Common.ObjectNotAssignedWarning("ExitGameBtn");
+            Common.ObjectNotAssignedWarning("DeathGameBtn");
         }
 
         if (_cancelBtn != null)
@@ -61,9 +61,9 @@ public class NewGameView : MonoBehaviour
         PrepareGame(GameTypes.TeamMatch);
     }
 
-    private void BattleRoyalBtnClicked()
+    private void DeathBtnClicked()
     {
-        PrepareGame(GameTypes.BattleRoyalMatch);
+        PrepareGame(GameTypes.DeathMatch);
     }
 
     public void PrepareGame(GameTypes type)

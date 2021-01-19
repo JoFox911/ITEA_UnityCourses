@@ -405,12 +405,12 @@ PrefabInstance:
     - target: {fileID: 1845077717310033205, guid: b5ba966b8dac0294d9e5b0e296f364c4,
         type: 3}
       propertyPath: m_Name
-      value: BattleRoyaleMatchBtn
+      value: DeathMatchBtn
       objectReference: {fileID: 0}
     - target: {fileID: 1845077717925566651, guid: b5ba966b8dac0294d9e5b0e296f364c4,
         type: 3}
       propertyPath: m_text
-      value: 'Battle Royale
+      value: 'Death Match
 
 '
       objectReference: {fileID: 0}
@@ -819,7 +819,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _teamaBtn: {fileID: 2131439517}
-  _battleRoyalGameBtn: {fileID: 531491970}
+  _deathGameBtn: {fileID: 531491970}
   _cancelBtn: {fileID: 2123990210}
   _playerNameInput: {fileID: 1208509496}
 --- !u!1001 &1382045368
@@ -1258,6 +1258,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4907301042494135572, guid: 677b25bbc231b704a9868485f90018eb,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -20.11
+      objectReference: {fileID: 0}
+    - target: {fileID: 7688031872599593617, guid: 677b25bbc231b704a9868485f90018eb,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 677b25bbc231b704a9868485f90018eb, type: 3}
@@ -2299,7 +2309,7 @@ PrefabInstance:
     - target: {fileID: 1845077717925566651, guid: b5ba966b8dac0294d9e5b0e296f364c4,
         type: 3}
       propertyPath: m_text
-      value: Team
+      value: Team Match
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b5ba966b8dac0294d9e5b0e296f364c4, type: 3}

@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
 
         _gameController = new GameController();
 
-        GameTypes gameType = GameTypes.BattleRoyalMatch;
+        GameTypes gameType = GameTypes.DeathMatch;
 
         if (PlayerPrefs.HasKey("GameType"))
         {
@@ -96,7 +96,7 @@ public class GameManager : MonoBehaviour
         //}
         //else
         //{
-        //    LoadBattleRoyalMatch();
+        //    LoadDeathMatch();
         //}
     }
 
@@ -118,7 +118,7 @@ public class GameManager : MonoBehaviour
         _teamsManager.InitAndSpawnTeam(comand2);
     }
 
-    private void LoadBattleRoyalMatch()
+    private void LoadDeathMatch()
     {
         _teamsManager = ServiceLocator.Resolved<TeamsManager>();
 
@@ -200,5 +200,5 @@ public class GameController
 public enum GameTypes
 {
     TeamMatch,
-    BattleRoyalMatch
+    DeathMatch
 }

@@ -134,7 +134,7 @@ MonoBehaviour:
   _ammoType: 0
   _ammoVolume: 20
   _weaponIcon: {fileID: 21300000, guid: dcb31db008416064b9e9985c1aca7734, type: 3}
-  _weaponSound: 0
+  _weaponSound: 3
   _fireRate: 15
   _muzzleFlash: {fileID: 5819343054239251191}
   _range: 100
