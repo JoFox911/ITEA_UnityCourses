@@ -10,20 +10,14 @@ using System;
 [RequireComponent(typeof(Soldier))]
 public class ControllerBotFSM : MonoBehaviour
 {
-
-    private BotSharedContext _botSharedContext;
-
     [SerializeField]
     private GameObject _raycastSource;
+
+    private BotSharedContext _botSharedContext;
 
     private FiniteStateMachine<BotSharedContext> _finiteStateMachine;
 
     private Dictionary<Type, BaseState<BotSharedContext>> _allBotStates;
-
-
-
-    private List<Transform> _itemSpawnPoints;
-    private List<Transform> _enemySearchingPoints;
 
     private PickUpHelper _pickUpHelper;
     private SoldierWeaponManager _soldierWeaponManager;
@@ -47,17 +41,11 @@ public class ControllerBotFSM : MonoBehaviour
 
     void Start()
     {
-        if (_itemsSpawnManager != null)
+        BotMapHelper _mapHelper = null;
+        if (_itemsSpawnManager != null && _itemsSpawnManager != null)
         {
-            _itemSpawnPoints = _itemsSpawnManager.GetAllSpawns();
+            _mapHelper = new BotMapHelper(_teamsSpawnManager.GetAllSpawns(), _itemsSpawnManager.GetAllSpawns());
         }
-
-        if (_itemsSpawnManager != null)
-        {
-            _enemySearchingPoints = _teamsSpawnManager.GetAllSpawns();
-        }
-
-        var _mapHelper = new BotMapHelper(_enemySearchingPoints, _itemSpawnPoints);
 
         _soldierWeaponManager.Initialize(_raycastSource);
 

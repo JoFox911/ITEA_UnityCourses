@@ -2,11 +2,12 @@
 
 public class HiResScreenShots : MonoBehaviour
 {
-    public new Camera camera;
-    public int resWidth = 2550;
-    public int resHeight = 3300;
-
-    private bool takeHiResShot = false;
+    [SerializeField]
+    private Camera _camera;
+    [SerializeField]
+    private int _resWidth = 2550;
+    [SerializeField]
+    private int _resHeight = 3300;
 
     public static string ScreenShotName(int width, int height)
     {
@@ -16,30 +17,23 @@ public class HiResScreenShots : MonoBehaviour
                              System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss"));
     }
 
-    public void TakeHiResShot()
-    {
-        takeHiResShot = true;
-    }
-
     void LateUpdate()
     {
-        takeHiResShot |= Input.GetKeyDown("k");
-        if (takeHiResShot)
+        if (Input.GetKeyDown("k"))
         {
-            RenderTexture rt = new RenderTexture(resWidth, resHeight, 24);
-            camera.targetTexture = rt;
-            Texture2D screenShot = new Texture2D(resWidth, resHeight, TextureFormat.RGB24, false);
-            camera.Render();
+            RenderTexture rt = new RenderTexture(_resWidth, _resHeight, 24);
+            _camera.targetTexture = rt;
+            Texture2D screenShot = new Texture2D(_resWidth, _resHeight, TextureFormat.RGB24, false);
+            _camera.Render();
             RenderTexture.active = rt;
-            screenShot.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
-            camera.targetTexture = null;
+            screenShot.ReadPixels(new Rect(0, 0, _resWidth, _resHeight), 0, 0);
+            _camera.targetTexture = null;
             RenderTexture.active = null; // JC: added to avoid errors
             Destroy(rt);
             byte[] bytes = screenShot.EncodeToPNG();
-            string filename = ScreenShotName(resWidth, resHeight);
+            string filename = ScreenShotName(_resWidth, _resHeight);
             System.IO.File.WriteAllBytes(filename, bytes);
             Debug.Log(string.Format("Took screenshot to: {0}", filename));
-            takeHiResShot = false;
         }
     }
 }

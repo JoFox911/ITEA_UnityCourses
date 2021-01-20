@@ -15,9 +15,6 @@ public class TeamsManager: MonoBehaviour
     [SerializeField]
     private GameObject _player;
 
-    //[SerializeField]
-    //private Sprite _teammateIcon;
-
     private List<TeamData> _teamsList;
 
 
@@ -46,6 +43,25 @@ public class TeamsManager: MonoBehaviour
         _fistEmptySpawnIndex++;
     }
 
+    public int GetAliveEnemiesNumber()
+    {
+        var number = 0;
+        foreach (var team in _teamsList)
+        {
+            if (!team.IsPlayerTeam)
+            {
+                foreach (var member in team.memdersList)
+                {
+                    if (member.IsAlive())
+                    {
+                        number++;
+                    }
+                }
+            }
+        }
+        return number;
+    }
+
     public void SpawnCommandOnPosition(TeamData team, Vector3 pos)
     {
         team.Name = TeamNamesGenerator.GenerateRandomName();
@@ -55,6 +71,7 @@ public class TeamsManager: MonoBehaviour
             _player.SetActive(false);
             _player.transform.position = pos;
             _player.SetActive(true);
+
             _player.tag = team.Tag;
             var soldierComponent = _player.GetComponent<Soldier>();
             if (soldierComponent != null)
@@ -77,42 +94,17 @@ public class TeamsManager: MonoBehaviour
                 }
                 team.memdersList.Add(soldierComponent);
             }
-
-            var checkEnemyComponent = member.GetComponent<CheckEnemyHelper>();
-            if(checkEnemyComponent != null)
-            {
-                checkEnemyComponent.SetTeamTag(team.Tag);
-            }
         }
 
         _teamsList.Add(team);
     }
 
-    public GameObject InstantiateBot(Vector3 pos)
+    private GameObject InstantiateBot(Vector3 pos)
     {
-        var soldier = Instantiate(_botPrefab, pos, Quaternion.identity);
-        soldier.transform.SetParent(_soldiersContainer.transform);
-        return soldier;
-    }
-
-    public int GetAliveEnemiesNumber()
-    {
-        var number = 0;
-        foreach (var team in _teamsList)
-        {
-            if (!team.IsPlayerTeam)
-            {
-                foreach (var member in team.memdersList)
-                {
-                    if (member.IsAlive())
-                    {
-                        number++;
-                    }
-                }
-            }
-        }
-        return number;
-    }
+        var bot = Instantiate(_botPrefab, pos, Quaternion.identity);
+        bot.transform.SetParent(_soldiersContainer.transform);
+        return bot;
+    }    
 }
 
 public class TeamData

@@ -30,7 +30,6 @@ public class JoystickDetector : MonoBehaviour, IPointerDownHandler, IBeginDragHa
         _thumble.transform.position = _thumbleStartPosition + direction * distance;
         var normalizedMovementDirection = direction * distance / _radius;
         RaiseJoystickDirectionEvent(normalizedMovementDirection);
-        //Debug.Log($"Direction: {normalizedMovementDirection}");
     }
 
     public void OnEndDrag(PointerEventData eventData)

@@ -1,10 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-
-public class PlayerTakeWeaponEvent
-{ }
+﻿using UnityEngine;
 
 public class JumpBtnClickedEvent
 { }
@@ -40,37 +34,6 @@ public class ChangeSlotWeaponIconEvent
     {
         slotWeaponType = _slotWeaponType;
         weaponIcon = _weaponIcon;
-    }
-}
-
-
-public class ChangeFirstSlotWeaponIconEvent
-{
-    public Sprite NewIcon;
-
-    public ChangeFirstSlotWeaponIconEvent(Sprite _newIcon)
-    {
-        NewIcon = _newIcon;
-    }
-}
-
-public class ChangeSecondSlotWeaponIconEvent
-{
-    public Sprite NewIcon;
-
-    public ChangeSecondSlotWeaponIconEvent(Sprite _newIcon)
-    {
-        NewIcon = _newIcon;
-    }
-}
-
-public class ChangeThirdSlotWeaponIconEvent
-{
-    public Sprite NewIcon;
-
-    public ChangeThirdSlotWeaponIconEvent(Sprite _newIcon)
-    {
-        NewIcon = _newIcon;
     }
 }
 

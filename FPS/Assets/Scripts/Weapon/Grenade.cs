@@ -5,26 +5,30 @@ public class Grenade : Weapon
 {
 
     [SerializeField]
-    private float _delay = 4f;
+    private float _explosionDelay = 4f;
 
     [SerializeField]
     protected float _impactRadius = 6f;
 
     [SerializeField]
-    protected float _reloadTime = 1f;
+    protected float _reloadTime = 2f;
 
     private float _nextTimeToFire = 0f;
 
+    void Awake()
+    {
+        _currentAmmo = _ammoVolume;
+    }
+
     public override void Shoot(GameObject _raycastSource, string shooterName)
     {
-        Debug.Log("granage Shoot");
         StartCoroutine(Explode(shooterName));
         _nextTimeToFire = Time.time + _reloadTime;
     }
 
     private IEnumerator Explode(string shooterName)
     {
-        yield return new WaitForSeconds(_delay);
+        yield return new WaitForSeconds(_explosionDelay);
         var colliders = Physics.OverlapSphere(transform.position, _impactRadius);
 
         foreach (var collider in colliders)
@@ -38,28 +42,17 @@ public class Grenade : Weapon
             var target = collider.transform.GetComponent<IShootable>();
             if (target != null)
             {
-                var shootData = new AttackData(_damage, shooterName, _weaponName, _weaponIcon);
-                target.TakeDamage(shootData);
+                target.TakeDamage(new AttackData(shooterName, _damage, _weaponName, _weaponIcon));
             }
         }
-        GameObject go = Instantiate(_impactEffect, transform.position, transform.rotation);
-        Destroy(go, 2f);
+
+        var impact = Instantiate(_impactEffect, transform.position, transform.rotation);
+        Destroy(impact, _destroyImpactTimeout);
         Destroy(gameObject);
-    }
-
-    public override void Reload(int enabledAmmoNumber, out int remaining)
-    {
-        remaining = enabledAmmoNumber;
-    }
-
-
-    public override int GetCurrentAmmo()
-    {
-        return 1;
     }
 
     public override bool IsWeaponReady()
     {
-        return (Time.time >= _nextTimeToFire) && !_isOutOfAmmo;
+        return Time.time >= _nextTimeToFire;
     }
 }

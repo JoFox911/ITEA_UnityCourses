@@ -22,17 +22,32 @@ public class FinishView : MonoBehaviour
 
     void Awake()
     {
-        var currentPlace = ServiceLocator.Resolved<GameController>()?.AliveEnemiesNumber + 1;
+        var currentPlace = ServiceLocator.Resolved<GameController>()?.AliveEnemiesNumber + 1;        
 
-        _labelText.text = $"You are got {currentPlace} place!";
-
-        if (currentPlace == 1)
+        if (_labelText != null)
         {
-            _resultText.text = _congratsText;
+            _labelText.text = $"You are got {currentPlace} place!";
         }
         else
         {
-            _resultText.text = _motivationText;
+            Common.ObjectNotAssignedWarning("LabelText");
+        }
+
+
+        if (_resultText != null)
+        {
+            if (currentPlace == 1)
+            {
+                _resultText.text = _congratsText;
+            }
+            else
+            {
+                _resultText.text = _motivationText;
+            }
+        }
+        else
+        {
+            Common.ObjectNotAssignedWarning("ResultText");
         }
 
         if (_okBtn != null)

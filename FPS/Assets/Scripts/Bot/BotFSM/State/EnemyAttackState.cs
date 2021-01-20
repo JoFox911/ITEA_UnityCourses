@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using UnityEngine;
 
 namespace BotLogic
@@ -8,11 +7,10 @@ namespace BotLogic
     {
         private BotMovementManager _botMovement;
         private SoldierWeaponManager _botWeapon;
+
         private GameObject _target;
 
-        private float _folowDistance = 7f;
-
-        private float _enemyCooldownAfterShoot = 1.5f;
+        private readonly float _enemyCooldownAfterShoot = 1.5f;
         private float _cooldownEndTime = 0f;
 
         public EnemyAttackState(BotSharedContext sharedContext) : base(sharedContext)
@@ -42,7 +40,6 @@ namespace BotLogic
             } 
             else if (!_sharedContext.EnemySpyManager.IsAnyEnemySpyed)
             {
-                //Debug.Log("Lost ENEMY");
                 _stateSwitcher.Switch(typeof(SearchingEnemyState));
             }
             else
@@ -53,8 +50,10 @@ namespace BotLogic
                 {
                     _stateSwitcher.Switch(typeof(SearchingWeaponState));
                 } 
+                // когда перезаряжаемся - не преследуем жертву
                 else if ((Time.time > _cooldownEndTime) && !_botWeapon.isReloading)
                 {
+                    // подойти к врагу если тот отошел, но цель еще не потеряна
                     FolowTarget();
                     _botWeapon.Attack(UpdateEndCooldownTime);
                 }
@@ -68,7 +67,7 @@ namespace BotLogic
 
         private void FolowTarget()
         {
-            _botMovement.FolowTarget(_target.transform.position, _folowDistance);
+            _botMovement.MoveToEnemy(_target.transform.position);
         }
 
     }

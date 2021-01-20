@@ -1,5 +1,4 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -66,29 +65,104 @@ public class HUDView : MonoBehaviour
     private Button _throwGrenadeBtn;
 
     [SerializeField]
-    private KillInfoView _killInfoView;
-
-    [SerializeField]
     private TextMeshProUGUI _aliveEnemiesNumber;
 
     [SerializeField]
-    private TextMeshProUGUI _killedEnemiesNumber;
+    private KillInfoView _killInfoView;
 
     void Awake()
     {
-        _jumpBtn.onClick.AddListener(EmitJumpBtnClickedEvent);
-        _grabBtn.onClick.AddListener(EmitGrabBtnClickedEvent);
-        _shootBtn.onClick.AddListener(EmitShootBtnClickedEvent);
-        _shootBtn2.onClick.AddListener(EmitShootBtnClickedEvent);
-        _firstSlotWeaponBtn.onClick.AddListener(EmitFirstSlotWeaponBtnClickedEvent);
-        _secondSlotWeaponBtn.onClick.AddListener(EmitSecondSlotWeaponBtnClickedEvent);
-        _thirdSlotWeaponBtn.onClick.AddListener(EmitThirdSlotWeaponBtnClickedEvent);        
-        _reloadBtn.onClick.AddListener(EmitReloadBtnClickedEvent);
-        _pauseBtn.onClick.AddListener(EmitPauseBtnClickedEvent);
-        _throwGrenadeBtn.onClick.AddListener(EmitThrowGrenadeBtnClickedEvent);
+        if (_jumpBtn != null)
+        {
+            _jumpBtn.onClick.AddListener(EmitJumpBtnClickedEvent);
+        }
+        else
+        {
+            Common.ObjectNotAssignedWarning("JumpBtn");
+        }
+
+        if (_grabBtn != null)
+        {
+            _grabBtn.onClick.AddListener(EmitGrabBtnClickedEvent);
+        }
+        else
+        {
+            Common.ObjectNotAssignedWarning("GrabBtn");
+        }
+
+        if (_shootBtn != null)
+        {
+            _shootBtn.onClick.AddListener(EmitShootBtnClickedEvent);
+        }
+        else
+        {
+            Common.ObjectNotAssignedWarning("ShootBtn");
+        }
+
+        if (_shootBtn2 != null)
+        {
+            _shootBtn2.onClick.AddListener(EmitShootBtnClickedEvent);
+        }
+        else
+        {
+            Common.ObjectNotAssignedWarning("ShootBtn2");
+        }
+
+        if (_reloadBtn != null)
+        {
+            _reloadBtn.onClick.AddListener(EmitReloadBtnClickedEvent);
+        }
+        else
+        {
+            Common.ObjectNotAssignedWarning("ReloadBtn");
+        }
+
+        if (_pauseBtn != null)
+        {
+            _pauseBtn.onClick.AddListener(EmitPauseBtnClickedEvent);
+        }
+        else
+        {
+            Common.ObjectNotAssignedWarning("PauseBtn");
+        }
+
+        if (_throwGrenadeBtn != null)
+        {
+            _throwGrenadeBtn.onClick.AddListener(EmitThrowGrenadeBtnClickedEvent);
+        }
+        else
+        {
+            Common.ObjectNotAssignedWarning("ThrowGrenadeBtn");
+        }
+
+        if (_firstSlotWeaponBtn != null)
+        {
+            _firstSlotWeaponBtn.onClick.AddListener(EmitFirstSlotWeaponBtnClickedEvent);
+        }
+        else
+        {
+            Common.ObjectNotAssignedWarning("FirstSlotWeaponBtn");
+        }
+
+        if (_secondSlotWeaponBtn != null)
+        {
+            _secondSlotWeaponBtn.onClick.AddListener(EmitSecondSlotWeaponBtnClickedEvent);
+        }
+        else
+        {
+            Common.ObjectNotAssignedWarning("SecondSlotWeaponBtn");
+        }
+
+        if (_thirdSlotWeaponBtn != null)
+        {
+            _thirdSlotWeaponBtn.onClick.AddListener(EmitThirdSlotWeaponBtnClickedEvent);
+        }
+        else
+        {
+            Common.ObjectNotAssignedWarning("ThirdSlotWeaponBtn");
+        }
 
         EventAgregator.Subscribe<ChangeGrabBtnVisibilityEvent>(SetGrabBtnVisibility);
-        EventAgregator.Subscribe<SoldierKilledEvent>(PrintKillData);
         EventAgregator.Subscribe<ChangeHealthEvent>(SetNewHealthValue);
         EventAgregator.Subscribe<ChangeFirstSlotWeaponAmmoInClipVolumeEvent>(SetFirstSlotAmmoInClipVolume);
         EventAgregator.Subscribe<ChangeFirstSlotWeaponAmmoInStockVolumeEvent>(SetFirstSlotAmmoInStockVolume);
@@ -98,13 +172,12 @@ public class HUDView : MonoBehaviour
         EventAgregator.Subscribe<CurrentWeaponChangedEvent>(ChangeCurrentWeapon);
         EventAgregator.Subscribe<ChangeSlotWeaponIconEvent>(ChangeSlotWeaponIcon);
         EventAgregator.Subscribe<ChangeAliveEnemiesEvent>(ChangeAliveEnemies);
-        EventAgregator.Subscribe<ChangeKilledEnemiesEvent>(ChangeKilledEnemies);
+        EventAgregator.Subscribe<SoldierKilledEvent>(PrintKillData);
     }
 
     void OnDestroy()
     {
         EventAgregator.Unsubscribe<ChangeGrabBtnVisibilityEvent>(SetGrabBtnVisibility);
-        EventAgregator.Unsubscribe<SoldierKilledEvent>(PrintKillData);
         EventAgregator.Unsubscribe<ChangeHealthEvent>(SetNewHealthValue);
         EventAgregator.Unsubscribe<ChangeFirstSlotWeaponAmmoInClipVolumeEvent>(SetFirstSlotAmmoInClipVolume);
         EventAgregator.Unsubscribe<ChangeFirstSlotWeaponAmmoInStockVolumeEvent>(SetFirstSlotAmmoInStockVolume);
@@ -114,17 +187,18 @@ public class HUDView : MonoBehaviour
         EventAgregator.Unsubscribe<CurrentWeaponChangedEvent>(ChangeCurrentWeapon);
         EventAgregator.Unsubscribe<ChangeSlotWeaponIconEvent>(ChangeSlotWeaponIcon);
         EventAgregator.Unsubscribe<ChangeAliveEnemiesEvent>(ChangeAliveEnemies);
-        EventAgregator.Unsubscribe<ChangeKilledEnemiesEvent>(ChangeKilledEnemies);
+        EventAgregator.Unsubscribe<SoldierKilledEvent>(PrintKillData);
+    }
+
+    private void PrintKillData(object sender, SoldierKilledEvent eventData)
+    {
+        _killInfoView.AddKillInfoItem(eventData.killerInfo);
+        Debug.Log(eventData.killerInfo);
     }
 
     private void ChangeAliveEnemies(object sender, ChangeAliveEnemiesEvent eventData)
     {
         _aliveEnemiesNumber.SetText(eventData.enemiesNumber.ToString());
-    }
-
-    private void ChangeKilledEnemies(object sender, ChangeKilledEnemiesEvent eventData)
-    {
-        _killedEnemiesNumber.SetText(eventData.enemiesNumber.ToString());
     }
 
     private void ChangeSlotWeaponIcon(object sender, ChangeSlotWeaponIconEvent eventData)
@@ -141,12 +215,6 @@ public class HUDView : MonoBehaviour
         {
             _thirdSlotWeaponIcon.sprite = eventData.weaponIcon;
         }
-    }
-
-    private void PrintKillData(object sender, SoldierKilledEvent eventData)
-    {
-        _killInfoView.AddKillInfoItem(eventData.killerInfo);
-        Debug.Log(eventData.killerInfo);
     }
 
     private void EmitThrowGrenadeBtnClickedEvent()
@@ -167,70 +235,57 @@ public class HUDView : MonoBehaviour
 
     private void EmitGrabBtnClickedEvent()
     {
-        Debug.Log("HUD GRAB");
         EventAgregator.Post(this, new GrabBtnClickedEvent());
     }
 
     private void EmitShootBtnClickedEvent()
     {
-        Debug.Log("HUD SHOOT");
         EventAgregator.Post(this, new AttacklickedEvent());
     }
 
     private void EmitFirstSlotWeaponBtnClickedEvent()
     {
-        Debug.Log("HUD FIRST WEAPON SLOT");
         EventAgregator.Post(this, new FirstSlotWeaponBtnClickedEvent());
     }
 
     private void EmitSecondSlotWeaponBtnClickedEvent()
     {
-        Debug.Log("HUD SECOND WEAPON SLOT");
         EventAgregator.Post(this, new SecondSlotWeaponBtnClickedEvent());
     }
 
     private void EmitThirdSlotWeaponBtnClickedEvent()
     {
-        Debug.Log("HUD SECOND WEAPON SLOT");
         EventAgregator.Post(this, new ThirdSlotWeaponBtnClickedEvent());
     }
-
     
-
     private void EmitReloadBtnClickedEvent()
     {
-        Debug.Log("HUD RELOAD");
         EventAgregator.Post(this, new ReloadBtnClickedEvent());
     }
 
     private void SetGrabBtnVisibility(object sender, ChangeGrabBtnVisibilityEvent eventData)
     {
-        Debug.Log("HUD SET GRAB VISIBILITY");
         _grabBtn.gameObject.SetActive(eventData.NewVisibilityValue);
     }
 
     private void SetFirstSlotAmmoInClipVolume(object sender, ChangeFirstSlotWeaponAmmoInClipVolumeEvent eventData)
     {
-        Debug.Log("HUD SET FS AMMO IN CLIP VOLUME");
         _firstSlotWeaponAmmoInClip.SetText(eventData.newVolume.ToString());
     }
 
     private void SetFirstSlotAmmoInStockVolume(object sender, ChangeFirstSlotWeaponAmmoInStockVolumeEvent eventData)
     {
-        Debug.Log("HUD SET FS AMMO IN STOCK VOLUME");
-        _firstSlotWeaponAmmoInStock.SetText("/" + eventData.newVolume.ToString());
+        _firstSlotWeaponAmmoInStock.SetText("/ " + eventData.newVolume.ToString());
     }
 
     private void SetSecondSlotAmmoInClipVolume(object sender, ChangeSecondSlotWeaponAmmoInClipVolumeEvent eventData)
     {
-        Debug.Log("HUD SET SS AMMO IN CLIP VOLUME");
         _secondSlotWeaponAmmoInClip.SetText(eventData.newVolume.ToString());
     }
 
     private void SetSecondSlotAmmoInStockVolume(object sender, ChangeSecondSlotWeaponAmmoInStockVolumeEvent eventData)
     {
-        Debug.Log("HUD SET SS AMMO IN STOCK VOLUME");
-        _secondSlotWeaponAmmoInStock.SetText("/" + eventData.newVolume.ToString());
+        _secondSlotWeaponAmmoInStock.SetText("/ " + eventData.newVolume.ToString());
     }
 
     private void SetThirdSlotAmmoVolume(object sender, ChangeThirdSlotWeaponAmmoVolumeEvent eventData)

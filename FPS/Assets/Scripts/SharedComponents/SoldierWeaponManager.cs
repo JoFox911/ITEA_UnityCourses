@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(AudioSource))]
 [RequireComponent(typeof(Soldier))]
@@ -14,9 +13,15 @@ public class SoldierWeaponManager : MonoBehaviour
     [SerializeField]
     private GameObject _weaponHolder;
 
-    private Dictionary<AmmoType, int> _availableAmmo;
+    public bool IsNoAmmoOnAllWeapons;
+    public bool isReloading;
+    public bool isWeaponReady;
 
     private readonly int _slotsNumber = 3;
+    private readonly int _ignoreRaycastLayer = 2;
+
+    private Dictionary<AmmoType, int> _availableAmmo;    
+
     private List<Weapon> _weaponsList;
     private Weapon _currentWeapon;
 
@@ -25,9 +30,6 @@ public class SoldierWeaponManager : MonoBehaviour
     private Animator _anim;
     private AudioSource _audioSource;
     private Soldier _soldier;
-
-    public bool IsNoAmmoOnAllWeapons;
-    public bool isReloading;
 
     void Awake()
     {
@@ -38,31 +40,17 @@ public class SoldierWeaponManager : MonoBehaviour
 
     private void Update()
     {
-        AnimationCheck();
+        AnimationCheck();        
+
         //  также можно использовать если захотим добавить код когда автоперезарядка и смена оружия
         if (_soldier.GetIsBot())
         {
-            IsNoAmmoOnAllWeapons = !IsWeaponWithAvailableAmmoExists();
+            WeaponCheck();
 
-            //var tet = IsCurrentWeaponAmmoAvailable();
-
-            //var t1 = IsWeaponSelected();
-            //var t2 = IsReload();
-            //if (t1)
-            //{
-            //    var t3 = GetCurrentWeapon().GetIsOutOfAmmo();
-            //    var t4 = GetCurrentWeapon().GetWeaponSlotType() == SlotWeaponType.ThirdSlotWeapon;
-            //    var t5 = IsCurrentWeaponAmmoAvailable();
-            //}
-            
-
-
-            if (IsWeaponSelected() && !isReloading && (GetCurrentWeapon().GetIsOutOfAmmo() || 
-                GetCurrentWeapon().GetWeaponSlotType() == SlotWeaponType.ThirdSlotWeapon && !IsCurrentWeaponAmmoAvailable()))
+            if (IsWeaponSelected() && !isReloading && !IsWeaponAmmoLoaded(_currentWeapon))
             {
-                if (IsCurrentWeaponAmmoAvailable())
+                if (IsWeaponAmmoAvailable(_currentWeapon))
                 {
-                    IsNoAmmoOnAllWeapons = false;
                     Reload(null);
                 }
                 else
@@ -101,11 +89,6 @@ public class SoldierWeaponManager : MonoBehaviour
         SelectSlotWeapon(2);
     }
 
-    public Weapon GetCurrentWeapon()
-    {
-        return _currentWeapon;
-    }
-
     public void AddWeapon(Weapon weapon, Action callback)
     {
         // прячем объект и перемещаем в контейнер для оружия
@@ -113,10 +96,10 @@ public class SoldierWeaponManager : MonoBehaviour
         weapon.transform.SetParent(_weaponHolder.transform);
 
         //Put the game object in the ignore raycast layer(2)
-        weapon.gameObject.layer = 2;
+        weapon.gameObject.layer = _ignoreRaycastLayer;
 
-        weapon.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
-        weapon.transform.localPosition = new Vector3(0, 0, 0);
+        weapon.transform.localEulerAngles = Vector3.zero;
+        weapon.transform.localPosition = Vector3.zero;
 
         // add ammo from weapon to all ammo list
         AddAmmoByType(weapon.GetWeaponAmmoType(), weapon.GetWeaponAmmoVolume());
@@ -137,33 +120,19 @@ public class SoldierWeaponManager : MonoBehaviour
         callback?.Invoke();
     }
 
-
     public void AddAmmo(Ammo ammo, Action callback)
     {
         AddAmmoByType(ammo.GetAmmoType(), ammo.GetAmmoVolume());
 
+        // удаляем сам объект
         Destroy(ammo.gameObject);
 
         callback?.Invoke();
 
     }
 
-    private void AddAmmoByType(AmmoType ammoType, int ammoNumber)
-    {
-        if (_availableAmmo.ContainsKey(ammoType))
-        {
-            _availableAmmo[ammoType] += ammoNumber;
-        }
-        else
-        {
-            _availableAmmo.Add(ammoType, ammoNumber);
-        }
-
-    }
-
     public void Attack(Action callback)
     {
-        Debug.Log("IS WEAPON READY" + _currentWeapon.IsWeaponReady());
         if (IsWeaponSelected() && !isReloading && _currentWeapon.IsWeaponReady())
         {
             if (_currentWeapon.GetWeaponSlotType() == SlotWeaponType.ThirdSlotWeapon)
@@ -175,47 +144,6 @@ public class SoldierWeaponManager : MonoBehaviour
                 Shoot();
             }
             callback?.Invoke();
-        }
-    }
-
-    private void ThrowGrenade()
-    {
-        if (_availableAmmo.ContainsKey(AmmoType.Grenade) && _availableAmmo[AmmoType.Grenade] > 0)
-        {
-            var grenadeInstance = Instantiate(_weaponsList[2]);
-            _availableAmmo[AmmoType.Grenade]--;
-            grenadeInstance.transform.position = _weaponsList[2].transform.position;
-
-            if (_soldier.GetIsBot())
-            {
-                //_anim.SetTrigger("throwGrenage");
-            }
-
-            var rigidBody = grenadeInstance.GetComponent<Rigidbody>();
-            if (rigidBody != null)
-            {
-                rigidBody.isKinematic = false;
-                rigidBody.useGravity = true;
-                rigidBody.AddForce(_raycastSource.transform.forward * _throwGrenadeRange, ForceMode.Impulse);
-            }
-
-            
-            grenadeInstance.Shoot(null, _soldier.GetName());
-        }
-    }
-
-    private void Shoot()
-    {
-        _currentWeapon.Shoot(_raycastSource, _soldier.GetName());
-
-        if (_soldier.GetIsBot())
-        {
-            _anim.SetTrigger("shoot");
-            AudioManager.PlaySFXOnAudioSource(_currentWeapon.GetWeaponSound(), _audioSource);
-        }
-        else
-        {
-            AudioManager.PlaySFX(_currentWeapon.GetWeaponSound());
         }
     }
 
@@ -236,8 +164,13 @@ public class SoldierWeaponManager : MonoBehaviour
                     AudioManager.PlaySFX(SFXType.Reload);
                 }
 
-                _currentWeapon.Reload(currentWeaponPossibleAmmo, out int remaining);
-                _availableAmmo[_currentWeapon.GetWeaponAmmoType()] = remaining;
+                var requiredNumberOfAmmo = _currentWeapon.MissingNumberOfAmmo();
+                var availableAmmoForWeaponClip = currentWeaponPossibleAmmo >= requiredNumberOfAmmo
+                                                ? requiredNumberOfAmmo
+                                                : currentWeaponPossibleAmmo;
+
+                _currentWeapon.Reload(availableAmmoForWeaponClip);
+                _availableAmmo[_currentWeapon.GetWeaponAmmoType()] = currentWeaponPossibleAmmo - availableAmmoForWeaponClip;
                 callback?.Invoke();
             }
         }
@@ -277,7 +210,6 @@ public class SoldierWeaponManager : MonoBehaviour
 
     private void AddWeaponToSlot(int slotIndex, Weapon weapon)
     {
-        //Debug.Log("AddWeaponToSlot");
         if (_weaponsList[slotIndex] != null)
         {
             if (_weaponsList[slotIndex].gameObject.activeInHierarchy)
@@ -285,7 +217,6 @@ public class SoldierWeaponManager : MonoBehaviour
                 weapon.gameObject.SetActive(true);
                 _currentWeapon = weapon;
             }
-            //todo может не надо уничтожеать?
             Destroy(_weaponsList[slotIndex].gameObject);
         }
 
@@ -300,71 +231,6 @@ public class SoldierWeaponManager : MonoBehaviour
         {
             SelectSlotWeapon(slotIndex);
         }
-    }
-
-    public bool IsWeaponSelected()
-    {
-        return _currentWeapon != null;
-    }
-
-    public int GetCurrentWeaponAvailableAmmo() 
-    {
-        if (IsWeaponSelected())
-        { 
-            return _availableAmmo[_currentWeapon.GetWeaponAmmoType()];
-        }
-        return 0;
-    }
-
-    public bool IsCurrentWeaponAmmoAvailable()
-    {
-        return IsWeaponAmmoAvailable(_currentWeapon);
-    }
-
-    public bool IsWeaponAmmoAvailable(Weapon weapon)
-    {
-        if (!weapon)
-        {
-            return false;
-        }
-        //var t1 = weapon.GetIsOutOfAmmo();
-        //var t2 = weapon.GetWeaponAmmoType();
-        //if (_availableAmmo.ContainsKey(t2))
-        //{
-        //    var t3 = _availableAmmo[t2];
-
-        //}
-        //var res = (weapon.GetWeaponSlotType() != SlotWeaponType.ThirdSlotWeapon && !weapon.GetIsOutOfAmmo()) || (_availableAmmo.ContainsKey(weapon.GetWeaponAmmoType()) && _availableAmmo[weapon.GetWeaponAmmoType()] > 0);
-        return (weapon.GetWeaponSlotType() != SlotWeaponType.ThirdSlotWeapon && !weapon.GetIsOutOfAmmo()) || (_availableAmmo.ContainsKey(weapon.GetWeaponAmmoType()) && _availableAmmo[weapon.GetWeaponAmmoType()] > 0);
-    }
-
-    public void TryToSelectWeaponWithAvailableAmmo()
-    {
-        //Debug.Log("TryToSelectWeaponWithAvailableAmmo");
-        for (var i = 0; i < _weaponsList.Count; i++)
-        {
-            if (_weaponsList[i] != null && IsWeaponAmmoAvailable(_weaponsList[i]))
-            {
-                SelectSlotWeapon(i);
-                return;
-            }
-        }
-    }
-
-    public bool IsWeaponWithAvailableAmmoExists()
-    {
-        if (_weaponsList != null)
-        {
-            for (var i = 0; i < _weaponsList.Count; i++)
-            {
-                if (_weaponsList[i] != null && IsWeaponAmmoAvailable(_weaponsList[i]))
-                {
-                    return true;
-                }
-            }
-        }
-       
-        return false;
     }
 
     public List<Tuple<int, int>> GetWeaponAmmoStatuses()
@@ -384,10 +250,133 @@ public class SoldierWeaponManager : MonoBehaviour
         return result;
     }
 
+    private void Shoot()
+    {
+        if (_currentWeapon == null)
+        {
+            return;
+        }
+
+        _currentWeapon.Shoot(_raycastSource, _soldier.GetName());
+
+        if (_soldier.GetIsBot())
+        {
+            _anim.SetTrigger("shoot");
+            AudioManager.PlaySFXOnAudioSource(_currentWeapon.GetWeaponSound(), _audioSource);
+        }
+        else
+        {
+            AudioManager.PlaySFX(_currentWeapon.GetWeaponSound());
+        }
+    }
+
+    private void ThrowGrenade()
+    {
+        if (_availableAmmo.ContainsKey(AmmoType.Grenade) && _availableAmmo[AmmoType.Grenade] > 0)
+        {
+            _availableAmmo[AmmoType.Grenade]--;
+
+            var grenadeOrig = GetThirdSlotWeapon();
+            var grenadeInstance = Instantiate(grenadeOrig);           
+            grenadeInstance.transform.position = grenadeOrig.transform.position;
+
+            var rig = grenadeInstance.GetComponent<Rigidbody>();
+            if (rig != null)
+            {
+                rig.isKinematic = false;
+                rig.useGravity = true;
+                rig.AddForce(_raycastSource.transform.forward * _throwGrenadeRange, ForceMode.Impulse);
+            }
+
+            grenadeInstance.Shoot(null, _soldier.GetName());
+        }
+    }
+
+    private void AddAmmoByType(AmmoType ammoType, int ammoNumber)
+    {
+        if (_availableAmmo.ContainsKey(ammoType))
+        {
+            _availableAmmo[ammoType] += ammoNumber;
+        }
+        else
+        {
+            _availableAmmo.Add(ammoType, ammoNumber);
+        }
+    }
+
+    private bool IsWeaponSelected()
+    {
+        return _currentWeapon != null;
+    }
+
+    // есть ли еще патроны в запасе или в самом оружии
+    private bool IsWeaponAmmoAvailable(Weapon weapon)
+    {
+        if (!weapon)
+        {
+            return false;
+        }
+
+        // проверяем наличие патронов в самом оружии (актуально для всех оружий кроме гранат, их проверяем второй проверкой)
+        if (IsWeaponAmmoLoaded(weapon))
+        {
+            return true;
+        }
+        // если патронов нет в оружии то проверим в запасе патронов
+        else if (_availableAmmo.ContainsKey(weapon.GetWeaponAmmoType()) && _availableAmmo[weapon.GetWeaponAmmoType()] > 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    //  есть ли еще патроны в самом оружии
+    private bool IsWeaponAmmoLoaded(Weapon weapon) 
+    {
+        if (!weapon)
+        {
+            return false;
+        }
+
+        // проверяем наличие патронов в самом оружии (актуально для всех оружий кроме гранат, их проверяем второй проверкой)
+        if (weapon.GetWeaponSlotType() != SlotWeaponType.ThirdSlotWeapon)
+        {
+            return !weapon.IsOutOfAmmo();
+        }
+        // есть ли патроны в запасе
+        else
+        {
+            return _availableAmmo.ContainsKey(weapon.GetWeaponAmmoType()) && _availableAmmo[weapon.GetWeaponAmmoType()] > 0;
+        }
+    }
+
+    private void TryToSelectWeaponWithAvailableAmmo()
+    {
+        var weaponIndex = IndexOfWeaponWithAvailableAmmo();
+        if (weaponIndex != -1)
+        {
+            SelectSlotWeapon(weaponIndex);
+        }
+    }
+
+    private int IndexOfWeaponWithAvailableAmmo()
+    {
+        if (_weaponsList != null)
+        {
+            for (var i = 0; i < _weaponsList.Count; i++)
+            {
+                if (_weaponsList[i] != null && IsWeaponAmmoAvailable(_weaponsList[i]))
+                {
+                    return i;
+                }
+            }
+        }
+
+        return -1;
+    }
 
     private void AnimationCheck()
     {
-
         //Check if reloading
         //Check both animations
         if (_anim.GetCurrentAnimatorStateInfo(0).IsName("m_weapon_reload"))
@@ -400,5 +389,24 @@ public class SoldierWeaponManager : MonoBehaviour
         }
     }
 
-}
+    private void WeaponCheck()
+    {
+        IsNoAmmoOnAllWeapons = IndexOfWeaponWithAvailableAmmo() == -1;
 
+        if (IsWeaponSelected() && !IsNoAmmoOnAllWeapons)
+        {
+            isWeaponReady = true;
+        }
+        else
+        {
+            isWeaponReady = false;
+        }
+
+
+    }
+
+    private Weapon GetThirdSlotWeapon()
+    {
+        return _weaponsList[2];
+    }
+}

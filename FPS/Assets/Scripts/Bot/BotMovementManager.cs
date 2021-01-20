@@ -6,7 +6,11 @@ using UnityEngine.AI;
 [RequireComponent(typeof(AudioSource))]
 public class BotMovementManager : MonoBehaviour
 {
+    [SerializeField]
+    private float _stoppingNearEnemyDistance = 7f;
+
     public bool IsMovementCompleted;
+    public bool isMove;
 
     private Animator _anim;
     private AudioSource _audioSource;
@@ -14,15 +18,18 @@ public class BotMovementManager : MonoBehaviour
 
     private Vector3 _target;
 
-    private Vector2 smoothDeltaPosition = Vector2.zero;
-    private Vector2 velocity = Vector2.zero;
+    private Vector2 _smoothDeltaPosition = Vector2.zero;
+    private Vector2 _velocity = Vector2.zero;
 
     private readonly float _stoppingDistanceDelta = 0.1f;
-    private readonly float nextStepSoundDelay = 0.3f;
 
-    private float nextStepSoundTime = 0f;
+    private readonly float _nextStepSoundDelay = 0.3f;
+    private float _nextStepSoundTime = 0f;
 
-    
+    private Vector3 _worldDeltaPosition;
+    private float _dx;
+    private float _dy;
+    private float _smooth;
 
     void Awake()
     {
@@ -51,30 +58,29 @@ public class BotMovementManager : MonoBehaviour
         {
             IsMovementCompleted = false;
 
-            Vector3 worldDeltaPosition = _agent.nextPosition - transform.position;
+            _worldDeltaPosition = _agent.nextPosition - transform.position;
 
             // Map 'worldDeltaPosition' to local space
-            float dx = Vector3.Dot(transform.right, worldDeltaPosition);
-            float dy = Vector3.Dot(transform.forward, worldDeltaPosition);
-            Vector2 deltaPosition = new Vector2(dx, dy);
+            _dx = Vector3.Dot(transform.right, _worldDeltaPosition);
+            _dy = Vector3.Dot(transform.forward, _worldDeltaPosition);
 
             // Low-pass filter the deltaMove
-            float smooth = Mathf.Min(1.0f, Time.deltaTime / 0.15f);
-            smoothDeltaPosition = Vector2.Lerp(smoothDeltaPosition, deltaPosition, smooth);
+            _smooth = Mathf.Min(1.0f, Time.deltaTime / 0.15f);
+            _smoothDeltaPosition = Vector2.Lerp(_smoothDeltaPosition, new Vector2(_dx, _dy), _smooth);
 
             // Update velocity if time advances
             if (Time.deltaTime > 1e-5f)
             {
-                velocity = smoothDeltaPosition / Time.deltaTime;
+                _velocity = _smoothDeltaPosition / Time.deltaTime;
             }
 
-            bool isMove = velocity.magnitude > 0.5f && _agent.remainingDistance > _agent.radius;
+            isMove = _velocity.magnitude > 0.5f && _agent.remainingDistance > _agent.radius;
 
-            if (isMove && Time.time > nextStepSoundTime)
+            if (isMove && Time.time > _nextStepSoundTime)
             {
                 _audioSource.volume = Random.Range(0.8f, 1);
                 _audioSource.pitch = Random.Range(0.8f, 1.1f);
-                nextStepSoundTime = Time.time + nextStepSoundDelay;
+                _nextStepSoundTime = Time.time + _nextStepSoundDelay;
                 AudioManager.PlaySFXOnAudioSource(SFXType.Steps, _audioSource);
             }
 
@@ -96,10 +102,10 @@ public class BotMovementManager : MonoBehaviour
         SetTarget(target, 0);
     }
 
-    public void FolowTarget(Vector3 target, float distance)
+    public void MoveToEnemy(Vector3 target)
     {
         _target = target;
-        SetTarget(target, distance);
+        SetTarget(target, _stoppingNearEnemyDistance);
     }
 
     public void LookAtTarget()
@@ -112,6 +118,11 @@ public class BotMovementManager : MonoBehaviour
         return _agent.nextPosition;
     }
 
+    public void StopMovement()
+    {
+        _agent.isStopped = true;
+    }
+
     private void SetTarget(Vector3 target, float stoppingDistance)
     {
         _agent.ResetPath();
@@ -122,16 +133,8 @@ public class BotMovementManager : MonoBehaviour
         _agent.stoppingDistance = stoppingDistance;
     }
 
-
     private bool IsNearDestinationPosition()
     {
         return _agent.remainingDistance <= _agent.stoppingDistance + _stoppingDistanceDelta;
     }
-
-    public void StopMovement()
-    {
-        _agent.isStopped = true;
-    }
-
-    
 }

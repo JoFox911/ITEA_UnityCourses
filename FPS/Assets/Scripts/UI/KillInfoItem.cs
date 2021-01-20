@@ -15,8 +15,31 @@ public class KillInfoItem : MonoBehaviour
 
     public void SetValues(KillInfoData data)
     {
-        _killerName.text = data.Who;
-        _victimName.text = data.Whom;
-        _weaponIcon.sprite = data.WeaponIcon;
+        if (_killerName != null)
+        {
+            _killerName.text = data.Who;
+        }
+        else
+        {
+            Common.ObjectNotAssignedWarning("KillerName");
+        }
+
+        if (_victimName != null)
+        {
+            _victimName.text = data.Whom;
+        }
+        else
+        {
+            Common.ObjectNotAssignedWarning("VictimName");
+        }
+
+        if (_weaponIcon != null)
+        {
+            _weaponIcon.sprite = data.WeaponIcon;
+        }
+        else
+        {
+            Common.ObjectNotAssignedWarning("WeaponIcon");
+        }
     }
 }

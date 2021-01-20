@@ -25,7 +25,12 @@ public class PickUpHelper : MonoBehaviour
         CheckGrab();
     }
 
-    public bool CheckGrab()
+    public GameObject GetPickUpObject()
+    {
+        return _grabableObject;
+    }
+
+    private void CheckGrab()
     {
         _distanceToColPoint = _charController.height * 0.5f - _charController.radius;
 
@@ -34,16 +39,12 @@ public class PickUpHelper : MonoBehaviour
                                 _charController.radius, transform.forward, out _hit, _castDistance, _canGrabMask))
         {
             _grabableObject = _hit.transform.gameObject;
-            //Debug.Log("CheckGrab true");
-            return true;
         }
-
-        _grabableObject = null;
-        return false;
+        else 
+        {
+            _grabableObject = null;
+        }
     }
 
-    public GameObject GetPickUpObject()
-    {
-        return _grabableObject;
-    }
+   
 }

@@ -6,14 +6,12 @@ namespace BotLogic
 {
     public class SearchingEnemyState : BaseState<BotSharedContext>
     {
+        private Transform _destinationPoint;
+        private List<Transform> _searchingPointsList;
+
         public SearchingEnemyState(BotSharedContext sharedContext) : base(sharedContext)
         {
-        }
-
-        private Transform _destinationPoint;
-        private BotMovementManager _botMovement;
-
-        private List<Transform> pointsList;
+        }      
 
         public override void OnStateEnter()
         {
@@ -22,27 +20,20 @@ namespace BotLogic
             {
                 return;
             }
-            _botMovement = _sharedContext.MovementManager;
             SetNewDistinationPoint();
         }
 
         public override void Execute()
         {
-            //Debug.Log($"[{GetType().Name}][{MethodBase.GetCurrentMethod().Name}] - OK");
             if (!_sharedContext.SoldierState.IsAlive())
             {
                 _stateSwitcher.Switch(typeof(DeadState));
-            }
-            else if (_botMovement == null)
-            {
-                return;
-            }
-
-            if (_sharedContext.EnemySpyManager.IsAnyEnemySpyed)
+            } 
+            else if (_sharedContext.EnemySpyManager.IsAnyEnemySpyed)
             {
                 _stateSwitcher.Switch(typeof(EnemyAttackState));
             }
-            else if (_botMovement.IsMovementCompleted)
+            else if (_sharedContext.MovementManager.IsMovementCompleted)
             {
                 //take next enemy searching point
                 SetNewDistinationPoint();
@@ -51,10 +42,10 @@ namespace BotLogic
 
         private void SetNewDistinationPoint()
         {
-            pointsList = _sharedContext.MapHelper.EnemySearchingPoints.Where(point => point != _destinationPoint).ToList();
-            _destinationPoint = Common.SetectOneOfTheNearestPoint(pointsList,
-                                                                  _botMovement.GetCurrentPossition(), pointsList.Count);
-            _botMovement.MoveToTarget(_destinationPoint.position);
+            _searchingPointsList = _sharedContext.MapHelper.EnemySearchingPoints.Where(point => point != _destinationPoint).ToList();
+            _destinationPoint = Common.SetectOneOfTheNearestPoint(_searchingPointsList,
+                                                                  _sharedContext.MovementManager.GetCurrentPossition(), _searchingPointsList.Count);
+            _sharedContext.MovementManager.MoveToTarget(_destinationPoint.position);
         }
     }
 }

@@ -11,26 +11,24 @@ public class CheckEnemyHelper : MonoBehaviour
 
     public bool IsAnyEnemySpyed => _target != null;
 
-    private string _teamTag;
-
     private GameObject _target;
     private GameObject _tempTarget;
 
     private Collider[] _hitsInfoArray;
     private float _lostEnemyTime = 0;
 
-    private void Update()
+    void Update()
     {
         CheckEnemy();
     }
 
-    public void CheckEnemy()
+    private void CheckEnemy()
     {
         _tempTarget = null;
         _hitsInfoArray = Physics.OverlapSphere(transform.position, _castDistance, _enemyMask);
         foreach (var hitCollider in _hitsInfoArray)
         {
-            if (!hitCollider.transform.gameObject.CompareTag(_teamTag))
+            if (!hitCollider.transform.gameObject.CompareTag(gameObject.tag))
             {
                 _tempTarget = hitCollider.transform.gameObject;
             }
@@ -50,10 +48,5 @@ public class CheckEnemyHelper : MonoBehaviour
     public GameObject GetTarget()
     {
         return _target;
-    }
-
-    public void SetTeamTag(string tag)
-    {
-        _teamTag = tag;
     }
 }

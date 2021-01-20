@@ -70,8 +70,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (heal != null)
             {
-                Destroy(heal.transform.gameObject);
-                _soldier.ApplyHeal(heal.GetHealpoints());
+                _soldier.ApplyHeal(heal);
             }
         }            
     }

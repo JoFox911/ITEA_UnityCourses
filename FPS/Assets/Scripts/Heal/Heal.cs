@@ -3,10 +3,10 @@
 public class Heal : MonoBehaviour
 {
     [SerializeField]
-    private float _healPOints = 25;
+    private float _healPoints = 25;
 
     public float GetHealpoints()
     {
-        return _healPOints;
+        return _healPoints;
     }
 }

@@ -13,6 +13,17 @@ public class KillInfoView : MonoBehaviour
 
     public void AddKillInfoItem(KillInfoData data)
     {
+        if (_itemPrefab == null)
+        {
+            Common.ObjectNotAssignedWarning("KillInfoItem");
+            return;
+        }
+        if (_parentForKillInfoItems == null)
+        {
+            Common.ObjectNotAssignedWarning("ParentForKillInfoItems");
+            return;
+        }
+
         var killInfoItem = Instantiate(_itemPrefab, _parentForKillInfoItems);
         killInfoItem.SetValues(data);
         Destroy(killInfoItem.gameObject, _killInfoPreviewTime);

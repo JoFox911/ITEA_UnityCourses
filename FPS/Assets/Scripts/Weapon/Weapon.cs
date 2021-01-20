@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
 public abstract class Weapon : MonoBehaviour
 {
@@ -11,6 +10,9 @@ public abstract class Weapon : MonoBehaviour
 
     [SerializeField]
     protected GameObject _impactEffect;
+
+    [SerializeField]
+    protected float _destroyImpactTimeout = 2f;
 
     [SerializeField]
     protected float _impactForce = 30f;
@@ -33,11 +35,17 @@ public abstract class Weapon : MonoBehaviour
     [SerializeField]
     protected SFXType _weaponSound;
 
-    protected bool _isOutOfAmmo;
+    protected int _currentAmmo;
+    
 
 
     public abstract void Shoot(GameObject _raycastSource, string shooterName);
-    public abstract void Reload(int enabledAmmoNumber, out int remaining);
+    public abstract bool IsWeaponReady();
+
+    public void Reload(int availableAmmoForWeaponClip)
+    {
+        _currentAmmo += availableAmmoForWeaponClip;
+    }
 
     public SlotWeaponType GetWeaponSlotType()
     {
@@ -54,9 +62,9 @@ public abstract class Weapon : MonoBehaviour
         return _ammoVolume;
     }
 
-    public bool GetIsOutOfAmmo()
+    public bool IsOutOfAmmo()
     {
-        return _isOutOfAmmo;
+        return _currentAmmo <= 0;
     }
 
     public Sprite GetWeaponIcon()
@@ -69,8 +77,15 @@ public abstract class Weapon : MonoBehaviour
         return _weaponSound;
     }
 
-    public abstract bool IsWeaponReady();
-    public abstract int GetCurrentAmmo();
+    public int MissingNumberOfAmmo()
+    {
+        return _ammoVolume - _currentAmmo;
+    }
+
+    public int GetCurrentAmmo()
+    {
+        return _currentAmmo;
+    }    
 }
 
 
@@ -91,15 +106,15 @@ public enum SlotWeaponType
 
 public class AttackData
 {
-    public float damage;
     public string shooterName;
+    public float damage;
     public string weaponName;
     public Sprite weaponIcon;
 
-    public AttackData(float _damage, string _shooterName, string _weaponName, Sprite _weaponIcon)
+    public AttackData(string _shooterName, float _damage, string _weaponName, Sprite _weaponIcon)
     {
-        damage = _damage;
         shooterName = _shooterName;
+        damage = _damage;
         weaponName = _weaponName;
         weaponIcon = _weaponIcon;
     }

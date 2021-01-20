@@ -89,14 +89,14 @@ public class ItemsSpawnsManager : MonoBehaviour
         {
             if (_availableWeaponPrefabs != null)
             {
-            itemPrefab = SelectWeaponPrefab();
+                itemPrefab = SelectWeaponPrefab();
             }
         }
         else
         {
             if (_availableHealPrefabs != null)
             {
-            itemPrefab = SelectHealPrefab();
+                itemPrefab = SelectHealPrefab();
             }
         }
 

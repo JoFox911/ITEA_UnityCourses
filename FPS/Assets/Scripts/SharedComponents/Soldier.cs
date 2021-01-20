@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 public class Soldier : MonoBehaviour, IShootable
 {
     [SerializeField]
-    private float _health = 50f;
+    private float _health = 100f;
 
     [SerializeField]
     private bool _isBot;
@@ -16,26 +15,29 @@ public class Soldier : MonoBehaviour, IShootable
     [SerializeField]
     private GameObject _friendIndicator;
 
+    [SerializeField]
+    private float _hideDeadBotTimeout = 2f;
+
     private Animator _anim;
-    private float _maxHealth = 50f;
+    private float _maxHealth;
     private bool _isAlive = true;
 
 
     void Awake()
     {
         _anim = GetComponent<Animator>();
+
         _maxHealth = _health;
         if (_isBot)
         {
             _name = NamesGenerator.GenerateRandomName();
-        }        
+        }
+        else 
+        {
+            _name = PlayerPrefs.GetString("PlayerName", "Nemo");
+        }
     }
-
-    public bool IsAlive()
-    {
-        return _isAlive;
-    }
-
+        
     public void TakeDamage(AttackData attackData)
     {
         SetNewHealthValue(_health - attackData.damage);
@@ -46,36 +48,16 @@ public class Soldier : MonoBehaviour, IShootable
             {
                 Die(attackData);
             }
-            else if (_isBot)
-            {
-                _anim.SetTrigger("damage");
-            }
+        }
+        else if (_isBot)
+        {
+            _anim.SetTrigger("damage");
         }
     }
 
-    private void Die(AttackData attackData)
+    public bool IsAlive()
     {
-        _isAlive = false;
-        _anim.SetTrigger("dead");
-
-        EventAgregator.Post(this, new SoldierKilledEvent( new KillInfoData(attackData.shooterName, _name, attackData.weaponIcon, attackData.weaponName)));
-        
-        if (!_isBot)
-        {
-            EventAgregator.Post(this, new PlayerKilledEvent());
-        } 
-        else
-        {
-            // not correct. each bor kill be summed there
-            ServiceLocator.Resolved<GameController>()?.AddKilledEnemy();
-            StartCoroutine(DestroyPlayer());
-        }
-    }
-
-    public IEnumerator DestroyPlayer()
-    {
-        yield return new WaitForSeconds(2f);
-        Destroy(gameObject);
+        return _isAlive;
     }
 
     public string GetName()
@@ -92,6 +74,13 @@ public class Soldier : MonoBehaviour, IShootable
     {
         _friendIndicator.SetActive(true);
     }
+
+    public void ApplyHeal(Heal heal)
+    {
+        SetNewHealthValue(Mathf.Clamp(_health + heal.GetHealpoints(), 0, _maxHealth));
+        Destroy(heal.transform.gameObject);
+    }
+
     private void SetNewHealthValue(float newValue)
     {
         _health = newValue;
@@ -101,8 +90,20 @@ public class Soldier : MonoBehaviour, IShootable
         }
     }
 
-    public void ApplyHeal(float healpoints)
+    private void Die(AttackData attackData)
     {
-        SetNewHealthValue(Mathf.Clamp(_health + healpoints, 0, _maxHealth));
+        _isAlive = false;
+        _anim.SetTrigger("dead");
+
+        EventAgregator.Post(this, new SoldierKilledEvent(new KillInfoData(attackData.shooterName, _name, attackData.weaponIcon, attackData.weaponName)));
+
+        if (!_isBot)
+        {
+            EventAgregator.Post(this, new PlayerKilledEvent());
+        }
+        else
+        {
+            Destroy(gameObject, _hideDeadBotTimeout);
+        }
     }
 }
